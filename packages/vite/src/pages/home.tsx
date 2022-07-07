@@ -7,11 +7,11 @@ import {
   Spinner, Text, Link as ChakraLink, chakra,
 } from '@chakra-ui/react'
 import Markdown from 'react-markdown'
-import { httpURL } from './lib/helpers'
-import type { Maybe, ERC1155Metadata, TokenState } from './lib/types'
-import { Header, TokensTable } from './components'
-import { useWeb3 } from './lib/hooks'
-import TokenFilterForm from './components/TokenFilterForm'
+import { httpURL } from '../lib/helpers'
+import type { Maybe, ERC1155Metadata, TokenState } from '../lib/types'
+import { Header, TokensTable } from '../components'
+import { useWeb3 } from '../lib/hooks'
+import TokenFilterForm from '../components/TokenFilterForm'
 
 const Home = () => {
   const [tokens, setTokens] = useState<Array<TokenState>>([])

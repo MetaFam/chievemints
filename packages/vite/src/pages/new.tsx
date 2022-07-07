@@ -1,25 +1,24 @@
-import { NextPage } from 'next'
-import { OptionsForm } from 'components'
+import { OptionsForm } from '../components'
 import {
   Button, Center, Flex, Heading, Spinner, Text, chakra,
   Stack, Container, useToast, Table, Thead, Th, Tr, Tbody, Td, Checkbox, Input,
 } from '@chakra-ui/react'
-import { useWeb3 } from 'lib/hooks'
+import { useWeb3 } from '../lib/hooks'
 import { useCallback, useEffect, useState } from 'react'
-import { NETWORKS } from '../../lib/networks'
-import { switchTo } from 'lib/helpers'
-import Head from 'next/head'
-import { Header } from 'components'
-import { useRouter } from 'next/router'
+import { NETWORKS } from '../lib/networks'
+import { switchTo } from '../lib/helpers'
+import { Helmet } from 'react-helmet'
+import { Header } from '../components'
 import { Event, utils as ethUtils } from 'ethers'
-import { MetaMaskError, NestedError } from '../../lib/types'
+import { MetaMaskError, NestedError } from '../lib/types'
 import { useForm } from 'react-hook-form'
+import { useSearchParams } from 'react-router-dom'
 
-export const New: NextPage = () => (
+export const New = () => (
   <Container maxW="full">
-    <Head>
+    <Helmet>
       <title>’𝖈𝖍𝖎𝖊𝖛𝖊: Ⲛⲉⲱ Ⲧⲟⲕⲉⲛ</title>
-    </Head>
+    </Helmet>
     <chakra.header>
       <Flex justify="center">
         <Header my="7vh" maxW="xl"/>
@@ -33,9 +32,11 @@ export const New: NextPage = () => (
 
 const Content: React.FC = () => {
   const {
-    ensProvider, constsContract, rwContract, connecting, connect, chain, address,
+    ensProvider, roContract, rwContract, connecting, connect, chain, address,
   } = useWeb3()
-  const { query: { tokenId: id } } = useRouter()
+  console.log({connecting})
+  const [search, setSearch] = useSearchParams({ tokenId: '' })
+  const id = search.get('tokenId')
   const [tokenId, setTokenId] = (
     useState(Array.isArray(id) ? id[0] : id)
   )
@@ -52,11 +53,11 @@ const Content: React.FC = () => {
 
   useEffect(() => {
     const load = async () => {
-      if(constsContract) {
-        const numRoles = await constsContract.numRoles()
+      if(roContract) {
+        const numRoles = await roContract.roleIndexForName('Reserved[-1]')
         const roles = await Promise.all(
           Array.from({ length: numRoles }).map(async (_, idx) => (
-            await constsContract.roleNameByIndex(idx)
+            await roContract.roleNameByIndex(idx)
           ))
         )
         setRoles(roles)
@@ -64,7 +65,7 @@ const Content: React.FC = () => {
     }
 
     load()
-  }, [constsContract])
+  }, [roContract])
 
   const reserve = useCallback(async (data) => {
     setWorking(true)
@@ -75,7 +76,7 @@ const Content: React.FC = () => {
           'Connect your wallet to reserve an id.'
         )
       }
-      if(!constsContract){
+      if(!roContract){
         throw new Error('Library not loaded.')
       }
       if(!ensProvider){
@@ -88,7 +89,7 @@ const Content: React.FC = () => {
           if(typeof value === 'boolean' && value) {
             const [_, type, role] = key.match(/^(grant|disable)\((.+)\)$/) ?? []
             console.log({type, role})
-            const roleId = await constsContract.roleValueForName(role)
+            const roleId = await roContract.roleValueForName(role)
             switch(type) {
               case 'grant': {
                 grants.push(roleId)

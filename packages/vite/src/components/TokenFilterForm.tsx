@@ -1,4 +1,4 @@
-import { FormValues } from '@/lib/types'
+import { FormValues } from '../lib/types'
 import { Box, Button, Checkbox, Flex, FormControl, FormLabel, Input } from '@chakra-ui/react'
 import { Dispatch, SetStateAction, useEffect, useRef } from 'react'
 import { Controller, useForm } from 'react-hook-form'

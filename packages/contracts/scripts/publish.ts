@@ -114,7 +114,7 @@ const publishContract = (contractName: string) => {
 
 async function main() {
   if(!fs.existsSync(publishDir)) {
-    fs.mkdirSync(publishDir)
+    fs.mkdirSync(publishDir, { recursive: true })
   }
   const finalContractList: Array<string> = []
   fs.readdirSync(hre.config.paths.sources).forEach(

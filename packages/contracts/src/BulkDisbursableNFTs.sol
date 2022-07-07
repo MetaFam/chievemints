@@ -202,7 +202,7 @@ contract BulkDisbursableNFTs is
   function roleNameByIndex(Role index)
     public
     pure
-    returns (string memory name)
+    returns (string memory)
   {
     if(index == Role.Superuser) return "Superuser";
     if(index == Role.Minter) return "Minter";
@@ -215,10 +215,11 @@ contract BulkDisbursableNFTs is
     if(index == Role.Burner) return "Burner";
     if(index == Role.Destroyer) return "Destroyer";
     if(index == Role.Oracle) return "Oracle";
-    if(index == Role.ReservedNeg1) return "Reserved[-1]";
+    if(index == Role.ReservedNeg1) return "ReservedLast";
+    return "Unknown";
   }
 
-  function roleValueForName(string memory roleName)
+  function roleIndexForName(string memory roleName)
     public
     pure
     returns (Role role)
@@ -257,7 +258,7 @@ contract BulkDisbursableNFTs is
     if(hash == keccak256(abi.encodePacked('Oracle'))) {
       return Role.Oracle;
     }
-    if(hash == keccak256(abi.encodePacked('Reserved[-1]'))) {
+    if(hash == keccak256(abi.encodePacked('ReservedLast'))) {
       return Role.ReservedNeg1;
     }
     revert(string(abi.encodePacked('Unknown role type: ', roleName)));
