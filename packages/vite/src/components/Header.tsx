@@ -1,5 +1,5 @@
 import { Flex, FlexProps } from '@chakra-ui/react'
-import { LinkedSVG } from 'components'
+import { LinkedSVG } from '../components'
 
 export const Header: React.FC<
   FlexProps & { links?: Record<'cup' | 'sign', string> }

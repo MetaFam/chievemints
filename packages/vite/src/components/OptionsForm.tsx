@@ -4,18 +4,18 @@ import {
   FormLabel, Input, Spinner, Tab, TabList, TabPanel,
   TabPanels, Tabs, Text, useToast,
 } from '@chakra-ui/react'
-import { URIForm, JSONForm, NFTForm } from 'components/forms'
-import { capitalize, ipfsify, isSet, switchTo } from 'lib/helpers'
-import { NETWORKS } from 'lib/networks'
+import { URIForm, JSONForm, NFTForm } from '../components/forms'
+import { capitalize, ipfsify, isSet, switchTo } from '../lib/helpers'
+import { NETWORKS } from '../lib/networks'
 import { useCallback, useMemo, useState } from 'react'
-import { useWeb3 } from 'lib/hooks'
+import { useWeb3 } from '../lib/hooks'
 import { useForm } from 'react-hook-form'
-import { useRouter } from 'next/router'
+// import { useRouter } from 'next/router'
 import JSON5 from 'json5'
 import {
   ERC1155Metadata, FormValues, Maybe, OpenSeaAttribute,
-} from 'lib/types'
-import { isEmpty } from 'lib/helpers'
+} from '../lib/types'
+import { isEmpty } from '../lib/helpers'
 import { Attribute, MetaMaskError } from '../lib/types'
 
 const Submit: React.FC<ButtonProps & {
@@ -91,7 +91,7 @@ export const OptionsForm: React.FC<{
   purpose = 'create', tokenId, metadata
 }) => {
   const { rwContract } = useWeb3()
-  const router = useRouter()
+  // const router = useRouter()
   const {
     register, handleSubmit, watch, setValue,
     formState: {
@@ -105,7 +105,7 @@ export const OptionsForm: React.FC<{
   const toast = useToast()
 
   const configure = useCallback(
-    async ({ metadata, max = null }) => {
+    async ({ metadata, max = null }: {metadata: string, max: Maybe<number>}) => {
       if(!rwContract) {
         throw new Error(
           `Cannot connect to contract to ${purpose} metadata.`
@@ -128,9 +128,10 @@ export const OptionsForm: React.FC<{
       }
       await tx.wait()
           
-      return router.push(`/view/${tokenId}`)
+      // return router.push(`/view/${tokenId}`)
     },
-    [purpose, router, rwContract, tokenId],
+    // [purpose, router, rwContract, tokenId],
+    [purpose, rwContract, tokenId],
   )
 
   const buildMeta = async (data: FormValues) => {
@@ -223,7 +224,7 @@ export const OptionsForm: React.FC<{
       })()
         
       const max = (
-        isSet(data.maximum) ? data.maximum : null
+        isSet(data.maximum) ? data.maximum ?? null : null
       )
         
       if(!metadata) {

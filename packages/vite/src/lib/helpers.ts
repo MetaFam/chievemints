@@ -1,8 +1,8 @@
-import { CodedError, Fileish, FileListish, Maybe, NamedString } from 'lib/types'
+import { CodedError, Fileish, FileListish, Maybe, NamedString } from '../lib/types'
 import { CID } from 'multiformats/cid'
-import { IPFS_LINK_PATTERN } from '@/lib/constants'
-import { NETWORKS } from '@/lib/networks'
-import CONFIG from 'config'
+import { IPFS_LINK_PATTERN } from '../lib/constants'
+import { NETWORKS } from '../lib/networks'
+import CONFIG from '../config'
 import all from 'it-all'
 
 export const httpURL = (uri?: Maybe<string>) => {

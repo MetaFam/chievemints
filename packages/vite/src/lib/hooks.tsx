@@ -2,7 +2,7 @@ import {
   Web3Provider, JsonRpcProvider, StaticJsonRpcProvider,
 } from '@ethersproject/providers'
 import { Contract } from '@ethersproject/contracts'
-import type { Maybe } from 'lib/types'
+import type { Maybe } from './types'
 import React, {
   createContext,
   useCallback,
@@ -12,9 +12,9 @@ import React, {
   useState,
 } from 'react'
 import Web3Modal from 'web3modal'
-import providerOptions from 'lib/walletConnect'
-import { NETWORKS } from 'lib/networks'
-import CONFIG from 'config'
+import providerOptions from './walletConnect'
+import { NETWORKS } from './networks'
+import CONFIG from '../config'
 
 export type Web3ContextType = {
   userProvider?: Web3Provider
@@ -58,7 +58,7 @@ export const useWeb3 = (): Web3ContextType => (
   useContext(Web3Context)
 )
 
-export const Web3ContextProvider: React.FC = (
+export const Web3ContextProvider = (
   ({ children }) => {
     const [wallet, setWallet] = useState<Web3Modal>()
     const [userProvider, setUserProvider] = (

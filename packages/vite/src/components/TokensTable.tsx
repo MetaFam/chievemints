@@ -2,10 +2,9 @@ import {
   Box, Flex, Spinner, Stack, Table, Tbody, Td, Text, Th, Thead, Tr,
   Link as ChakraLink, Tooltip, chakra,
 } from '@chakra-ui/react'
-import { httpURL } from 'lib/helpers'
-import { TokenState } from 'lib/types'
-import Link from 'next/link'
-import NextLink from 'next/link'
+import { httpURL } from '../lib/helpers'
+import { TokenState } from '../lib/types'
+// import Link from 'next/link'
 import Markdown from 'react-markdown'
 
 type IndexedToken = { token: TokenState, index: number }
@@ -47,7 +46,7 @@ const LoadingTd:React.FC<Token> = () => (
 const ImageTd:React.FC<Token> = ({ token }) => (
   <Td>
     <Stack>
-      <NextLink href={`/view/${token.id}`} passHref>
+      <ChakraLink href={`/view/${token.id}`} >
         <ChakraLink>
           <Box
             bg={
@@ -73,7 +72,7 @@ const ImageTd:React.FC<Token> = ({ token }) => (
             <Text as="em">Untitled</Text>
           )}</Text>
         </ChakraLink>
-      </NextLink>
+      </ChakraLink>
     </Stack>
   </Td>
 )
@@ -135,36 +134,36 @@ const URITd:React.FC<Token> = ({ token }) => (
 
 const TotalTd:React.FC<Token> = ({ token }) => (
   <Td>
-    <Link href={`/owners/${token.id}`}>
+    <ChakraLink href={`/owners/${token.id}`}>
       {token.total?.toString() ?? <Spinner/>}
-    </Link>
+    </ChakraLink>
   </Td>
 )
 
 const ActionsTd:React.FC<Token> = ({ token }) => (
   <Td>
     <Flex justify="center" fontSize="150%">
-      <NextLink href={`/edit/${token.id}`} passHref>
+      <ChakraLink href={`/edit/${token.id}`} >
         <ChakraLink>
           <Tooltip label="Edit Metadata" hasArrow>
             ✏️
           </Tooltip>
         </ChakraLink>
-      </NextLink>
-      <NextLink href={`/view/${token.id}`} passHref>
+      </ChakraLink>
+      <ChakraLink href={`/view/${token.id}`} >
         <ChakraLink ml={2}>
           <Tooltip label="View This NFT" hasArrow>
             👁
           </Tooltip>
         </ChakraLink>
-      </NextLink>
-      <NextLink href={`/disburse/${token.id}`} passHref>
+      </ChakraLink>
+      <ChakraLink href={`/disburse/${token.id}`} >
         <ChakraLink ml={2}>
           <Tooltip label="Disburse This NFT" hasArrow>
             💸
           </Tooltip>
         </ChakraLink>
-      </NextLink>
+      </ChakraLink>
     </Flex>
   </Td>
 )

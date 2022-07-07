@@ -10,11 +10,11 @@ import {
   ModalCloseButton, ModalBody,
   Radio, RadioGroup, SimpleGrid, Stack, Center,
 } from '@chakra-ui/react'
-import { NFT_HOMEPAGE_BASE } from 'lib/constants'
-import { httpURL, isEmpty } from 'lib/helpers'
+import { NFT_HOMEPAGE_BASE } from '../lib/constants'
+import { httpURL, isEmpty } from '../lib/helpers'
 import {
   Attribute, ERC1155Metadata, Maybe, OpenSeaAttribute,
-} from 'lib/types'
+} from '../lib/types'
 import React, {
   ChangeEvent, useCallback, useEffect, useRef, useState,
 } from 'react'

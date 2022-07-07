@@ -1,5 +1,5 @@
 import WalletConnectProvider from '@walletconnect/web3-provider'
-import { NETWORKS } from 'lib/networks'
+import { NETWORKS } from '../lib/networks'
 
 const rpcUrls = Object.fromEntries(
   Object.entries(NETWORKS).map(

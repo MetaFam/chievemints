@@ -344,8 +344,13 @@ export default [
   {
     "inputs": [
       {
-        "internalType": "enum Bits.Role[]",
-        "name": "roles",
+        "internalType": "enum BulkDisbursableNFTs.Role[]",
+        "name": "grants",
+        "type": "uint8[]"
+      },
+      {
+        "internalType": "enum BulkDisbursableNFTs.Role[]",
+        "name": "disables",
         "type": "uint8[]"
       }
     ],
@@ -368,8 +373,13 @@ export default [
         "type": "address"
       },
       {
-        "internalType": "enum Bits.Role[]",
-        "name": "roles",
+        "internalType": "enum BulkDisbursableNFTs.Role[]",
+        "name": "grants",
+        "type": "uint8[]"
+      },
+      {
+        "internalType": "enum BulkDisbursableNFTs.Role[]",
+        "name": "disables",
         "type": "uint8[]"
       }
     ],
@@ -400,7 +410,7 @@ export default [
   {
     "inputs": [
       {
-        "internalType": "enum Bits.Role",
+        "internalType": "enum BulkDisbursableNFTs.Role",
         "name": "toDisable",
         "type": "uint8"
       },
@@ -437,7 +447,7 @@ export default [
   {
     "inputs": [
       {
-        "internalType": "enum Bits.Role",
+        "internalType": "enum BulkDisbursableNFTs.Role",
         "name": "role",
         "type": "uint8"
       },
@@ -466,7 +476,7 @@ export default [
   {
     "inputs": [
       {
-        "internalType": "enum Bits.Role",
+        "internalType": "enum BulkDisbursableNFTs.Role",
         "name": "role",
         "type": "uint8"
       },
@@ -484,7 +494,7 @@ export default [
   {
     "inputs": [
       {
-        "internalType": "enum Bits.Role",
+        "internalType": "enum BulkDisbursableNFTs.Role",
         "name": "role",
         "type": "uint8"
       },
@@ -507,7 +517,7 @@ export default [
   {
     "inputs": [
       {
-        "internalType": "enum Bits.Role",
+        "internalType": "enum BulkDisbursableNFTs.Role",
         "name": "role",
         "type": "uint8"
       }
@@ -526,7 +536,7 @@ export default [
   {
     "inputs": [
       {
-        "internalType": "enum Bits.Role",
+        "internalType": "enum BulkDisbursableNFTs.Role",
         "name": "role",
         "type": "uint8"
       },
@@ -555,7 +565,7 @@ export default [
   {
     "inputs": [
       {
-        "internalType": "enum Bits.Role",
+        "internalType": "enum BulkDisbursableNFTs.Role",
         "name": "role",
         "type": "uint8"
       },
@@ -579,7 +589,7 @@ export default [
   {
     "inputs": [
       {
-        "internalType": "enum Bits.Role",
+        "internalType": "enum BulkDisbursableNFTs.Role",
         "name": "role",
         "type": "uint8"
       },
@@ -793,7 +803,26 @@ export default [
   {
     "inputs": [
       {
-        "internalType": "enum Bits.Role",
+        "internalType": "enum BulkDisbursableNFTs.Role",
+        "name": "index",
+        "type": "uint8"
+      }
+    ],
+    "name": "roleNameByIndex",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "enum BulkDisbursableNFTs.Role",
         "name": "role",
         "type": "uint8"
       }
@@ -812,7 +841,7 @@ export default [
   {
     "inputs": [
       {
-        "internalType": "enum Bits.Role",
+        "internalType": "enum BulkDisbursableNFTs.Role",
         "name": "role",
         "type": "uint8"
       },
@@ -831,6 +860,25 @@ export default [
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "roleName",
+        "type": "string"
+      }
+    ],
+    "name": "roleValueForName",
+    "outputs": [
+      {
+        "internalType": "enum BulkDisbursableNFTs.Role",
+        "name": "role",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {

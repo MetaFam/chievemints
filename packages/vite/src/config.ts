@@ -1,5 +1,5 @@
 import { create as ipfsHTTPClient } from 'ipfs-http-client'
-
+const process: Record<string,any> = { env: {} }
 export const CONFIG = {
   infuraId: (
     process.env.NEXT_PUBLIC_INFURA_ID
