@@ -26,9 +26,6 @@
     "react-helmet": "^6.1.0",
     "react-hook-form": "^7.33.1",
     "react-markdown": "^8.0.3",
-    "rollup-plugin-node-builtins": "^2.1.2",
-    "rollup-plugin-node-globals": "^1.4.0",
-    "rollup-plugin-polyfill-node": "^0.10.0",
     "web3modal": "^1.9.8"
   },
   "devDependencies": {

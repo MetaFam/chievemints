@@ -17,9 +17,7 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 })
 
-const App: React.FC = () => {
-  if(true) return <>Testing</>
-  return (
+const App: React.FC = () => (
   <ChakraProvider>
     <Helmet>
       <link
@@ -37,7 +35,7 @@ const App: React.FC = () => {
        {/* <Component {...pageProps} /> */}
       </Web3ContextProvider>
     </ApolloProvider>
-  </ChakraProvider>)
-}
+  </ChakraProvider>
+)
 
 export default App
