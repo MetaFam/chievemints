@@ -1,1 +1,100 @@
-const sleep=t=>new Promise((a=>setTimeout(a,t))),randColor=()=>`hsl(\n    ${255*Math.random()},\n    ${50+50*Math.random()}%,\n    ${50+20*Math.random()}%\n  )`,randomLights=async t=>{for(const a of t){const t=a.querySelectorAll(".light circle");for(const a of t)a.style.fill=randColor(),await sleep(50)}},uniformLights=async t=>{const a=randColor();for(const o of t){const t=o.querySelectorAll(".light circle");for(const o of t)o.style.fill=a,await sleep(50)}},randomLetters=async t=>{for(const a of t){const t=a.querySelectorAll(".light circle"),o=randColor();for(const a of t)a.style.fill=o;await sleep(100)}},uniformLetters=async t=>{const a=`hsl(\n      ${255*Math.random()},\n      ${80+20*Math.random()}%,\n      ${60+20*Math.random()}%\n    )`;for(const o of t){const t=o.querySelectorAll(".light circle");for(const o of t)o.style.fill=a;await sleep(100)}},blink=async()=>{const t=Array.from(document.querySelectorAll(".light circle")),a=t.map((t=>t.style.fill));for(let o=1;o<=Math.round(2+3*Math.random());o++)Promise.all(t.map((async t=>{t.style.fill="black"}))),await sleep(100+400*Math.random()),Promise.all(t.map((async(t,o)=>{t.style.fill=a[o]}))),await sleep(100+400*Math.random())};window.addEventListener("load",(async()=>{const t=document.querySelectorAll(".letter");for(;;)switch(Math.floor(6*Math.random())+1){case 1:await randomLights(t);break;case 2:await uniformLights(t);break;case 3:await randomLetters(t);break;case 4:await uniformLetters(t);break;case 5:case 6:await blink()}}),!1);
+const sleep = (timeout) => (
+  new Promise((r) => setTimeout(r, timeout))
+)
+
+const randColor = () => (
+  `hsl(
+    ${Math.random() * 255},
+    ${50 + Math.random() * 50}%,
+    ${50 + Math.random() * 20}%
+  )`
+)
+
+const randomLights = async (letters) => {
+  for(const letter of letters) {
+    const lights = letter.querySelectorAll('.light circle')
+    for(const light of lights) {
+      light.style.fill = randColor()
+      await sleep(50)
+    }
+  }
+}
+const uniformLights = async (letters) => {
+  const fill = randColor()
+  for(const letter of letters) {
+    const lights = letter.querySelectorAll('.light circle')
+    for(const light of lights) {
+      light.style.fill = fill
+      await sleep(50)
+    }
+  }
+}
+const randomLetters = async (letters) => {
+  for(const letter of letters) {
+    const lights = letter.querySelectorAll('.light circle')
+    const fill = randColor()
+    for(const light of lights) {
+      light.style.fill = fill
+    }
+    await sleep(100)
+  }
+}
+const uniformLetters = async (letters) => {
+  const fill = (
+    `hsl(
+      ${Math.random() * 255},
+      ${80 + Math.random() * 20}%,
+      ${60 + Math.random() * 20}%
+    )`
+  )
+  for(const letter of letters) {
+    const lights = letter.querySelectorAll('.light circle')
+    for(const light of lights) {
+      light.style.fill = fill
+    }
+    await sleep(100)
+  }
+}
+const blink = async () => {
+  const lights = Array.from(document.querySelectorAll('.light circle'))
+  const state = lights.map((light) => light.style.fill)
+  for(let i = 1; i <= Math.round(2 + Math.random() * 3); i++) {
+    Promise.all(lights.map(async (light) => {
+      light.style.fill = 'black'
+    }))
+    await sleep(100 + 400 * Math.random())
+    Promise.all(lights.map(async (light, idx) => {
+      light.style.fill = state[idx]
+    }))
+    await sleep(100 + 400 * Math.random())
+  }
+}
+window.addEventListener('load', async () => {
+  const letters = document.querySelectorAll('.letter')
+  while(true) {
+    const dice = Math.floor(Math.random() * 6) + 1
+    switch(dice) {
+      case 1: {
+        await randomLights(letters)
+        break
+      }
+      case 2: {
+        await uniformLights(letters)
+        break
+      }
+      case 3: {
+        await randomLetters(letters)
+        break
+      }
+      case 4: {
+        await uniformLetters(letters)
+        break
+      }
+      case 5:
+      case 6: {
+        await blink()
+        break
+      }
+    }
+  }
+}, false)
