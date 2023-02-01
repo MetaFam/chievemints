@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import {
-  Alert, AlertDescription, AlertIcon, AlertTitle,
-  chakra, Heading, Flex, Spinner, Text,
-} from '@chakra-ui/react'
-import ReactMarkdown from 'react-markdown'
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import JSON5 from 'json5'
@@ -11,11 +8,10 @@ import {
   regexify, deregexify, httpURL,
 } from '@/lib/helpers'
 import type { ERC1155Metadata } from '@/lib/types'
-import { HomeLink } from '@/components'
+import { HomeLink, ThreeDScene } from '@/components'
 import { useWeb3 } from '@/lib/hooks'
-import { ThreeDScene } from '../components/ThreeDScene'
-
-const Markdown = chakra(ReactMarkdown)
+import { FadeLoader } from 'react-spinners'
+import vs from '../styles/view.module.css'
 
 export const View: React.FC<{ tokenId: string, header?: boolean }> = (
   ({ tokenId, header = true }) => {
@@ -56,20 +52,19 @@ export const View: React.FC<{ tokenId: string, header?: boolean }> = (
 
     if(error) {
       return (
-        <Alert status="error">
-          <AlertIcon />
-          <AlertTitle mr={2}>Error: Loading NFT</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
+        <aside>
+          <span>Error: Loading NFT</span>
+          <span>{error}</span>
+        </aside>
       )
     }
 
     if(!metadata) {
       return (
-        <Flex align="center" justify="center" h="100vh">
-          <Spinner thickness="4px" speed="1s" mr={2}/>
-          <Text>Loading Metadata For Token #{regexify(tokenId)}</Text>
-        </Flex>
+        <main>
+          <FadeLoader color="#36d7b7" height={100}/>
+          <p>Loading Metadata for Token #{regexify(tokenId)}</p>
+        </main>
       )
     }
 
@@ -79,7 +74,7 @@ export const View: React.FC<{ tokenId: string, header?: boolean }> = (
     } = metadata
 
     return (
-      <>
+      <div id={vs.style}>
         {header && (
           <Helmet>
             <title>{name} (#{regexify(tokenId)})</title>
@@ -89,33 +84,23 @@ export const View: React.FC<{ tokenId: string, header?: boolean }> = (
             />
           </Helmet>
         )}
+        <header><HomeLink/></header>
         <header>
-          <HomeLink/>
-          {name && <Heading>{name}</Heading>}
+          {name && <h1>{name}</h1>}
         </header>
         <main>
           {image && (
-            <chakra.object
-              data={httpURL(image) ?? undefined}
+            <object
+              data={httpURL(image as string) ?? undefined}
               title={name}
-              pointerEvents="none"
-              maxW="80vmin" maxH="80vmin"
-              bg={`#${bg}`}
-              borderRadius={15}
-              p={2}
+              className={vs.image}
+              style={{ backgroundColor: `#${bg}` }}
             />
           )}
           {description && (
             <Markdown
-              maxW="30rem"
-              sx={{
-                a: { textDecoration: 'underline' },
-                p: {
-                  textIndent: '1em',
-                  my: 3,
-                  textAlign: 'justify',
-                },
-              }}
+              className={vs.markdown}
+              remarkPlugins={[remarkGfm]}
               linkTarget="_blank"
             >
               {description}
@@ -123,39 +108,38 @@ export const View: React.FC<{ tokenId: string, header?: boolean }> = (
           )}
           {animation && (
             (() => {
-              const url = httpURL(animation) ?? undefined
-              const props = { maxW: 96, maxH: 96 }
+              const url = httpURL(animation as string) ?? undefined
 
-              if(/(mpe?g|mp4)$/i.test(animation)) {
+              if(/(mpe?g|mp4)$/i.test(animation as string)) {
                 return (
-                  <chakra.video
-                    {...props}
+                  <video
                     controls autoPlay loop muted
+                    className={vs.video}
                   >
-                    <chakra.source src={url}/>
-                  </chakra.video>
+                    <source src={url}/>
+                  </video>
                 )
-              } else if(/(glb|gltf)$/i.test(animation)) {
+              } else if(/(glb|gltf)$/i.test(animation as string)) {
                 return (
-                  <ThreeDScene model={url}/>
+                  <ThreeDScene
+                    model={url}
+                    className={vs.model}                            
+                    {...{ bg }}
+                  />
                 )
               } else {
                 return (
-                  <chakra.object
+                  <object
                     data={url}
                     title={name}
-                    pointerEvents="none"
-                    bg={`#${bg}`}
-                    borderRadius={15}
-                    p={2}
-                    {...props}
+                    className={vs.object}
                   />
                 )
               }
             })()
           )}
         </main>
-      </>
+      </div>
     )
   }
 )

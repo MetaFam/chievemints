@@ -4,10 +4,8 @@ import {
   NodeGlobalsPolyfillPlugin as ESBuildGlobalsPolyfillsPlugin
 } from '@esbuild-plugins/node-globals-polyfill'
 import TSConfigPathsPlugin  from 'rollup-plugin-tsconfig-paths'
-import ResolvePlugin from '@rollup/plugin-node-resolve'
 import NodePolyfillsPlugin from 'rollup-plugin-polyfill-node'
 import CommonJSPlugin from '@rollup/plugin-commonjs'
-// import NodePolyfillsPlugin from 'rollup-plugin-node-polyfills'
 import InjectPlugin from '@rollup/plugin-inject'
 import { defines, hideValues } from './src/lib/build'
 

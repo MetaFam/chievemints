@@ -1,0 +1,18 @@
+:root {
+  --bg-color: #EEE;
+  --font-color: #111;
+  --highlight: #531AFF;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #111;
+    --font-color: #CCC;
+    --highlight: #BD4AFF;
+  }
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--font-color);
+}
