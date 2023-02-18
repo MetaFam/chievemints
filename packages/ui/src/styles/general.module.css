@@ -1,0 +1,20 @@
+.flex {
+  display: flex;
+}
+
+.flexCol {
+  display: flex;
+  flex-direction: column;
+}
+
+.iblock {
+  display: inline-block;
+}
+
+.block {
+  display: block;
+}
+
+.grow0 {
+  flex-grow: 0;
+}

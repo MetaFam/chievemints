@@ -2624,10 +2624,11 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     react-helmet: ^6.1.0
-    react-hook-form: ^7.34.0
+    react-hook-form: ^7.43.0
     react-markdown: ^8.0.3
     react-router-dom: ^6.3.0
     react-spinners: ^0.13.8
+    react-tooltip: ^5.7.2
     remark-gfm: ^3.0.1
     rollup: ^2.77.2
     rollup-plugin-node-globals: ^1.4.0
@@ -3811,6 +3812,22 @@ __metadata:
     "@ethersproject/properties": ^5.6.0
     "@ethersproject/strings": ^5.6.1
   checksum: 3be4f300705b3f4f2b1dfa3948aac2e5030ab6216086578ec5cd2fad130b6b30d2a6a3c54d94c6669601ed62b56e7052232bc0a934a451ef3320fd6513734729
+  languageName: node
+  linkType: hard
+
+"@floating-ui/core@npm:^1.1.0":
+  version: 1.1.1
+  resolution: "@floating-ui/core@npm:1.1.1"
+  checksum: a8497bf981eedf652d275f7207342a9b24c1a67909dca9e042e2379b24321e6688c7774415f3ea607c466adf82b02d8779513f449376c46b2982f2380c80cd35
+  languageName: node
+  linkType: hard
+
+"@floating-ui/dom@npm:^1.0.4":
+  version: 1.1.1
+  resolution: "@floating-ui/dom@npm:1.1.1"
+  dependencies:
+    "@floating-ui/core": ^1.1.0
+  checksum: 8b7f3b98ed7ec0b634e4a0b735253b0442358c5cea8302935fc185b2bd882202a053622abe9248c76d0908645dd35f93adeaed2d64371b2ab76b36725ce3f7d3
   languageName: node
   linkType: hard
 
@@ -10198,6 +10215,13 @@ __metadata:
     node-gyp: latest
     node-gyp-build: ^4.3.0
   checksum: 88ddd12f2192c2775107d5e462998ac01095cb0222ca01dc2be77d8dcbbf9883c4c0a0248529cceee40a2f1232c68027b1aca731da9f767ad8e9483cbd61dd37
+  languageName: node
+  linkType: hard
+
+"classnames@npm:^2.3.2":
+  version: 2.3.2
+  resolution: "classnames@npm:2.3.2"
+  checksum: 2c62199789618d95545c872787137262e741f9db13328e216b093eea91c85ef2bfb152c1f9e63027204e2559a006a92eb74147d46c800a9f96297ae1d9f96f4e
   languageName: node
   linkType: hard
 
@@ -22353,12 +22377,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-hook-form@npm:^7.34.0":
-  version: 7.34.0
-  resolution: "react-hook-form@npm:7.34.0"
+"react-hook-form@npm:^7.43.0":
+  version: 7.43.0
+  resolution: "react-hook-form@npm:7.43.0"
   peerDependencies:
     react: ^16.8.0 || ^17 || ^18
-  checksum: 2b4a6f6ca5b3f729b88aa14a1a8c47ba86405d9c5fef2560b1dc85ac6fe1b105326571b8e1e857f8d8f3449636062d2d6201809918b5bb37f6f8f0b9c6cd6e2c
+  checksum: f86ef57b4e1d78fa5d76b41d0cbac6fdcaaf5f73f7707f1e8cf01d536c3c7d60493932dbf9af9b128af0608a8963daf5712daf79b01071212d7468897c1e792d
   languageName: node
   linkType: hard
 
@@ -22556,6 +22580,19 @@ __metadata:
   version: 0.0.0-deprecated
   resolution: "react-three-fiber@npm:0.0.0-deprecated"
   checksum: edbc23c4a95289841abcd1a48ef08bc6c8bd1bad5643e6a7d45b50978d81da2497bc5df2536751d7dab50fd785ec0b553c626786e41af227e5f4567307ae12b9
+  languageName: node
+  linkType: hard
+
+"react-tooltip@npm:^5.7.2":
+  version: 5.7.2
+  resolution: "react-tooltip@npm:5.7.2"
+  dependencies:
+    "@floating-ui/dom": ^1.0.4
+    classnames: ^2.3.2
+  peerDependencies:
+    react: ">=16.14.0"
+    react-dom: ">=16.14.0"
+  checksum: 32427e64f71f7c05f7a11f2ac5abd6dc9bfbc3652e70af80013d5b21ff2eb77d15b950b9787ebaeb85ca8b883c4b5c5fdbfc3c7abdee0a0ab97bb59e314f3648
   languageName: node
   linkType: hard
 

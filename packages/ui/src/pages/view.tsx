@@ -7,11 +7,17 @@ import JSON5 from 'json5'
 import {
   regexify, deregexify, httpURL,
 } from '@/lib/helpers'
-import type { ERC1155Metadata } from '@/lib/types'
+import type { ERC1155Metadata, Styles } from '@/lib/types'
 import { HomeLink, ThreeDScene } from '@/components'
 import { useWeb3 } from '@/lib/hooks'
-import { FadeLoader } from 'react-spinners'
-import vs from '../styles/view.module.css'
+import styles from '../styles/view.module.css'
+
+const ss: Styles = (
+  (...names: Array<string>) => {
+    return names.map((name) => styles[name]).join(' ')
+  }
+)
+Object.assign(ss, styles)
 
 export const View: React.FC<{ tokenId: string, header?: boolean }> = (
   ({ tokenId, header = true }) => {

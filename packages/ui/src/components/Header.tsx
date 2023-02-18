@@ -1,29 +1,40 @@
-import { Flex, FlexProps, Tooltip } from '@chakra-ui/react'
+import { Tooltip } from 'react-tooltip'
 import { LinkedSVG } from '@/components'
-import React from 'react'
+import React, { HTMLAttributes } from 'react'
+import styles from '../styles/home.module.css'
+import { Styles } from '@/lib/types'
+import { useStyles } from '@/lib/styles'
 
 export const Header: React.FC<
-  FlexProps & { links?: Record<'cup' | 'sign', string> }
-> = ({ links = { cup: '/new', sign: '/' }, ...props }) => (
-  <Flex  grow={1} {...props}>
-    <Tooltip hasArrow label="Create A New Token Type">
+  HTMLAttributes<HTMLDivElement>
+  & { links?: Record<'cup' | 'sign', string> }
+> = ({ links = { cup: '/new', sign: '/' }, ...props }) => {
+  const ss: Styles = useStyles()
+
+  return (
+    <section {...props}>
       <LinkedSVG
-        w="min(40%, 75vh)" h="auto"
+        id={ss.cup}
         svg="logo.svg"
         href={links.cup}
-        title="Create a new Token"
       />
-    </Tooltip>
-    <Tooltip hasArrow label="List Existing Tokens">
+      <Tooltip
+        anchorId={ss.cup}
+        place="bottom"
+        content="Create A New Token Type"
+      />
       <LinkedSVG
-        w="75%" h="auto"
-        ml="-15%"
+        id={ss.sign}
         svg="header.svg"
         href={links.sign}
-        title="View Existing Tokens"
       />
-    </Tooltip>
-  </Flex>
-)
+      <Tooltip
+        anchorId={ss.sign}
+        place="bottom"
+        content="List Existing Tokens"
+      />
+    </section>
+  )
+}
 
 export default Header

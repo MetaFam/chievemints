@@ -114,3 +114,8 @@ export class HiddenError extends Error {
     this.name = 'HiddenError'
   }
 }
+
+export type Styles = (
+  ((...names: string[]) => string)
+  & Record<string, string>
+)

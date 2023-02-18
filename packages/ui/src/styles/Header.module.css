@@ -1,0 +1,32 @@
+#header {
+  height: 45vh;
+  container-type: inline-size;
+}
+
+#cup {
+  width: min(40%, 75cqh);
+  height: auto;
+  margin-left: 10vw;
+
+  @media (width <= 420px) {
+    & {
+      width: 100vw;
+      margin: auto;
+      margin-top: -100%;
+    }
+  }
+}
+
+#sign {
+  width: 75%;
+  height: auto;
+  top: -90%;
+  left: 25%;
+
+  @media (width <= 420px) {
+    & {
+      top: -60%;
+      left: 0;
+    }
+  }
+}

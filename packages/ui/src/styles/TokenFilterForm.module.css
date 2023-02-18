@@ -1,0 +1,49 @@
+.filter {
+  display: flex;
+  align-items: center;
+  margin: auto;
+  margin-top: 4em;
+  margin-bottom: 1em;
+  width: 60ch;
+  max-width: 100%;
+  flex-direction: column;
+
+  & fieldset:nth-child(-n + 2) {
+    margin-top: 1em;
+  }
+
+  & input {
+    width: 100%;
+  }
+
+  & input[type="checkbox"] {
+    width: max-content;
+  }
+
+  & .gatingVisible {
+    display: flex;
+    flex-direction: row;
+
+    @media (width > 420px) {
+      & {
+        max-width: min(85vw, 50em);
+        flex-direction: column;
+      }
+    }
+  }
+
+  @media (width > 420px) {
+    & {
+      max-width: min(85vw, 50em);
+      flex-direction: row;
+    }
+  }
+}
+
+.label {
+  margin-top: 1rem;
+  margin-right: 0.75rem;
+  font-size: 110%;
+
+  &::after { content: ':' }
+}
