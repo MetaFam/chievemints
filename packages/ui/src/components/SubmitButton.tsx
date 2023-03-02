@@ -14,7 +14,7 @@ export const SubmitButton: React.FC<{
 }> = ({
   purpose = 'create',
   processing = false,
-  onClick,
+  // onClick,
   requireStorage,
   label = `${capitalize(purpose)} NFT`,
   ...props
@@ -30,7 +30,7 @@ export const SubmitButton: React.FC<{
   const desiredNetwork = (
     offChain ? NETWORKS.contract.name : null
   )
-  const { Settings, storage, onOpen: openSettings } = useConfig({ requireStorage })
+  const { Settings, storage } = useConfig({ requireStorage })
 
   return <>
     <Settings highlight={['nftStorageAPIToken']}/>
@@ -47,9 +47,9 @@ export const SubmitButton: React.FC<{
             evt.preventDefault()
             switchTo(NETWORKS.contract.chainId)
           } else if(!storage && requireStorage) {
-            openSettings()
+            // openSettings()
           } else {
-            onClick?.apply(null, [evt])
+            // onClick?.apply(null, [evt])
           }
         } finally {
           setWorking(false)

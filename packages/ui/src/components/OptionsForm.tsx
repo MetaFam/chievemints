@@ -13,6 +13,9 @@ import {
 } from '@/lib/types'
 import { useNavigate } from 'react-router-dom'
 import { useConfig } from '@/config'
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 
 export const OptionsForm: React.FC<{
   purpose?: 'create' | 'update'
@@ -35,7 +38,6 @@ export const OptionsForm: React.FC<{
     formState: { isSubmitting: processing },
   } = useForm()
   const [tab, setTab] = useState(FIELD_FORM)
-  const toast = useToast()
   const { storage } = useConfig()
   const metadata = watch('metadata')
   const json5 = watch('json5')
@@ -127,16 +129,10 @@ export const OptionsForm: React.FC<{
         }
       } catch(error) {
         console.error({ error })
-        toast({
-          title: 'Contract Error',
-          description: extractMessage(error),
-          status: 'error',
-          isClosable: true,
-          duration: 10000
-        })
+        toast(extractMessage(error))
       }
     },
-    [rwContract, tokenId, purpose, navigate, toast],
+    [rwContract, tokenId, purpose, navigate],
   )
 
   const submit = useCallback(async (data: FormValues) => {
@@ -179,25 +175,15 @@ export const OptionsForm: React.FC<{
       await configure({ metadata })
     } catch(error) {
       console.error({ error })
-      toast({
-        title: 'Metadata Error',
-        description: extractMessage(error),
-        status: 'error',
-        isClosable: true,
-        duration: 10000
-      })
+      toast(extractMessage(error))
     }
-  }, [buildMeta, configure, storage, tab, toast])
+  }, [buildMeta, configure, storage, tab])
 
   return (
-    <Stack align="center">
-      <Box
-        as="form" onSubmit={handleSubmit(submit)}
-        mt={10} w={['100%', 'min(85vw, 40em)']}
-        sx={{ a: { textDecoration: 'underline' } }}
-      >
-        <SubmitButton {...{ purpose, processing }} mb={3} />
-        <Tabs
+    <div>
+      <form onSubmit={handleSubmit(submit)}>
+        <SubmitButton {...{ purpose, processing }} />
+        {/* <Tabs
           mx={[0, 5]}
           isFitted
           variant="enclosed"
@@ -260,20 +246,19 @@ export const OptionsForm: React.FC<{
               </TabPanel>
             ))}
           </TabPanels>
-        </Tabs>
+        </Tabs> */}
         <SubmitButton
           {...{ purpose, processing }}
-          mb={3}
           requireStorage={true}
         />
-      </Box>
-      <MaxForm colorScheme="blue" {...{ tokenId, purpose }}/>
-      <MaxForm
-        colorScheme="blue"
-        perUser={true}
-        {...{ tokenId, purpose }}
-      />
-    </Stack>
+        <MaxForm colorScheme="blue" {...{ tokenId, purpose }}/>
+        <MaxForm
+          colorScheme="blue"
+          perUser={true}
+          {...{ tokenId, purpose }}
+        />
+      </form>
+    </div>
   )
 }
 

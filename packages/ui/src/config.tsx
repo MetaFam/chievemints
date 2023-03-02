@@ -1,11 +1,6 @@
-import {
-  FormControl, FormLabel, Input, InputGroup,
-  Modal, ModalBody, ModalCloseButton, Link,
-  ModalContent, ModalHeader, ModalOverlay,
-  useDisclosure, Text, ModalFooter, Stack, Flex, Button,
-} from '@chakra-ui/react'
 import { NFTStorage } from 'nft.storage'
 import React, { useCallback, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Maybe } from './lib/types'
 
 declare const CHAIN_NAME: string
@@ -113,105 +108,54 @@ export const useConfig = ({ requireStorage = false } = {}) => {
     )
   ), [nftStorageAPIToken])
 
-  const { isOpen, onOpen, onClose } = useDisclosure()
-
   const Settings: React.FC<{ highlight: Array<string> }> = (
-    useCallback(({ highlight }) => (
-      <Modal {...{ isOpen, onClose }}>
-        <ModalOverlay/>
-        <ModalContent>
-          <ModalHeader>Settings</ModalHeader>
-          <ModalCloseButton/>
-          <ModalBody
-            sx={{
-              a: { borderBottom: '1px dashed' },
-            }}
-          >
-            <FormControl mb={3}>
-              <FormLabel>
-                <Link target="_blank" href="//nft.storage" mr={1}>
-                  NFT.Storage
-                </Link>
-                API Token {requireStorage}
-                <Text as="span" color="red" fontSize="120%">
-                  *
-                </Text>
-              </FormLabel>
-              <InputGroup>
-                <Input
-                  placeholder="Required Token"
-                  type="password"
-                  bg={highlight.includes('nftStorageAPIToken') ? (
-                    '#FFFF0066'
-                  ) : (
-                    'transparent'
-                  )}
-                  value={internalNFTStorageAPIToken}
-                  onChange={({ target: { value } }) => {
-                    internalSetNFTStorageAPIToken(value)
-                  }}
-                />
-              </InputGroup>
-            </FormControl>
-          </ModalBody>
-
-          <ModalFooter>
-            <Stack w="full">
-              {/* <Flex mb={5}>
-                <Button 
-                  colorScheme="blue"
-                  mr={3}
-                  onClick={() => {
-                    setGw('http://{v1cid}.ipfs.localhost:8080/{path}')
-                    setDelay(0)
-                  }}
-                >
-                  Use <chakra.code ml={2}>localhost</chakra.code>
-                </Button>
-                <Button
-                  colorScheme="blue"
-                  onClick={() => {
-                    setGw(ipfsLinkPattern)
-                    setDelay(Number(ipfsLimitingDelay))
-                  }}
-                >
-                  Use Defaults
-                </Button>
-              </Flex> */}
-
-              <Flex alignSelf="end">
-                <Button
-                  colorScheme="red"
-                  mr={3}
-                  onClick={onClose}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  colorScheme="green"
-                  mr={3}
-                  onClick={() => {
-                    setNFTStorageAPIToken(
-                      internalNFTStorageAPIToken
-                    )
-                    onClose()
-                  }}
-                >
-                  Save
-                </Button>
-              </Flex>
-            </Stack>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    ), [internalNFTStorageAPIToken, isOpen, onClose, setNFTStorageAPIToken])
+    useCallback(() => (
+      <dialog>
+        <header>
+          <h2>Settings</h2>
+        </header>
+        <main>
+          <form>
+            <label>
+              <Link target="_blank" to="//nft.storage">
+                NFT.Storage
+              </Link>
+              API Token {requireStorage}
+              <span>*</span>
+            </label>
+            <input
+              placeholder="Required Token"
+              type="password"
+              value={internalNFTStorageAPIToken}
+              onChange={({ target: { value } }) => {
+                internalSetNFTStorageAPIToken(value)
+              }}
+            />
+          </form>
+        </main>
+        <footer>
+          <div>
+              <button>
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setNFTStorageAPIToken(
+                    internalNFTStorageAPIToken
+                  )
+                }}
+              >
+                Save
+              </button>
+            </div>
+        </footer>
+      </dialog>
+    ), [internalNFTStorageAPIToken, requireStorage, setNFTStorageAPIToken])
   )
 
   const settings = useMemo(() => ({
     Settings,
     storage,
-    onOpen,
-    isOpen,
   }), [Settings, storage])
 
   return settings

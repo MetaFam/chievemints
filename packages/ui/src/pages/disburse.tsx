@@ -8,6 +8,8 @@ import { useWeb3 } from '@/lib/hooks'
 import { HomeLink } from '@/components'
 import { useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
+import { ClockLoader, ScaleLoader } from 'react-spinners'
+import { toast } from 'react-toastify'
 
 const Address: React.FC<{ name: string }> = ({ name }) => {
   const { ensProvider } = useWeb3()
@@ -33,13 +35,13 @@ const Address: React.FC<{ name: string }> = ({ name }) => {
 
   return (
     <>
-      <Text>
+      <p>
         {name}
         {address != null && (
-          <Text ml={2} as="em">({address})</Text>
+          <em>({address})</em>
         )}
-      </Text>
-      {address === null && <Spinner size="xs"/>}
+      </p>
+      {address === null && <ScaleLoader color="#22BB99"/>}
     </>
   )
 }
@@ -65,7 +67,6 @@ const Disburse = () => {
     ensProvider, address, roContract, rwContract, connect,
   } = useWeb3()
   const [addresses, setAddresses] = useState<Array<string | ReactNode>>([])
-  const toast = useToast()
 
   useEffect(() => {
     const parse = async () => {
@@ -128,17 +129,9 @@ const Disburse = () => {
     evt.preventDefault()
 
     if(!rwContract) {
-      toast({
-        title: 'Contract Error!',
-        description: 'Token is not Connected.',
-        status: 'error',
-        isClosable: true,
-        duration: 10000
-      })
-      return
+      return toast('Token is not Connected.')
     }
     try {
-      // const skip = evt.target.skip.checked
       const addrs = await Promise.all(
         split(raw)
         .map(async (name: string) => {
@@ -169,28 +162,22 @@ const Disburse = () => {
         }
       }
     } catch(err) {
-      toast({
-        title: `${capitalize(action)}ing Error`,
-        description: extractMessage(err),
-        status: 'error',
-        isClosable: true,
-        duration: 10000
-      })
+      toast(extractMessage(err))
     }
-  }, [action, ensProvider, raw, roContract, rwContract, toast, tokenId])
+  }, [action, ensProvider, raw, roContract, rwContract, tokenId])
 
   if(error) {
     return (
-      <Alert status="error">
-        <AlertIcon />
-        <AlertTitle mr={2}>Error: Loading NFT</AlertTitle>
-        <AlertDescription>{error}</AlertDescription>
-      </Alert>
+      <div>
+        {/* <AlertIcon /> */}
+        <h2>Error: Loading NFT</h2>
+        <p>{error}</p>
+      </div>
     )
   }
 
   return (
-    <Container maxW="40rem">
+    <div>
       <Helmet>
         <title>Disburse NFT #{tokenId}</title>
         <meta name="description" content="Distribute A ’Chievemint NFT" />
@@ -198,81 +185,59 @@ const Disburse = () => {
 
       <HomeLink/>
 
-      <Stack as="form" onSubmit={submit}>
+      <form onSubmit={submit}>
         {(() => {
           if(metadata === null) {
-            return <Text my={8}>Token {name} does not exist.</Text>
+            return <p>Token {name} does not exist.</p>
           } else if(!address) {
             return (
-              <Text my={8}>
+              <p>
                 Connect your wallet to distribute “{name}” tokens…
-              </Text>
+              </p>
             )
           } else if(balance == null) {
             return (
-              <Flex my={8}>
-                <Spinner/>
-                <Text ml={2}>Loading Balance…</Text>
-              </Flex>
+              <div>
+                <ClockLoader color="#36d7b7" />
+                <p>Loading Balance…</p>
+              </div>
             )
           } else {
-            return <Text my={8}>Distribute up to {balance} “{name}” tokens:</Text>
+            return <p>Distribute up to {balance} “{name}” tokens:</p>
           }
         })()}
-        <Tabs isFitted variant="enclosed">
+        {/* <Tabs isFitted variant="enclosed">
           <TabList mb="1em">
             <Tab>CSV</Tab>
             <Tab>Parsed</Tab>
-          </TabList>
-          <TabPanels>
-            <TabPanel>
-              <FormControl>
-                <FormLabel>Comma, Space, or Semicolon Separated ETH or ENS Addresses:</FormLabel>
-                <Textarea
-                  height={64}
-                  placeholder="Enter space, semicolon, or comma separated eth addresses."
-                  value={raw}
-                  onChange={
-                    ({ target: { value } }: ChangeEvent<HTMLTextAreaElement>) => {
-                      setRaw(value)
-                    }
-                  }
-                />
-              </FormControl>
-            </TabPanel>
-            <TabPanel>
-              <OrderedList>
-                {addresses.map((addr, idx) => (
-                  <ListItem key={idx} justifyContent="center">
-                    {addr}
-                  </ListItem>
-                ))}
-              </OrderedList>
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-        <FormControl>
-          <RadioGroup onChange={setAction} value={action}>
-            <Radio value="mint">Mint</Radio>
-            <Radio value="whitelist" ml={5}>Whitelist</Radio>
-          </RadioGroup>
-        </FormControl>
-        <FormControl>
-          <Checkbox name="skip" value="true">
-            Skip existing holders
-          </Checkbox>
-        </FormControl>
-        <FormControl textAlign="center">
-          {!rwContract ? (
-            <Button onClick={connect}>
-              Connect
-            </Button>
-          ) : (
-            <Button type="submit" colorScheme="green">Distribute</Button>
-          )}
-        </FormControl>
-      </Stack>
-    </Container>
+          </TabList> */}
+        <label>Comma, Space, or Semicolon Separated ETH or ENS Addresses:</label>
+        <textarea
+          placeholder="Enter space, semicolon, or comma separated eth addresses."
+          value={raw}
+          onChange={
+            ({ target: { value } }: ChangeEvent<HTMLTextAreaElement>) => {
+              setRaw(value)
+            }
+          }
+        />
+        <ol>
+          {addresses.map((addr, idx) => (
+            <li key={idx}>{addr}</li>
+          ))}
+        </ol>
+        <input type="radio" name="op" value="mint">Mint</input>
+        <input type="radio" name="op" value="whitelist">Whitelist</input>
+        <input type="checkbox" name="skip" value="true">
+          Skip existing holders
+        </input>
+        {!rwContract ? (
+          <button onClick={connect}>Connect</button>
+        ) : (
+          <button type="submit">Distribute</button>
+        )}
+      </form>
+    </div>
   )
 }
 
