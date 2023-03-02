@@ -1,8 +1,3 @@
-/* eslint-disable indent */
-import {
-  Box, Stack, Tab, TabList, TabPanel,
-  TabPanels, Tabs, useToast,
-} from '@chakra-ui/react'
 import {
   URIForm, JSONForm, NFTForm, MaxForm, SubmitButton,
 } from '@/components'

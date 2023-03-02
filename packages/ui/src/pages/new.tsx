@@ -1,8 +1,3 @@
-import {
-  Center, Flex, Heading, Spinner, Text, chakra,
-  Stack, Container, useToast, Table, Thead, Th, Tr,
-  Tbody, Td, Checkbox, Input, Tooltip,
-} from '@chakra-ui/react'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Event } from 'ethers'
 import { useForm } from 'react-hook-form'

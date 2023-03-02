@@ -1,4 +1,3 @@
-import { Textarea } from '@chakra-ui/react'
 import React from 'react'
 import { FieldValues, UseFormRegister } from 'react-hook-form'
 import JSON5 from 'json5'
@@ -10,13 +9,12 @@ export const JSONForm: React.FC<{
 }> = ({
   register, metadata
 }) => (
-   <Textarea
+   <textarea
     placeholder="Enter JSON5 token metadata…"
-    h="75vh"
     {...register('json5')}
    >
     {JSON5.stringify(metadata)}
-   </Textarea>
+   </textarea>
 )
 
 export default JSONForm

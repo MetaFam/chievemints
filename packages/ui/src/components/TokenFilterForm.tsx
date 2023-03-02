@@ -1,11 +1,7 @@
 import { toSpanList } from '@/lib/helpers'
 import { Limits } from '@/lib/types'
-import {
-  chakra, Button, Checkbox, Flex, FormControl,
-  FormLabel, Input, Stack, type FlexProps, Text,
-} from '@chakra-ui/react'
 import React, {
-  FormEventHandler, HTMLAttributes, SetStateAction, useEffect, useState,
+  FormEventHandler, HTMLAttributes, SetStateAction, useEffect,
 } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useStyles } from '../lib/styles'

@@ -1,9 +1,6 @@
 import React, {
   ReactNode, useEffect, useMemo, useState,
 } from 'react'
-import {
-  Alert, AlertDescription, AlertIcon, AlertTitle, Box, Spinner,
-} from '@chakra-ui/react'
 import { useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import JSON5 from 'json5'

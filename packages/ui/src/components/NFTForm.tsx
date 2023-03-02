@@ -1,15 +1,6 @@
-/* eslint-disable indent */
 import {
   AddIcon, CloseIcon, ExternalLinkIcon
 } from '@chakra-ui/icons'
-import {
-  Input, chakra, Select, Td, Tooltip, Button, Tr,
-  UnorderedList, ListItem, FormControl, Flex,
-  FormLabel, Text, Link, Image, Tabs,
-  TabList, Tab, TabPanels, TabPanel, Textarea,
-  Table, Thead, Th, Tbody, Radio, RadioGroup,
-  SimpleGrid, Stack, Center,
-} from '@chakra-ui/react'
 import { nftBase } from '@/config'
 import { httpURL, isEmpty, regexify } from '@/lib/helpers'
 import {

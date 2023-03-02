@@ -1,13 +1,12 @@
 import { capitalize, switchTo } from '@/lib/helpers'
 import { NETWORKS } from '@/lib/networks'
-import {
-  Button, ButtonProps, Flex, Link, Spinner, Text,
-} from '@chakra-ui/react'
 import React, { MouseEvent, useMemo, useState } from 'react'
 import { useWeb3 } from '@/lib/hooks'
 import { useConfig } from '@/config'
+import { PacmanLoader } from 'react-spinners'
+import { Link } from 'react-router-dom'
 
-export const SubmitButton: React.FC<ButtonProps & {
+export const SubmitButton: React.FC<{
   purpose?: string
   processing?: boolean
   label?: string
@@ -35,16 +34,8 @@ export const SubmitButton: React.FC<ButtonProps & {
 
   return <>
     <Settings highlight={['nftStorageAPIToken']}/>
-    <Button
+    <button
       type="submit"
-      variant="solid"
-      colorScheme={
-        (!rwContract || offChain) ? 'blue' : 'green'
-      }
-      isDisabled={
-        (offChain && !!rwContract) || processing || working
-      }
-      w="full"
       onClick={async (evt: MouseEvent<HTMLButtonElement>) => {
         try {
           setWorking(true)
@@ -69,12 +60,10 @@ export const SubmitButton: React.FC<ButtonProps & {
       {(() => {
         if(processing || working) {
           return (
-            <Flex>
-              <Spinner/>
-              <Text ml={2}>
-                {capitalize(purpose).replace(/e$/, '')}ing…
-              </Text>
-            </Flex>
+            <div>
+              <PacmanLoader color="#BB2244"/>
+              <p>{capitalize(purpose).replace(/e$/, '')}ing…</p>
+            </div>
           )
         } else if(!userProvider) {
           return `Connect To ${capitalize(purpose)}`
@@ -85,7 +74,7 @@ export const SubmitButton: React.FC<ButtonProps & {
         } else if(requireStorage && !storage) {
           return <>
             Missing
-            <Link mx={1} target="_blank" href="//nft.storage">
+            <Link target="_blank" to="//nft.storage">
               NFT.Storage
             </Link>
             Token
@@ -94,6 +83,6 @@ export const SubmitButton: React.FC<ButtonProps & {
           return label
         }
       })()}
-    </Button>
+    </button>
   </>
 }

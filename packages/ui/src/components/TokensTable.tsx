@@ -5,6 +5,7 @@ import Markdown from 'react-markdown'
 import React from 'react'
 import { useStyles } from '@/lib/styles'
 import { ClimbingBoxLoader } from 'react-spinners'
+import { Link } from 'react-router-dom'
 
 type IndexedToken = { token: TokenState, index: number }
 type Token = { token: TokenState }
@@ -64,7 +65,7 @@ const Loading:React.FC<
 
 const Image:React.FC<Token> = ({ token }) => (
   <div>
-    <a href={`/view/${regexify(token.id)}`}>
+    <Link to={`/view/${regexify(token.id)}`}>
       {token.metadata?.image && (
         <object
           data={httpURL(token.metadata.image) ?? undefined}
@@ -74,7 +75,7 @@ const Image:React.FC<Token> = ({ token }) => (
       <p>{token.metadata?.name ?? (
         <em>Untitled</em>
       )}</p>
-    </a>
+    </Link>
   </div>
 )
 
@@ -83,9 +84,9 @@ const Description:React.FC<Token> = ({ token }) => (
     {token.is?.disabling && (
       <p>
         This token disables the following permission for
-        <a href={`/view/${token.gates}`}>
+        <Link to={`/view/${token.gates}`}>
           the token at index #{token.gates}
-        </a>:
+        </Link>:
       </p>
     )}
     {token.is?.gating && (
@@ -94,9 +95,9 @@ const Description:React.FC<Token> = ({ token }) => (
         {token.gates === 0 ? (
           ' all tokens'
         ) : (
-          <a href={`/view/${token.gates}`}>
+          <Link to={`/view/${token.gates}`}>
             the token at index #{token.gates}
-          </a>
+          </Link>
         )}:
       </p>
     )}
@@ -117,12 +118,12 @@ const LinkLink:React.FC<Token> = ({ token }) => {
   return (
     <div>
       {token.metadata?.external_url && (
-        <a href={token.metadata.external_url}>
-          <span id={ss('link')}>🌐</span>
-          <Tooltip anchorId={ss('link')}>
+        <Link to={token.metadata.external_url}>
+          <span id={ss.link}>🌐</span>
+          <Tooltip anchorId={ss.link}>
             {token.metadata.external_url}
           </Tooltip>
-        </a>
+        </Link>
       )}
     </div>
   )
@@ -135,13 +136,13 @@ const URI:React.FC<Token> = ({ token }) => {
     <div>
       {token.uri && (
         <div>
-          <a href={httpURL(token.uri) ?? undefined}>
-            <span id={ss('uri')}>🔗</span>
-            <Tooltip anchorId={ss('uri')}>
+          <Link to={httpURL(token.uri) ?? undefined}>
+            <span id={ss.uri}>🔗</span>
+            <Tooltip anchorId={ss.uri}>
               {token.uri}            
             </Tooltip>
-          </a>
-          <a
+          </Link>
+          <div
             onClick={() => {
               if(
                 token.uri
@@ -152,9 +153,9 @@ const URI:React.FC<Token> = ({ token }) => {
               }
             }}
           >
-            <span id={ss('copy')}>📋</span>
+            <span id={ss.copy}>📋</span>
             <Tooltip>Copy to Clipboard</Tooltip>
-          </a>
+          </div>
         </div>
       )}
     </div>
@@ -163,11 +164,11 @@ const URI:React.FC<Token> = ({ token }) => {
 
 const Total:React.FC<Token> = ({ token }) => (
   <div>
-    <a href={`/owners/${regexify(token.id)}`}>
-      {token.total?.toString() ?? <ClimbingBoxLoader color="#36d7b7"/>}
+    <Link to={`/owners/${regexify(token.id)}`}>
+      {token.total?.toString() ?? <ClimbingBoxLoader color="#FE0235"/>}
       {' ⁄ '}
-      {token.max?.toString() ?? <ClimbingBoxLoader color="#36d7b7"/>}
-    </a>
+      {token.max?.toString() ?? <ClimbingBoxLoader color="#EF2299"/>}
+    </Link>
   </div>
 )
 
@@ -179,24 +180,24 @@ const Actions:React.FC<Token> = ({ token }) => {
     <nav>
       <ul>
         <li>
-          <a href={`/edit/${id}`}>
-            <span id={ss('edit')}>✏️</span>
-            <Tooltip anchorId={ss('edit')}>Edit Metadata</Tooltip>
-          </a>
+          <Link to={`/edit/${id}`}>
+            <span id={ss.edit}>✏️</span>
+            <Tooltip anchorId={ss.edit}>Edit Metadata</Tooltip>
+          </Link>
         </li>
         <li>
-          <a href={`/view/${id}`}>
-            <span id={ss('view')}>👁</span>
+          <Link to={`/view/${id}`}>
+            <span id={ss.view}>👁</span>
             <Tooltip>View This NFT</Tooltip>
-          </a>
+          </Link>
         </li>
         <li>
-          <a href={`/disburse/${id}`}>
-            <span id={ss('disburse')}>💸</span>
-            <Tooltip anchorId={ss('disburse')}>
+          <Link to={`/disburse/${id}`}>
+            <span id={ss.disburse}>💸</span>
+            <Tooltip anchorId={ss.disburse}>
               Disburse This NFT
             </Tooltip>
-          </a>
+          </Link>
         </li>
       </ul>
     </nav>
@@ -206,8 +207,10 @@ const Actions:React.FC<Token> = ({ token }) => {
 export const TokensTable: React.FC<{
   tokens: Array<TokenState | Error>
 }> = ({ tokens }) => {
+  const ss = useStyles('TokensTable')
+  
   return (
-    <section>
+    <section id={ss.tokens}>
       {tokens.map((token: TokenState, index) => {
         if(token.is?.hidden) {
           return null

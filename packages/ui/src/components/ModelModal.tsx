@@ -1,8 +1,3 @@
-import {
-  FormControl, FormLabel, Modal, ModalBody, ModalCloseButton,
-  ModalContent, ModalHeader, ModalOverlay, Select, chakra,
-  Input, ModalFooter, Button,
-} from '@chakra-ui/react'
 import React, { FormEvent, useState } from 'react'
 
 export type ModelModalProps = {

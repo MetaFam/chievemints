@@ -1,9 +1,5 @@
 import { useWeb3 } from '@/lib/hooks'
 import { Maybe } from '@/lib/types'
-import {
-  Flex, FormControl, FormLabel, Input,
-  Spinner, Text, useToast
-} from '@chakra-ui/react'
 import React, {
   ChangeEvent, FormEvent, useCallback, useEffect, useState
 } from 'react'

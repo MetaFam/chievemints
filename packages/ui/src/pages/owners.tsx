@@ -1,8 +1,4 @@
 import { gql, useLazyQuery } from '@apollo/client'
-import {
-  chakra, Box, Heading, ListItem, OrderedList, Text,
-  Alert, AlertIcon, AlertTitle, AlertDescription,
-} from '@chakra-ui/react'
 import React, { useEffect, useMemo, useState } from 'react'
 import contractAddress from '../contracts/polygon/BulkDisbursableNFTs.address'
 import {

@@ -2,9 +2,7 @@ import { Maybe } from '@/lib/types'
 import React, {
   ReactNode, useCallback, useRef, useState,
 } from 'react'
-import {
-  Box, chakra, Flex, FormLabel, Link, Text,
-} from '@chakra-ui/react'
+import { Link } from 'react-router-dom'
 
 export const Anchor = ({ name }: { name: string }) => {
   const anchor = name.toLowerCase().replace(/\s+/g, '-')
@@ -12,21 +10,19 @@ export const Anchor = ({ name }: { name: string }) => {
   return (
     <Link
       id={anchor}
-      href={`#${anchor}`}
-      style={{ textDecoration: 'none' }}
-      tabIndex={-1}
+      to={`#${anchor}`}
     >
-      <chakra.span role="img" aria-label="Link">🔗</chakra.span>
+      <span role="img" aria-label="Link">🔗</span>
     </Link>
   )
 }
 
-const Label = ({ name }: { name: string }) => (
-  <Flex ml="-2.75em" mt={-1.5}>
+export const Label = ({ name }: { name: string }) => (
+  <div>
     <Anchor {...{ name }} />
-    <Text ml={3} mr={2}>■</Text>
-    <FormLabel whiteSpace="pre">{name}:</FormLabel>
-  </Flex>
+    <span>■</span>
+    <label>{name}:</label>
+  </div>
 )
 
 export const Expandable: React.FC<{
@@ -39,24 +35,17 @@ export const Expandable: React.FC<{
   const box = useRef<HTMLDivElement>(null)
 
   return (
-    <Box ref={box}>
-      <Flex ml="-3em" mt={3} align="center">
+    <div ref={box}>
+      <div>
         <Anchor {...{ name, box }} />
-        <Text
-          ml={3}
-          cursor={hide[name] ? 'zoom-in' : 'zoom-out'}
-          onClick={() => toggle(name)}
-          _after={{ content: '":"'}}
-        >
-          <chakra.span mr={2}>
-            {hide[name] ? '▸' : '▾'}
-          </chakra.span>
+        <p onClick={() => toggle(name)}>
+          <span>{hide[name] ? '▸' : '▾'}</span>
           {name}
-        </Text>
+        </p>
         {!hide[name] && button}
-      </Flex>
+      </div>
       {!hide[name] && children}
-    </Box>
+    </div>
   )
 }
 
