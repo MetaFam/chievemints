@@ -1,49 +1,76 @@
 .filter {
-  display: flex;
-  align-items: center;
-  margin: auto;
-  margin-top: 4em;
-  margin-bottom: 1em;
-  width: 60ch;
-  max-width: 100%;
-  flex-direction: column;
+  width: min(100%, 30rem);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 4fr 1fr;
+  grid-template-rows: auto;
+  grid-template-areas: 
+    "limit offset permissions view"
+    "or or permissions view"
+    "visible-list visible-list visible-list view";
+  font-size: 110%;
+  margin-block: 3rem;
 
-  & fieldset:nth-child(-n + 2) {
-    margin-top: 1em;
+  @media (width < 30rem) {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 
+      "limit offset"
+      "or or"
+      "visible-list visible-list"
+      "permissions permissions"
+      "view view";
   }
 
   & input {
     width: 100%;
   }
 
-  & input[type="checkbox"] {
-    width: max-content;
+  & > fieldset:nth-of-type(1) {
+    grid-area: limit;
   }
 
-  & .gatingVisible {
+  & > fieldset:nth-of-type(2) {
+    grid-area: offset;
+  }
+
+  & > label {
+    grid-area: permissions;
+    place-self: center;
+    margin-inline-end: 0.5rem;
+    margin-block: 0.5rem;
+    font-size: 110%;
     display: flex;
-    flex-direction: row;
 
-    @media (width > 420px) {
-      & {
-        max-width: min(85vw, 50em);
-        flex-direction: column;
-      }
+    & input {
+      width: 1rem;
+      margin-inline-end: 0.75rem;
     }
   }
 
-  @media (width > 420px) {
-    & {
-      max-width: min(85vw, 50em);
-      flex-direction: row;
+  & > span {
+    grid-area: or;
+    text-align: center;
+  }
+
+  & > fieldset:nth-of-type(3) {
+    grid-area: visible-list;
+    & input {
+      width: 100%;
     }
   }
-}
 
-.label {
-  margin-top: 1rem;
-  margin-right: 0.75rem;
-  font-size: 110%;
+  & > button {
+    grid-area: view;
+    justify-self: center;
+    padding: 0.25rem 1rem;
+    cursor: pointer;
+    transition: filter 0.25s ease-in-out;
+    &:hover {
+      filter: brightness(0.75);
+    }
+  }
 
-  &::after { content: ':' }
-}
+  & legend {
+    &::after { content: ':' }
+  }
+} 

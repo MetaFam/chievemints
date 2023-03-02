@@ -1,7 +1,6 @@
 import { Tooltip } from 'react-tooltip'
 import { LinkedSVG } from '@/components'
 import React, { HTMLAttributes } from 'react'
-import styles from '../styles/home.module.css'
 import { Styles } from '@/lib/types'
 import { useStyles } from '@/lib/styles'
 
@@ -9,12 +8,13 @@ export const Header: React.FC<
   HTMLAttributes<HTMLDivElement>
   & { links?: Record<'cup' | 'sign', string> }
 > = ({ links = { cup: '/new', sign: '/' }, ...props }) => {
-  const ss: Styles = useStyles()
+  const ss: Styles = useStyles('Header')
 
   return (
-    <section {...props}>
+    <header id={ss.header} {...props}>
       <LinkedSVG
         id={ss.cup}
+        className={ss.link}
         svg="logo.svg"
         href={links.cup}
       />
@@ -25,6 +25,7 @@ export const Header: React.FC<
       />
       <LinkedSVG
         id={ss.sign}
+        className={ss.link}
         svg="header.svg"
         href={links.sign}
       />
@@ -33,7 +34,7 @@ export const Header: React.FC<
         place="bottom"
         content="List Existing Tokens"
       />
-    </section>
+    </header>
   )
 }
 

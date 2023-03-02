@@ -1,32 +1,31 @@
+:root {
+}
+
 #header {
-  height: 45vh;
-  container-type: inline-size;
+  height: max(20vh, 12rem);
+  aspect-ratio: 12 / 5;
+  container-type: size;
+  position: relative;
+  margin: 1vh auto min(10cqh, 3.5rem);
 }
 
 #cup {
-  width: min(40%, 75cqh);
-  height: auto;
-  margin-left: 10vw;
-
-  @media (width <= 420px) {
-    & {
-      width: 100vw;
-      margin: auto;
-      margin-top: -100%;
-    }
-  }
+  position: absolute;
+  left: 0;
+  height: 100cqh;
+  aspect-ratio: 2105 / 1778;
 }
 
 #sign {
-  width: 75%;
-  height: auto;
-  top: -90%;
-  left: 25%;
+  position: absolute;
+  top: 32cqh;
+  left: 24cqw;
+  height: 100cqh;
+  aspect-ratio: 392 / 223;
 
   @media (width <= 420px) {
     & {
-      top: -60%;
-      left: 0;
+      left: 4cqw;
     }
   }
 }

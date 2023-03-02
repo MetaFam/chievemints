@@ -17,9 +17,6 @@ import {
 } from 'react-router-dom'
 import JSON5 from 'json5'
 import { defaults } from '@/config'
-import {
-  chakra, Button, Container, Flex, Text, Stack,
-} from '@chakra-ui/react'
 import { useStyles } from '@/lib/styles'
 
 const Home = () => {
@@ -267,7 +264,7 @@ const Home = () => {
   }, [
     visibleList, retrieve, roContract, bitsLibrary,
     limit, offset, typeCount,
-                                                                                              TYPE_WIDTH, TYPE_BOUNDARY, GATING_TYPE, DISABLING_TYPE,
+    TYPE_WIDTH, TYPE_BOUNDARY, GATING_TYPE, DISABLING_TYPE,
   ])
 
   return (
@@ -280,9 +277,7 @@ const Home = () => {
         />
       </Helmet>
 
-      <header id={ss.header}>
-        <Header id={ss.title}/>
-      </header>
+      <Header id={ss.header}/>
 
       <main>
         <section>

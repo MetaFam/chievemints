@@ -16,3 +16,7 @@ body {
   background-color: var(--bg-color);
   color: var(--font-color);
 }
+
+[role="tooltip"] {
+  z-index: 10;
+}

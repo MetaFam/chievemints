@@ -53,32 +53,30 @@ export const TokenFilterForm: React.FC<{
   }
 
   return (
-    <form
-      onSubmit={handleSubmit(submit) as FormEventHandler}
-      className={ss.filter}
-      {...props}
-    >
-      <section className={ss.flexCol}>
-        <div className={ss.flex}>
-          <fieldset>
-            <legend>Limit</legend>
-            <input
-              type="number"
-              placeholder="Number of tokens to display."
-              {...register('limit')}
-            />
-          </fieldset>
-          <fieldset>
-            <legend>Offset</legend>
-            <input
-              type="number"
-              placeholder="Size of the offset."
-              {...register('offset')}
-            />
-          </fieldset>
-        </div>
+    <section>
+      <form
+        onSubmit={handleSubmit(submit) as FormEventHandler}
+        className={ss.filter}
+        {...props}
+      >
+        <fieldset>
+          <legend>Limit</legend>
+          <input
+            type="number"
+            placeholder="Number of tokens to display."
+            {...register('limit')}
+          />
+        </fieldset>
+        <fieldset>
+          <legend>Offset</legend>
+          <input
+            type="number"
+            placeholder="Size of the offset."
+            {...register('offset')}
+          />
+        </fieldset>
         <span className={ss.sep}>or</span>
-        <fieldset className={ss.flex}>
+        <fieldset>
           <legend>Visible&#xA0;List</legend>
 
           <input
@@ -86,27 +84,24 @@ export const TokenFilterForm: React.FC<{
             {...register('visible')}
           />
         </fieldset>
-      </section>
-      <section className={ss.gatingVisible}>
-          <Controller
-            {...{ control }}
-            name="gatingVisible"
-            defaultValue={gatingVisible}
-            render={({ field: { onChange, value: checked, ref } }) => (
-              <label className={ss('flex')}>
-                <input
-                  className={ss.grow0}
-                  type="checkbox"
-                  {...{ checked, onChange, ref }}
-                />
-                <span>View<br/>Permission<br/>Tokens</span>
-              </label>
-            )}
-          />
+        <Controller
+          {...{ control }}
+          name="gatingVisible"
+          defaultValue={gatingVisible}
+          render={({ field: { onChange, value: checked, ref } }) => (
+            <label id={ss.perms}>
+              <input
+                type="checkbox"
+                {...{ checked, onChange, ref }}
+              />
+              <span>Show Permission Tokens</span>
+            </label>
+          )}
+        />
 
         <button>View</button>
-      </section>
-    </form>
+      </form>
+    </section>
   )
 }
 
