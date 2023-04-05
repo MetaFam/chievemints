@@ -2588,6 +2588,7 @@ __metadata:
     "@rollup/plugin-commonjs": ^22.0.1
     "@rollup/plugin-inject": ^4.0.4
     "@rollup/plugin-node-resolve": ^13.3.0
+    "@tippyjs/react": ^4.2.6
     "@types/babel__core": ^7
     "@types/jest": ^28.1.6
     "@types/node": ^18.6.4
@@ -2628,8 +2629,8 @@ __metadata:
     react-markdown: ^8.0.3
     react-router-dom: ^6.3.0
     react-spinners: ^0.13.8
+    react-tabs: ^6.0.0
     react-toastify: ^9.1.1
-    react-tooltip: ^5.7.2
     remark-gfm: ^3.0.1
     rollup: ^2.77.2
     rollup-plugin-node-globals: ^1.4.0
@@ -3813,22 +3814,6 @@ __metadata:
     "@ethersproject/properties": ^5.6.0
     "@ethersproject/strings": ^5.6.1
   checksum: 3be4f300705b3f4f2b1dfa3948aac2e5030ab6216086578ec5cd2fad130b6b30d2a6a3c54d94c6669601ed62b56e7052232bc0a934a451ef3320fd6513734729
-  languageName: node
-  linkType: hard
-
-"@floating-ui/core@npm:^1.1.0":
-  version: 1.1.1
-  resolution: "@floating-ui/core@npm:1.1.1"
-  checksum: a8497bf981eedf652d275f7207342a9b24c1a67909dca9e042e2379b24321e6688c7774415f3ea607c466adf82b02d8779513f449376c46b2982f2380c80cd35
-  languageName: node
-  linkType: hard
-
-"@floating-ui/dom@npm:^1.0.4":
-  version: 1.1.1
-  resolution: "@floating-ui/dom@npm:1.1.1"
-  dependencies:
-    "@floating-ui/core": ^1.1.0
-  checksum: 8b7f3b98ed7ec0b634e4a0b735253b0442358c5cea8302935fc185b2bd882202a053622abe9248c76d0908645dd35f93adeaed2d64371b2ab76b36725ce3f7d3
   languageName: node
   linkType: hard
 
@@ -5143,6 +5128,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@popperjs/core@npm:^2.9.0":
+  version: 2.11.6
+  resolution: "@popperjs/core@npm:2.11.6"
+  checksum: 47fb328cec1924559d759b48235c78574f2d71a8a6c4c03edb6de5d7074078371633b91e39bbf3f901b32aa8af9b9d8f82834856d2f5737a23475036b16817f0
+  languageName: node
+  linkType: hard
+
 "@popperjs/core@npm:^2.9.3":
   version: 2.11.5
   resolution: "@popperjs/core@npm:2.11.5"
@@ -5806,6 +5798,18 @@ __metadata:
     react: ^18.0.0
     react-dom: ^18.0.0
   checksum: 98fd8616a7cae0ecfcbe97b5b3c5b91fbafccf449c04875395ccc0e3f0b139e53b3261b9536ec2169a5e2883a1be2098907209064061fe0c2ff21dfbc785dd40
+  languageName: node
+  linkType: hard
+
+"@tippyjs/react@npm:^4.2.6":
+  version: 4.2.6
+  resolution: "@tippyjs/react@npm:4.2.6"
+  dependencies:
+    tippy.js: ^6.3.1
+  peerDependencies:
+    react: ">=16.8"
+    react-dom: ">=16.8"
+  checksum: 8f0fba591c9dae2e1af1ae632bbc775ba5c9dd4498e50e242be70302b4c27115c6740eec44e885e294b27cb28515777b52af5b34aac9d4bab627d948add938ae
   languageName: node
   linkType: hard
 
@@ -10219,13 +10223,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"classnames@npm:^2.3.2":
-  version: 2.3.2
-  resolution: "classnames@npm:2.3.2"
-  checksum: 2c62199789618d95545c872787137262e741f9db13328e216b093eea91c85ef2bfb152c1f9e63027204e2559a006a92eb74147d46c800a9f96297ae1d9f96f4e
-  languageName: node
-  linkType: hard
-
 "clean-css@npm:^5.2.2":
   version: 5.3.1
   resolution: "clean-css@npm:5.3.1"
@@ -10366,7 +10363,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:^1.1.1":
+"clsx@npm:^1.1.0, clsx@npm:^1.1.1":
   version: 1.2.1
   resolution: "clsx@npm:1.2.1"
   checksum: 30befca8019b2eb7dbad38cff6266cf543091dae2825c856a62a8ccf2c3ab9c2907c4d12b288b73101196767f66812365400a227581484a05f968b0307cfaf12
@@ -21968,7 +21965,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.0.0, prop-types@npm:^15.6.0, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
+"prop-types@npm:^15.0.0, prop-types@npm:^15.5.0, prop-types@npm:^15.6.0, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -22584,6 +22581,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-tabs@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "react-tabs@npm:6.0.0"
+  dependencies:
+    clsx: ^1.1.0
+    prop-types: ^15.5.0
+  peerDependencies:
+    react: ^18.0.0
+  checksum: 711dfe862a37019d1d9794840999e5ecac3bca9ea0b0fbe3d36163142df5f200c60de7832e9158adf92034e942d5476753a3a4fa842b64652172d80ee829df1a
+  languageName: node
+  linkType: hard
+
 "react-three-fiber@npm:0.0.0-deprecated":
   version: 0.0.0-deprecated
   resolution: "react-three-fiber@npm:0.0.0-deprecated"
@@ -22600,19 +22609,6 @@ __metadata:
     react: ">=16"
     react-dom: ">=16"
   checksum: 2039255539961a9b4d77b2656f120b20abe46cb0c699a7f3c0af23b4ef669d9c4d24dae6b8f4954b5efd83edf6d6e23614a29e94e9ee0d2647741fba9ba2db85
-  languageName: node
-  linkType: hard
-
-"react-tooltip@npm:^5.7.2":
-  version: 5.7.2
-  resolution: "react-tooltip@npm:5.7.2"
-  dependencies:
-    "@floating-ui/dom": ^1.0.4
-    classnames: ^2.3.2
-  peerDependencies:
-    react: ">=16.14.0"
-    react-dom: ">=16.14.0"
-  checksum: 32427e64f71f7c05f7a11f2ac5abd6dc9bfbc3652e70af80013d5b21ff2eb77d15b950b9787ebaeb85ca8b883c4b5c5fdbfc3c7abdee0a0ab97bb59e314f3648
   languageName: node
   linkType: hard
 
@@ -25361,6 +25357,15 @@ __metadata:
   version: 1.2.0
   resolution: "tiny-invariant@npm:1.2.0"
   checksum: e09a718a7c4a499ba592cdac61f015d87427a0867ca07f50c11fd9b623f90cdba18937b515d4a5e4f43dac92370498d7bdaee0d0e7a377a61095e02c4a92eade
+  languageName: node
+  linkType: hard
+
+"tippy.js@npm:^6.3.1":
+  version: 6.3.7
+  resolution: "tippy.js@npm:6.3.7"
+  dependencies:
+    "@popperjs/core": ^2.9.0
+  checksum: cac955318a65288e8d2dca05059878b003c6e66f92c94f7810f5bc5448eb6646abdf7dacc9bd00020e2611592598d0aae3a28ec9a45349a159603c3fdddce5fb
   languageName: node
   linkType: hard
 

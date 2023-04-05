@@ -1,7 +1,7 @@
 :root {
 }
 
-#header {
+header {
   height: max(20vh, 12rem);
   aspect-ratio: 12 / 5;
   container-type: size;

@@ -7,21 +7,20 @@ import { OptionsForm, Header, SubmitButton } from '@/components'
 import { useWeb3 } from '@/lib/hooks'
 import { extractMessage } from '@/lib/helpers'
 import { rolePermissions, tokenPermissions } from '@/config'
+import { useStyles } from '@/lib/styles'
+import { CircleLoader } from 'react-spinners'
+import Tippy from '@tippyjs/react'
+import { toast } from 'react-toastify'
+import '../styles/new.css'
 
 export const New = () => (
-  <Container maxW="full">
+  <section>
     <Helmet>
       <title>’𝖈𝖍𝖎𝖊𝖛𝖊: Ⲛⲉⲱ Ⲧⲟⲕⲉⲛ</title>
     </Helmet>
-    <chakra.header>
-      <Flex justify="center">
-        <Header my="7vh" maxW="xl"/>
-      </Flex>
-    </chakra.header>
-    <chakra.main>
-      <Content/>
-    </chakra.main>
-  </Container>
+    <Header/>
+    <Content/>
+  </section>
 )
 
 const Content: React.FC = () => {
@@ -39,7 +38,6 @@ const Content: React.FC = () => {
   )
   const [working, setWorking] = useState(false)
   const { register, handleSubmit } = useForm()
-  const toast = useToast()
 
   useEffect(() => {
     if(typeof id === 'string') {
@@ -130,104 +128,93 @@ const Content: React.FC = () => {
       const [id] = event.args
       setTokenId(id.toHexString())
     } catch(error) {
-      toast({
-        title: 'Creation Error',
-        description: extractMessage(error),
-        status: 'error',
-        isClosable: true,
-        duration: 10000
-      })
+      toast.error(extractMessage(error))
       console.error((error as Error).stack)
     } finally {
       setWorking(false)
     }
-  }, [address, ensProvider, rolesLibrary, rwContract, toast])
+  }, [address, ensProvider, rolesLibrary, rwContract])
 
   if(!rwContract || !tokenId || working) {
     return (
-      <Center>
-        <Stack>
-          <Heading textAlign="center">
-            Create a New Token Type
-          </Heading>
+      <main>
+        <div className="flexCol">
+          <h1>Create a New Token Type</h1>
           {(() => {
             if(connecting) {
               return (
-                <Flex justify="center">
-                  <Spinner thickness="4px"/>
-                  <Text ml={2}>Connecting…</Text>
-                </Flex>
+                <section>
+                  <CircleLoader color="#FF7301" size={100}/>
+                  <p>Connecting…</p>
+                </section>
               )
             }
             if(working) {
               return (
-                <Flex justify="center" mt={7}>
-                  <Spinner/>
-                  <Text ml={2}>Reserving your token…</Text>
-                </Flex>
+                <section>
+                  <CircleLoader color="#6EA8FF" size={100}/>
+                  <p>Reserving your token…</p>
+                </section>
               )
             }
             if(!tokenId) {
               return (
-                <Stack
-                  as="form"
-                  onSubmit={handleSubmit(reserve)}
-                >
-                  <Flex align="center">
-                    <chakra.label mr={3}>Admin:</chakra.label>
-                    <Input
+                <form onSubmit={handleSubmit(reserve)}>
+                  <div>
+                    <label>Admin</label>
+                    <input
                       {...register('maintainer')}
                       placeholder="Maintainer Address (default Creator)"
                     />
-                  </Flex>
-                  <Table mb={5}>
-                    <Thead>
-                      <Tr>
-                        <Th>Role</Th>
-                        <Th>
-                          <Tooltip label="Give the admin these roles:">
-                            Grant
-                          </Tooltip>
-                        </Th>
-                        <Th>
-                          <Tooltip label="Prevent these permissions from being checked:">
-                            Disable
-                          </Tooltip>
-                        </Th>
-                        <Th>Description</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
+                  </div>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Role</th>
+                        <th>
+                          <Tippy content="Give the admin these roles:">
+                            <span>Grant</span>
+                          </Tippy>
+                        </th>
+                        <th>
+                          <Tippy content="Prevent these permissions from being checked:">
+                            <span>Disable</span>
+                          </Tippy>
+                        </th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
                       {roles.map((role, idx) => (
-                        <Tr key={idx}>
-                          <Td>{role}</Td>
-                          <Td textAlign="center">
-                            <Checkbox {...register(`grant(${role})`)}/>
-                          </Td>
-                          <Td textAlign="center">
-                            <Checkbox {...register(`disable(${role})`)}/>
-                          </Td>
-                          <Td>
+                        <tr key={idx}>
+                          <td>{role}</td>
+                          <td>
+                            <input type="checkbox" {...register(`grant(${role})`)}/>
+                          </td>
+                          <td>
+                            <input type="checkbox" {...register(`disable(${role})`)}/>
+                          </td>
+                          <td>
                             {rolePermissions[role as keyof typeof rolePermissions]}
-                          </Td>
-                        </Tr>
+                          </td>
+                        </tr>
                       ))}
-                    </Tbody>
-                  </Table>
+                    </tbody>
+                  </table>
                   <SubmitButton
                     purpose="create"
                     label="Reserve an ID"
                     requireStorage={false}
                   />
-                </Stack>
+                </form>
               )
             }
             return (
-              <Text>¿How’d we get here?</Text>
+              <p>¿How’d we get here?</p>
             )
           })()}
-        </Stack>
-      </Center>
+        </div>
+      </main>
     )
   }
 

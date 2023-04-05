@@ -1,41 +1,29 @@
-import { Tooltip } from 'react-tooltip'
 import { LinkedSVG } from '@/components'
 import React, { HTMLAttributes } from 'react'
-import { Styles } from '@/lib/types'
-import { useStyles } from '@/lib/styles'
+import Tippy from '@tippyjs/react'
 
 export const Header: React.FC<
   HTMLAttributes<HTMLDivElement>
   & { links?: Record<'cup' | 'sign', string> }
-> = ({ links = { cup: '/new', sign: '/' }, ...props }) => {
-  const ss: Styles = useStyles('Header')
-
-  return (
-    <header id={ss.header} {...props}>
+> = ({ links = { cup: '/new', sign: '/' }, ...props }) => (
+  <header {...props}>
+    <Tippy content="Create A New Token Type">
       <LinkedSVG
-        id={ss.cup}
-        className={ss.link}
+        id="cup"
+        className="link"
         svg="logo.svg"
         href={links.cup}
       />
-      <Tooltip
-        anchorId={ss.cup}
-        place="bottom"
-        content="Create A New Token Type"
-      />
+    </Tippy>
+    <Tippy content="List Existing Tokens">
       <LinkedSVG
-        id={ss.sign}
-        className={ss.link}
+        id="sign"
+        className="link"
         svg="header.svg"
         href={links.sign}
       />
-      <Tooltip
-        anchorId={ss.sign}
-        place="bottom"
-        content="List Existing Tokens"
-      />
-    </header>
-  )
-}
+    </Tippy>
+  </header>
+)
 
 export default Header

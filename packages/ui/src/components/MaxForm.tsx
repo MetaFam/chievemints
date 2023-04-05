@@ -44,10 +44,10 @@ export const MaxForm = (
       let tx
       if (perUser){
         tx = await rwContract.setPerUserMax(tokenId, max)
-      }else{
+      } else {
         tx = await rwContract.setMax(tokenId, max)
       }
-        await tx.wait()
+      await tx.wait()
     } catch(error) {
       toast(extractMessage(error))
     } finally {

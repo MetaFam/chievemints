@@ -4,7 +4,6 @@ import React, {
   FormEventHandler, HTMLAttributes, SetStateAction, useEffect,
 } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { useStyles } from '../lib/styles'
 
 export type FilterValues = {
   limit: number
@@ -32,8 +31,6 @@ export const TokenFilterForm: React.FC<{
   const {
     register, handleSubmit, control, setValue,
   } = useForm<FilterValues>()
-  const ss = useStyles('TokenFilterForm')
-
   useEffect(() => {
     setValue('limit', limit)
     setValue('offset', offset)
@@ -52,7 +49,7 @@ export const TokenFilterForm: React.FC<{
     <section>
       <form
         onSubmit={handleSubmit(submit) as FormEventHandler}
-        className={ss.filter}
+        className="filter"
         {...props}
       >
         <fieldset>
@@ -71,7 +68,7 @@ export const TokenFilterForm: React.FC<{
             {...register('offset')}
           />
         </fieldset>
-        <span className={ss.sep}>or</span>
+        <span className="sep">or</span>
         <fieldset>
           <legend>Visible&#xA0;List</legend>
 
@@ -85,7 +82,7 @@ export const TokenFilterForm: React.FC<{
           name="gatingVisible"
           defaultValue={gatingVisible}
           render={({ field: { onChange, value: checked, ref } }) => (
-            <label id={ss.perms}>
+            <label id="perms">
               <input
                 type="checkbox"
                 {...{ checked, onChange, ref }}

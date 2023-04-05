@@ -10,14 +10,8 @@ import {
 import type { ERC1155Metadata, Styles } from '@/lib/types'
 import { HomeLink, ThreeDScene } from '@/components'
 import { useWeb3 } from '@/lib/hooks'
-import styles from '../styles/view.module.css'
-
-const ss: Styles = (
-  (...names: Array<string>) => {
-    return names.map((name) => styles[name]).join(' ')
-  }
-)
-Object.assign(ss, styles)
+import { FadeLoader } from 'react-spinners'
+import '../styles/view.css'
 
 export const View: React.FC<{ tokenId: string, header?: boolean }> = (
   ({ tokenId, header = true }) => {
@@ -92,6 +86,7 @@ export const View: React.FC<{ tokenId: string, header?: boolean }> = (
         )}
         <header><HomeLink/></header>
         <header>
+          <HomeLink/>
           {name && <h1>{name}</h1>}
         </header>
         <main>
@@ -99,13 +94,13 @@ export const View: React.FC<{ tokenId: string, header?: boolean }> = (
             <object
               data={httpURL(image as string) ?? undefined}
               title={name}
-              className={vs.image}
+              className="image"
               style={{ backgroundColor: `#${bg}` }}
             />
           )}
           {description && (
             <Markdown
-              className={vs.markdown}
+              className="markdown"
               remarkPlugins={[remarkGfm]}
               linkTarget="_blank"
             >
@@ -129,7 +124,7 @@ export const View: React.FC<{ tokenId: string, header?: boolean }> = (
                 return (
                   <ThreeDScene
                     model={url}
-                    className={vs.model}                            
+                    className="model"
                     {...{ bg }}
                   />
                 )

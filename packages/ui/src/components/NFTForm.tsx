@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import {
   AddIcon, CloseIcon, ExternalLinkIcon
 } from '@chakra-ui/icons'
@@ -15,6 +16,7 @@ import {
   UseFormWatch,
 } from 'react-hook-form'
 import { Link } from 'react-router-dom'
+import '../styles/NFTForm.css'
 
 const AttrRow: React.FC<{
   attributes: Array<Attribute>
@@ -281,48 +283,43 @@ export const NFTForm: React.FC<{
           />
         </div>
         {images?.length > 0 && (
-          <input
-            type="radio"
-            value={primaryImageIdx}
-            onChange={({ target: { value } }) => {
-              setPrimaryImageIdx(Number(value))
-            }}
-          >
-            <div>
-              {images.map((image: File | string, idx: number) => {
-                const name = (
-                  (image as File)?.name
-                  ?? (image as string)?.replace(/^.*\//g, '')
-                )
+          <div>
+            {images.map((image: File | string, idx: number) => {
+              const name = (
+                (image as File)?.name
+                ?? (image as string)?.replace(/^.*\//g, '')
+              )
 
-                return (
-                  <React.Fragment key={idx}>
-                    <div>
-                      <input type="radio" value={idx}>Display Image</input>
-                    </div>
-                    <div>
-                      <img
-                        alt={name}
-                        src={
-                          (image instanceof File) ? (
-                            URL.createObjectURL(image)
-                          ) : (
-                            httpURL(image) ?? undefined
-                          )
-                        }
-                        onClick={() => imageRef.current?.click()}
-                      />
-                    </div>
-                    <div>
-                      <button onClick={() => removeImage(idx)}>
-                        {/* <CloseIcon/> */}
-                      </button>
-                    </div>
-                  </React.Fragment>
-                )
-              })}
-            </div>
-          </input>
+              return (
+                <React.Fragment key={idx}>
+                  <div>
+                    <label>
+                      Display Image
+                      <input type="radio" value={idx}/>
+                    </label>
+                  </div>
+                  <div>
+                    <img
+                      alt={name}
+                      src={
+                        (image instanceof File) ? (
+                          URL.createObjectURL(image)
+                        ) : (
+                          httpURL(image) ?? undefined
+                        )
+                      }
+                      onClick={() => imageRef.current?.click()}
+                    />
+                  </div>
+                  <div>
+                    <button onClick={() => removeImage(idx)}>
+                      {/* <CloseIcon/> */}
+                    </button>
+                  </div>
+                </React.Fragment>
+              )
+            })}
+          </div>
         )}
         <button onClick={() => imageRef.current?.click()}>
           {/* <AddIcon/> */}
@@ -351,7 +348,7 @@ export const NFTForm: React.FC<{
       <li>
         <div>
           <label>Description</label>
-          {/* <Tabs ml={5} isFitted variant="enclosed">
+          <Tabs>
             <TabList mb="1em">
               <Tab>Markdown</Tab>
               <Tab>Preview</Tab>
@@ -370,7 +367,7 @@ export const NFTForm: React.FC<{
                 </Markdown>
               </TabPanel>
             </TabPanels>
-          </Tabs> */}
+          </Tabs>
         </div>
       </li>
       <li>

@@ -1,21 +1,27 @@
-import { Tooltip } from 'react-tooltip'
+/* eslint-disable jsx-a11y/alt-text */
+/* eslint-disable @next/next/no-img-element */
+import Tippy from '@tippyjs/react'
 import { extractMessage, httpURL, regexify } from '@/lib/helpers'
 import type { TokenState } from '@/lib/types'
 import Markdown from 'react-markdown'
-import React from 'react'
-import { useStyles } from '@/lib/styles'
+import React, { useMemo, useRef, useEffect } from 'react'
 import { ClimbingBoxLoader } from 'react-spinners'
 import { Link } from 'react-router-dom'
+import '../styles/TokensTable.css'
 
 type IndexedToken = { token: TokenState, index: number }
 type Token = { token: TokenState }
 
-const Id:React.FC<IndexedToken> = ({ token }) => {
-  const ss = useStyles('TokensTable')
-
-  return (
-    <section>
-      <p id={ss.id}>
+const Id:React.FC<IndexedToken> = ({ token }) => (
+  <div className="idElem">
+    <Tippy
+      content={token.id != null ? (
+        regexify(token.id)
+      ) : (
+        '𝚄𝚗𝚔𝚗𝚘𝚠𝚗'
+      )}
+    >
+      <p id="id">
         <span>{token.index}</span>
         {token.gates != null && (
           <span title={`Controls Token #${token.gates}`}>
@@ -26,74 +32,71 @@ const Id:React.FC<IndexedToken> = ({ token }) => {
           <span>(disabled)</span>
         )}
       </p>
-      <Tooltip
-        anchorId={ss.id}
-        place="bottom"
-        content={token.id != null ? (
-          regexify(token.id)
-        ) : (
-          '𝚄𝚗𝚔𝚗𝚘𝚠𝚗'
-        )}
-      />
-    </section>
-  )
-}
+    </Tippy>
+  </div>
+)
 
-const Error:React.FC<Token> = ({ token }) => {
-  const ss = useStyles('TokensTable')
-
-  return (
-    <section className={ss.error}>
-      <p>{extractMessage(token.error)}</p>
-    </section>
-  )
-}
+const Error:React.FC<Token> = ({ token }) => (
+  <div className="errorElem">
+    <p className="error">{extractMessage(token.error)}</p>
+  </div>
+)
 
 const Loading:React.FC<
   Token & { label?: string }
 > = (
-  ({ label = 'Loading Metadata…', ...props }) => {
-    const ss = useStyles('TokensTable')
-
-    return (
-      <section className={ss.loading} {...props}>
-        <p>{label}</p>
-      </section>
-    )
-  }
+  ({ label = 'Loading Metadata…', ...props }) => (
+    <div className="loadElem">
+      <p className="loading" {...props}>{label}</p>
+    </div>
+  )
 )
 
 const Image:React.FC<Token> = ({ token }) => (
-  <div>
-    <Link to={`/view/${regexify(token.id)}`}>
+  <div className="imgElem">
+    <Link to={`/view/${regexify(token.id)}`} className="image">
       {token.metadata?.image && (
-        <object
-          data={httpURL(token.metadata.image) ?? undefined}
-          title={token.metadata?.name ?? 'Untitled'}
+        <img
+          src={httpURL(token.metadata.image) ?? undefined}
+          alt={token.metadata?.name ?? 'Untitled'}
         />
       )}
-      <p>{token.metadata?.name ?? (
-        <em>Untitled</em>
-      )}</p>
     </Link>
   </div>
 )
 
 const Description:React.FC<Token> = ({ token }) => (
-  <div>
+  <div className="descElem">
+    <h2>
+      {token.metadata?.name ?? (
+        <em>Untitled</em>
+      )}
+      {token.gates == null ? '' : (
+        token.gates === 0 ? (
+          ' for all tokens'
+        ) : (
+          <>
+            {' '}for{' '}
+            <Link to={`/view/${token.gates}`}>
+              #{token.gates}
+            </Link>
+          </>
+        )
+      )}
+    </h2>
     {token.is?.disabling && (
       <p>
-        This token disables the following permission for
-        <Link to={`/view/${token.gates}`}>
+        This token <b>disables</b> the following permission for{' '}
+        <Link to={`/view/i:${token.gates}`}>
           the token at index #{token.gates}
         </Link>:
       </p>
     )}
     {token.is?.gating && (
       <p>
-        This token gives holders the following permission for
+        This token gives holders the following permission for{' '}
         {token.gates === 0 ? (
-          ' all tokens'
+          'all tokens'
         ) : (
           <Link to={`/view/${token.gates}`}>
             the token at index #{token.gates}
@@ -113,91 +116,100 @@ const Description:React.FC<Token> = ({ token }) => (
   </div>
 )
 
-const LinkLink:React.FC<Token> = ({ token }) => {
-  const ss = useStyles('TokensTable')
-  return (
-    <div>
-      {token.metadata?.external_url && (
-        <Link to={token.metadata.external_url}>
-          <span id={ss.link}>🌐</span>
-          <Tooltip anchorId={ss.link}>
-            {token.metadata.external_url}
-          </Tooltip>
-        </Link>
-      )}
-    </div>
-  )
-}
-
-const URI:React.FC<Token> = ({ token }) => {
-  const ss = useStyles('TokensTable')
-
-  return (
-    <div>
-      {token.uri && (
-        <div>
-          <Link to={httpURL(token.uri) ?? undefined}>
-            <span id={ss.uri}>🔗</span>
-            <Tooltip anchorId={ss.uri}>
-              {token.uri}            
-            </Tooltip>
-          </Link>
-          <div
-            onClick={() => {
-              if(
-                token.uri
-                && typeof navigator !== 'undefined'
-                && window.isSecureContext
-              ) {
-                navigator.clipboard?.writeText(token.uri)
-              }
-            }}
-          >
-            <span id={ss.copy}>📋</span>
-            <Tooltip>Copy to Clipboard</Tooltip>
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
-const Total:React.FC<Token> = ({ token }) => (
-  <div>
-    <Link to={`/owners/${regexify(token.id)}`}>
-      {token.total?.toString() ?? <ClimbingBoxLoader color="#FE0235"/>}
-      {' ⁄ '}
-      {token.max?.toString() ?? <ClimbingBoxLoader color="#EF2299"/>}
-    </Link>
+const LinkLink:React.FC<Token> = ({ token }) => (
+  <div className="homepageElem">
+    {token.metadata?.external_url && (
+      <Tippy content={token.metadata.external_url}>
+        <a
+          href={token.metadata.external_url}
+          target="_blank" rel="noreferrer"
+        >
+          🌐
+        </a>
+      </Tippy>
+    )}
   </div>
 )
 
+const URI:React.FC<Token> = ({ token }) => (
+  <nav className="metaElem">
+    {token.uri && (
+      <ul className="links">
+        <li>
+          <Tippy content={token.uri}>
+            <a
+              className="meta"
+              href={httpURL(token.uri) ?? undefined}
+              target="_blank" rel="noreferrer"
+            >
+              🔗
+            </a>
+          </Tippy>
+        </li>
+        <li>
+          <Tippy content="Copy to Clipboard">
+            <button onClick={() => {
+              if(token.uri && window.isSecureContext) {
+                navigator?.clipboard?.writeText(token.uri)
+              }
+            }}>
+              📋
+            </button>
+          </Tippy>
+        </li>
+      </ul>
+    )}
+  </nav>
+)
+
+const Total:React.FC<Token> = ({ token }) => {
+  const label = `${token.total?.toString()} minted of ${token.max?.toString()} total`
+
+  return (
+    <div>
+      <Link to={`/owners/${regexify(token.id)}`}>
+        <Tippy content={label}><>
+          <sup>{
+            token.total?.toString()
+            ?? <ClimbingBoxLoader color="#FE0235"/>
+          }</sup>
+          {'⁄'}
+          <sub>{
+            Number(token.max) === -1 ? '∞' : token.max?.toString()
+            ?? <ClimbingBoxLoader color="#EF2299"/>
+          }</sub>
+        </></Tippy>
+      </Link>
+    </div>
+  )
+}
+
 const Actions:React.FC<Token> = ({ token }) => {
-  const ss = useStyles('TokensTable')
   const id = regexify(token.id)
 
   return (
     <nav>
-      <ul>
+      <ul className="links">
         <li>
-          <Link to={`/edit/${id}`}>
-            <span id={ss.edit}>✏️</span>
-            <Tooltip anchorId={ss.edit}>Edit Metadata</Tooltip>
-          </Link>
+          <Tippy content="Edit Metadata">
+            <Link to={`/edit/${id}`}>
+              ✏️
+            </Link>
+          </Tippy>
         </li>
         <li>
-          <Link to={`/view/${id}`}>
-            <span id={ss.view}>👁</span>
-            <Tooltip>View This NFT</Tooltip>
-          </Link>
+          <Tippy content="View This NFT">
+            <Link to={`/view/${id}`}>
+              👁
+            </Link>
+          </Tippy>
         </li>
         <li>
-          <Link to={`/disburse/${id}`}>
-            <span id={ss.disburse}>💸</span>
-            <Tooltip anchorId={ss.disburse}>
-              Disburse This NFT
-            </Tooltip>
-          </Link>
+          <Tippy content="Disburse This NFT">
+            <Link to={`/disburse/${id}`}>
+              💸
+            </Link>
+          </Tippy>
         </li>
       </ul>
     </nav>
@@ -206,46 +218,45 @@ const Actions:React.FC<Token> = ({ token }) => {
 
 export const TokensTable: React.FC<{
   tokens: Array<TokenState | Error>
-}> = ({ tokens }) => {
-  const ss = useStyles('TokensTable')
-  
-  return (
-    <section id={ss.tokens}>
-      {tokens.map((token: TokenState, index) => {
-        if(token.is?.hidden) {
-          return null
-        }
-        return (
-          <div key={index}>
-            <Id {...{ token, index }}/>
-            {(() => {
-              if(!token.uri && token.error) {
-                return <Error {...{ token }}/>
-              }
-              if(!token.metadata) {
-                return (
-                  <Loading
-                    label={`${token.uri ? 'Loading' : 'Finding'} Metadata…`}  
-                    {...{ token }}
-                  />
-                )
-              }
+}> = ({ tokens }) => (
+  <section id="tokens">
+    {tokens.map((token: TokenState, index) => {
+      if(token.is?.hidden) {
+        return null
+      }
+      return (
+        <article className="token" key={index}>
+          <Id {...{ token, index }}/>
+          {(() => {
+            if(!token.uri && token.error) {
+              return <Error {...{ token }}/>
+            }
+            if(!token.metadata) {
               return (
-                <>
-                  <Image {...{ token }}/>
-                  <Description {...{ token }}/>
-                  <LinkLink {...{ token }}/>
-                </>
+                <Loading
+                  label={
+                    token.uri ? 'Loading' : 'Finding'
+                    + ' Metadata…'
+                  }
+                  {...{ token }}
+                />
               )
-            })()}
-            {token.uri && <URI {...{ token }}/>}
-            <Total {...{ token }}/>
-            <Actions {...{ token }}/>
-          </div>
-        )
-      })}
-    </section>
-  )
-}
+            }
+            return (
+              <>
+                <Image {...{ token }}/>
+                <Description {...{ token }}/>
+                <LinkLink {...{ token }}/>
+              </>
+            )
+          })()}
+          {token.uri && <URI {...{ token }}/>}
+          <Total {...{ token }}/>
+          <Actions {...{ token }}/>
+        </article>
+      )
+    })}
+  </section>
+)
 
 export default TokensTable

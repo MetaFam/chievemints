@@ -1,0 +1,25 @@
+@import url('general.css');
+@import url('Header.css');
+@import url('TokenFilterForm.css');
+
+.link {
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+}
+
+footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+main {
+  display: grid;
+  place-items: center;
+
+  & h1 {
+    text-align: center;
+  }
+}

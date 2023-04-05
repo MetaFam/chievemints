@@ -1,7 +1,10 @@
 :root {
-  --bg-color: #EEE;
-  --font-color: #111;
-  --highlight: #531AFF;
+  --bg-color-light: #EEE;
+  --font-color-light: #111;
+  --highlight-light: #531AFF;
+  --bg-color: var(--bg-color-light);
+  --font-color: var(--font-color-light);
+  --highlight: var(--highlight-light);
 }
 
 @media (prefers-color-scheme: dark) {

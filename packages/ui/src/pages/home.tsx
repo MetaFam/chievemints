@@ -5,7 +5,7 @@ import {
   extractMessage, httpURL, toSpanList,
 } from '@/lib/helpers'
 import {
-  HiddenError, Limits, Maybe, Styles, TokenState,
+  HiddenError, Limits, Maybe, TokenState,
 } from '@/lib/types'
 import {
   Header, TokenFilterForm, TokensTable,
@@ -17,7 +17,7 @@ import {
 } from 'react-router-dom'
 import JSON5 from 'json5'
 import { defaults } from '@/config'
-import { useStyles } from '@/lib/styles'
+import '../styles/home.css'
 
 const Home = () => {
   const [tokens, setTokens] = useState<Array<TokenState | Error>>([])
@@ -33,7 +33,6 @@ const Home = () => {
   )
   const navigate = useNavigate()
   const { roContract, bitsLibrary } = useWeb3()
-  const ss = useStyles('home')
 
   const setToken = useCallback(
     (idx: number, info: Record<string, unknown>) => {
@@ -277,50 +276,48 @@ const Home = () => {
         />
       </Helmet>
 
-      <Header id={ss.header}/>
+      <Header/>
 
       <main>
-        <section>
-          <TokenFilterForm
-            {...{
-              limit, setLimit,
-              offset, setOffset,
-              gatingVisible, setGatingVisible,
-              visibleList, setVisibleList,
-            }}
-          />
-          <TokensTable {...{ tokens }}/>
-          <section className={ss.center}>
-            <button
-              onClick={() => {
-                if(visibleList.length > 0) {
-                  const potentials = visibleList.map(
-                    (entry) => ((entry as Limits)?.high ?? entry) as number
-                  )
-                  const max = Math.max(...potentials)
-                  setVisibleList((vis) => ([
-                    ...vis, { low: max, high: max + 10 }
-                  ]))
-                } else {
-                  setLimit((lim) => lim + 10)
-                }
-              }}
-            >
-              <span className={ss.bigNBold}>+</span>10
-            </button>
-            <button
-              onClick={() => setOffset((off) => off + limit)}
-            >
-              <span className={ss.biggerNBold}>↓</span>{limit}
-            </button>
-            <button
-              onClick={() => setOffset((off) => off - limit)}
-            >
-              <span className={ss.biggerNBold}>↑</span>{limit}
-            </button>
-          </section>
-        </section>
+        <TokenFilterForm
+          {...{
+            limit, setLimit,
+            offset, setOffset,
+            gatingVisible, setGatingVisible,
+            visibleList, setVisibleList,
+          }}
+        />
+        <TokensTable {...{ tokens }}/>
       </main>
+      <footer>
+        <button
+          onClick={() => {
+            if(visibleList.length > 0) {
+              const potentials = visibleList.map(
+                (entry) => ((entry as Limits)?.high ?? entry) as number
+              )
+              const max = Math.max(...potentials)
+              setVisibleList((vis) => (
+                [...vis, { low: max, high: max + 10 }]
+              ))
+            } else {
+              setLimit((lim) => lim + 10)
+            }
+          }}
+        >
+          <span className="bigNBold">+</span>10
+        </button>
+        <button
+          onClick={() => setOffset((off) => off + limit)}
+        >
+          <span className="biggerNBold">↓</span>{limit}
+        </button>
+        <button
+          onClick={() => setOffset((off) => off - limit)}
+        >
+          <span className="biggerNBold">↑</span>{limit}
+        </button>
+      </footer>
     </>
   )
 }

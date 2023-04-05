@@ -2,14 +2,13 @@ import { gql, useLazyQuery } from '@apollo/client'
 import React, { useEffect, useMemo, useState } from 'react'
 import contractAddress from '../contracts/polygon/BulkDisbursableNFTs.address'
 import {
-  useParams, useSearchParams, Link as ReactRouterLink,
+  useParams, useSearchParams, Link,
 } from 'react-router-dom'
 import { httpURL, deregexify, capitalize } from '@/lib/helpers'
 import { HomeLink } from '@/components'
 import { useWeb3 } from '@/lib/hooks'
 import { contractNetwork } from '@/config'
-
-const RouterLink = chakra(ReactRouterLink)
+import { Maybe } from '@/lib/types'
 
 const LIMIT = 100 // The Graph's return limit
 
@@ -51,7 +50,7 @@ export const Owners = () => {
   const startAfter = params.get('start_after') ?? ''
   const offset = params.get('offset') ?? 0
   const [ownerships, setOwnerships] = (
-    useState<Array<Ownership>>([])
+    useState<Maybe<Array<Ownership>>>(null)
   )
 
   const decId = tokenId ? BigInt(tokenId).toString(10) : null
@@ -137,40 +136,34 @@ export const Owners = () => {
     process()
   }, [data, ensProvider])
 
-  if(loading) return <>Loading…</>
+  if(loading || ownerships == null) return <>Loading…</>
 
   return (
-    <Box ml={8}>
+    <section>
       <HomeLink/>
-      <Heading mt={10} fontSize={20}>
-        {title}
-      </Heading>
+      <h1>{title}</h1>
       {error && (
-        <Alert status="error">
-          <AlertIcon/>
-          <AlertTitle>¡Error!</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
+        <div className="error">
+          <span>¡Error!</span>:
+          <span>{error}</span>
+        </div>
       )}
       {ownerships.length === 0 ? (
-        <Alert status="warning">
-          <AlertIcon/>
-          <AlertTitle>¡Empty!</AlertTitle>
-          <AlertDescription>
-            No owners found for token #{nftId}.
-          </AlertDescription>
-        </Alert>
+        <div className="warning">
+          <span>¡Empty!</span>:
+          <span>No owners found for token #{nftId}.</span>
+        </div>
       ) : (
-        <OrderedList start={Number(offset) + 1}>
+        <ol start={Number(offset) + 1}>
           {ownerships.map(({ owner, quantity }, idx) => (
-            <ListItem key={idx} ml={6}>
+            <li key={idx}>
               {`${owner} (${quantity})`}
-            </ListItem>
+            </li>
           ))}
-        </OrderedList>
+        </ol>
       )}
       {ownerships.length === LIMIT && (
-        <RouterLink
+        <Link
           to={{
             pathname: `/owners?${new URLSearchParams({
               nftId,
@@ -180,9 +173,9 @@ export const Owners = () => {
           }}
         >
           Next
-        </RouterLink>
+        </Link>
       )}
-    </Box>
+    </section>
   )
 }
 

@@ -14,8 +14,8 @@ import {
 import { useNavigate } from 'react-router-dom'
 import { useConfig } from '@/config'
 import { toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
+import '../styles/OptionsForm.css'
 
 export const OptionsForm: React.FC<{
   purpose?: 'create' | 'update'
@@ -38,7 +38,7 @@ export const OptionsForm: React.FC<{
     formState: { isSubmitting: processing },
   } = useForm()
   const [tab, setTab] = useState(FIELD_FORM)
-  const { storage } = useConfig()
+  const { Settings, storage } = useConfig()
   const metadata = watch('metadata')
   const json5 = watch('json5')
   const uri = watch('uri')
@@ -179,85 +179,77 @@ export const OptionsForm: React.FC<{
     }
   }, [buildMeta, configure, storage, tab])
 
+  const onSelect = useCallback((idx: number, previous: number) => {
+    switch(idx) {
+      case FIELD_FORM: {
+        let metaPromise
+        switch(previous) {
+          case URI_FORM: {
+            if(uri && uri !== '') {
+              metaPromise = (
+                fetch(uri)
+                .then((res) => res.text())
+                .then((txt) => JSON5.parse(txt))
+              )
+            }
+            break
+          }
+          case JSON5_FORM: {
+            if(json5 && json5 !== '') {
+              metaPromise = Promise.resolve(JSON5.parse(json5))
+            }
+            break
+          }
+        }
+        if(metaPromise) {
+          setValue('metadata', null)
+          metaPromise.then((meta) => setValue('metadata', meta))
+        } else {
+          toast.warn('No metadata specified.')
+        }
+        break
+      }
+      case URI_FORM: {
+        break
+      }
+    }
+    setTab(idx)
+  }, [])
+
   return (
     <div>
+      <Settings highlight={['nftStorageAPIToken']}/>
       <form onSubmit={handleSubmit(submit)}>
-        <SubmitButton {...{ purpose, processing }} />
-        {/* <Tabs
-          mx={[0, 5]}
-          isFitted
-          variant="enclosed"
-          onChange={async (idx: number) => {
-            switch(idx) {
-              case FIELD_FORM: {
-                let metadata
-                switch(tab) {
-                  case URI_FORM: {
-                    if(uri && uri !== '') {
-                      const res = await fetch(uri)
-                      metadata = JSON5.parse(
-                        await res.text()
-                      )
-                    }
-                    break
-                  }
-                  case JSON5_FORM: {
-                    if(json5 && json5 !== '') {
-                      metadata = JSON5.parse(json5)
-                    }
-                    break
-                  }
-                }
-                if(metadata) {
-                  await configure({ metadata })
-                } else {
-                  toast({
-                    title: 'Metadata Warning',
-                    description: 'No metadata specified.',
-                    status: 'warning',
-                    isClosable: true,
-                    duration: 10000
-                  })
-                }
-                break
-              }
-              case URI_FORM: {
-                break
-              }
-            }
-            setTab(idx)
-          }}
-        >
-          <TabList mb="1em">
+        <SubmitButton {...{ purpose, processing }} className="full"/>
+        <Tabs {...{ onSelect }}>
+          <TabList>
             <Tab>Fields</Tab>
             <Tab>URI</Tab>
             <Tab>JSON5</Tab>
           </TabList>
-          <TabPanels>
-            {[NFTForm, URIForm, JSONForm].map((Form, idx) => (
-              <TabPanel key={idx} p={0}>
-                <Form {...{
-                  register,
-                  watch,
-                  setValue,
-                  tokenId,
-                  metadata,
-                }} />
-              </TabPanel>
-            ))}
-          </TabPanels>
-        </Tabs> */}
+          {[NFTForm, URIForm, JSONForm].map((Form, idx) => (
+            <TabPanel key={idx}>
+              <Form {...{
+                register,
+                watch,
+                setValue,
+                tokenId,
+                metadata,
+              }} />
+            </TabPanel>
+          ))}
+        </Tabs>
         <SubmitButton
-          {...{ purpose, processing }}
           requireStorage={true}
-        />
-        <MaxForm colorScheme="blue" {...{ tokenId, purpose }}/>
-        <MaxForm
-          colorScheme="blue"
-          perUser={true}
-          {...{ tokenId, purpose }}
+          className="full"
+          {...{ purpose, processing }}
         />
       </form>
+      <MaxForm {...{ tokenId, purpose }}/>
+      <MaxForm
+        perUser={true}
+        {...{ tokenId, purpose }}
+      />
     </div>
   )
 }

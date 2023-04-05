@@ -14,7 +14,6 @@ import {
   Route,
 } from 'react-router-dom'
 import React from 'react'
-import 'react-tooltip/dist/react-tooltip.css'
 
 const Home = React.lazy(() => import('./pages/home'))
 const New = React.lazy(() => import('./pages/new'))
