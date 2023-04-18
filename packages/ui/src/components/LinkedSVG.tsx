@@ -38,7 +38,7 @@ export const LinkedSVG = React.forwardRef<
       svg.current = elem
       if(typeof ref === 'function') {
         ref(elem)
-      } else if('current' in ref) {
+      } else if('current' in (ref ?? {})) {
         ref.current = elem
       }
     },

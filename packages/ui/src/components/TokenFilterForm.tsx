@@ -53,19 +53,19 @@ export const TokenFilterForm: React.FC<{
         {...props}
       >
         <fieldset>
-          <legend>Limit</legend>
-          <input
-            type="number"
-            placeholder="Number of tokens to display."
-            {...register('limit')}
-          />
-        </fieldset>
-        <fieldset>
           <legend>Offset</legend>
           <input
             type="number"
             placeholder="Size of the offset."
             {...register('offset')}
+          />
+        </fieldset>
+        <fieldset>
+          <legend>Limit</legend>
+          <input
+            type="number"
+            placeholder="Number of tokens to display."
+            {...register('limit')}
           />
         </fieldset>
         <span className="sep">or</span>

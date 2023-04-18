@@ -1,14 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
-import {
-  AddIcon, CloseIcon, ExternalLinkIcon
-} from '@chakra-ui/icons'
 import { nftBase } from '@/config'
-import { httpURL, isEmpty, regexify } from '@/lib/helpers'
+import {
+  httpURL, isEmpty, regexify, capitalize,
+} from '@/lib/helpers'
 import {
   Attribute, ERC1155Metadata, Maybe, OpenSeaAttribute,
 } from '@/lib/types'
 import React, {
-  ChangeEvent, useCallback, useEffect, useRef, useState,
+  ChangeEvent, useCallback, useEffect,
 } from 'react'
 import Markdown from 'react-markdown'
 import {
@@ -16,6 +15,10 @@ import {
   UseFormWatch,
 } from 'react-hook-form'
 import { Link } from 'react-router-dom'
+import {
+  Tab, Tabs, TabList, TabPanel,
+} from 'react-tabs'
+import { ThreeDScene } from './ThreeDScene'
 import '../styles/NFTForm.css'
 
 const AttrRow: React.FC<{
@@ -47,8 +50,8 @@ const AttrRow: React.FC<{
   const setType = setter('type')
 
   return (
-    <div>
-      <>
+    <tr>
+      <td>
         <input
           value={name}
           onChange={
@@ -57,20 +60,29 @@ const AttrRow: React.FC<{
             }
           }
         />
+      </td>
+      <td>
         {(() => {
           switch (type) {
             case 'date': {
               return (
                 <input
                   type="date"
-                  value={isEmpty(value) ? (
-                    ''
-                  ) : (
-                    (new Date(value)).toISOString().split('T')[0]
-                  )}
+                  value={(() => {
+                    if(!isEmpty(value)) {
+                      try {
+                        return (
+                          new Date(value).toDateString()
+                        )
+                      } catch(e) {
+                        console.error(e)
+                      }
+                    }
+                    return ''
+                  })()}
                   onChange={
                     ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
-                      setValue((new Date(value)).getTime())
+                      setValue(new Date(value).getTime())
                     }
                   }
                 />
@@ -103,41 +115,147 @@ const AttrRow: React.FC<{
             }
           }
         })()}
-        <div>
-          <select
-            value={type}
-            onChange={
-              ({ target: { value } }: ChangeEvent<HTMLSelectElement>) => {
-                setType(value)
-              }
+      </td>
+      <td>
+        <select
+          value={type}
+          onChange={
+            ({ target: { value } }: ChangeEvent<HTMLSelectElement>) => {
+              setType(value)
             }
-          >
-            <option value="string">String</option>
-            <option value="date">Date</option>
-            <option value="number">Number</option>
-            <option value="boost_percentage">
-              Boost Percentage
-            </option>
-            <option value="boost_number">
-              Boost Number
-            </option>
-          </select>
+          }
+        >
+          <option value="string">String</option>
+          <option value="date">Date</option>
+          <option value="number">Number</option>
+          <option value="boost_percentage">
+            Boost Percentage
+          </option>
+          <option value="boost_number">
+            Boost Number
+          </option>
+        </select>
+      </td>
+      <td className='actions'>
+        <button
+          onClick={() => setFormValue(
+            'attributes',
+            [
+              ...attributes.slice(0, index + 1),
+              { name: '', value: '', type: 'string' },
+              ...attributes.slice(index + 1),
+            ]
+          )}
+        >
+          ➕
+        </button>
+        <button
+          onClick={() => setFormValue(
+            'attributes',
+            [
+              ...attributes.slice(0, index),
+              ...attributes.slice(index + 1),
+            ]
+          )}
+        >
+          ❌
+        </button>
+      </td>
+    </tr>
+  )
+}
+
+const Hyperlink: React.FC<React.PropsWithChildren<{
+  href: string
+}>> = ({
+  href, children,
+}) => {
+  const external = /^(http|ip[nf]s)/.test(href)
+  return (external ? (
+    <a {...{ href }} target="_blank" rel="noreferrer">
+      {children}
+    </a>
+  ) : (
+    <Link {...{ to: href }}>{children}</Link>
+  ))
+
+}
+
+const MediaDisplay: React.FC<{
+  content: File | string
+  name?: string
+  prop: string
+  setValue: UseFormSetValue<FieldValues>
+  accept?: string
+}> = ({
+  content, name = 'Alt', prop, setValue, accept = '*/*',
+}) => {
+  const [filename, setFilename] = React.useState<Maybe<string>>(null)
+
+  useEffect(() => {
+    if(typeof content === 'string') {
+      setFilename(content.replace(
+        /^(https?:\/\/[^/]+\/|ip[nf]s:\/\/(.+\/)?)/, ''
+      ))
+    }
+  }, [content])
+
+  const set = ({ target: { files } }: (
+    { target: { files: Maybe<FileList> } }
+  )) => {
+    if(files.length >= 1 && files[0]) {
+      setValue(prop, files[0])
+      setFilename(files[0].name)
+    }
+  }
+
+  const remove = (evt: React.MouseEvent) => {
+    setValue(prop, undefined)
+    setFilename(null)
+    evt.preventDefault()
+  }
+
+  return (
+    <label className="media">
+      <div className="selector">
+        <h3>{capitalize(prop)}</h3>
+        <input
+          type="file"
+          onChange={set}
+          {...{ accept }}
+        />
+        {filename && <h4>{filename}</h4>}
+        {!content && <div className="btn">Set</div>}
+      </div>
+      {content && (
+        <div className="content">
+          {(() => {
+            const url = (
+              (content instanceof File) ? (
+                URL.createObjectURL(content)
+              ) : (
+                httpURL(content)
+              )
+            )
+            const ext = filename?.split('.').pop()
+            if(['mp4', 'avif', 'webm'].includes(ext)) {
+              return (
+                <video>
+                  <source src={url}/>
+                </video>
+              )
+            }
+            if(['gltf', 'glb'].includes(ext)) {
+              return <ThreeDScene model={url}/>
+            }
+            return (
+              <img alt={name} src={url}/>
+            )
+          })()}
+          <button onClick={remove}>❌</button>
         </div>
-        <div>
-          <button
-            onClick={() => setFormValue(
-              'attributes',
-              [
-                ...attributes.slice(0, index),
-                ...attributes.slice(index + 1)
-              ]
-            )}
-          >
-            {/* <CloseIcon /> */}
-          </button>
-        </div>
-      </>
-    </div>
+      )}
+    </label>
   )
 }
 
@@ -156,29 +274,23 @@ export const NFTForm: React.FC<{
   tokenId = '𝘜𝘯𝘬𝘯𝘰𝘸𝘯',
   metadata,
 }) => {
-  const [primaryImageIdx, setPrimaryImageIdx] = (
-    useState<number | undefined>(0)
-  )
-  const imageRef = useRef<HTMLInputElement>(null)
   const {
-    homepage, description, color, images, attributes, animation,
+    homepage, description, color, image,
+    attributes, animation, name,
   } = watch()
   // const [wearables, setWearables] = useState({})
 
   useEffect(() => {
     if (metadata) {
       Object.entries({
-        name: null, description: null,
+        name: null, description: null, image: null,
         external_url: 'homepage',
         animation_url: 'animation',
       })
       .forEach(([prop, name]) => {
+        console.info({ name, m: metadata[prop] })
         setValue(name ?? prop, metadata[prop])
       })
-
-      if(metadata.image) {
-        setValue('images', [metadata.image])
-      }
 
       const { attributes: attrs } = metadata
       if(!isEmpty(attrs)) {
@@ -206,7 +318,11 @@ export const NFTForm: React.FC<{
   }, [metadata, setValue])
 
   useEffect(() => {
-    if(!homepage || isEmpty(homepage) || homepage.endsWith('𝘜𝘯𝘬𝘯𝘰𝘸𝘯')) {
+    if(
+      !homepage
+      || isEmpty(homepage)
+      || homepage.endsWith('𝘜𝘯𝘬𝘯𝘰𝘸𝘯')
+    ) {
       setValue(
         'homepage',
         `${nftBase}/${regexify(tokenId)}`
@@ -226,206 +342,105 @@ export const NFTForm: React.FC<{
     }
   }, [])
 
-  const addImage = ({ target: { files } }: (
-    { target: { files: Maybe<FileList> } }
-  )) => {
-    if(files?.length && files?.length >= 1) {
-      setValue('images', [...(images ?? []), ...Array.from(files)])
-    }
-  }
-
-  const removeImage = (idx: number) => {
-    const replacement = [
-      ...images.slice(0, idx),
-      ...images.slice(idx + 1)
-    ]
-    setValue('images', replacement)
-    if(primaryImageIdx === idx) {
-      setPrimaryImageIdx(
-        replacement.length > 0 ? 0 : undefined
-      )
-    }
-  }
-
-  const configAnimation = (
-    (evt: ChangeEvent & { target: { files: Maybe<FileList> } }) => {
-      const { target: { files } } = evt
-      if (files?.length >= 1) {
-        setValue('animation', files[0])
-      } else {
-        setValue('animation', null)
-      }
-      evt.preventDefault()
-    }
-  )
-
   const addRow = () => {
     setValue('attributes', [...(attributes ?? []), {}])
   }
 
   return (
     <ul>
-      <li>
-        <div>
-          <label>Name</label>
+      <li id="name">
+        <label>
+          <h3>Name</h3>
           <input {...register('name')}/>
-        </div>
+        </label>
       </li>
-      <li>
-        <div>
-          <label>Images</label>
-          <input
-            type="file"
-            accept="image/*"
-            ref={imageRef}
-            onChange={addImage}
-            multiple
-          />
-        </div>
-        {images?.length > 0 && (
-          <div>
-            {images.map((image: File | string, idx: number) => {
-              const name = (
-                (image as File)?.name
-                ?? (image as string)?.replace(/^.*\//g, '')
-              )
-
-              return (
-                <React.Fragment key={idx}>
-                  <div>
-                    <label>
-                      Display Image
-                      <input type="radio" value={idx}/>
-                    </label>
-                  </div>
-                  <div>
-                    <img
-                      alt={name}
-                      src={
-                        (image instanceof File) ? (
-                          URL.createObjectURL(image)
-                        ) : (
-                          httpURL(image) ?? undefined
-                        )
-                      }
-                      onClick={() => imageRef.current?.click()}
-                    />
-                  </div>
-                  <div>
-                    <button onClick={() => removeImage(idx)}>
-                      {/* <CloseIcon/> */}
-                    </button>
-                  </div>
-                </React.Fragment>
-              )
-            })}
-          </div>
-        )}
-        <button onClick={() => imageRef.current?.click()}>
-          {/* <AddIcon/> */}
-        </button>
+      <li id="image" style={{ '--img-bg': color }}>
+        <MediaDisplay
+          content={image}
+          prop="image"
+          accept="image/*"
+          {...{ name, setValue }}
+        />
       </li>
-      <li>
-        <div>
-          <label>Background</label>
+      <li id="background">
+        <label>
+          <h3>Background</h3>
           <input
             type="color"
             {...register('color')}
           />
-        </div>
+        </label>
       </li>
-      <li>
-        <div>
-          <label>Homepage</label>
+      <li id="homepage">
+        <label>
+          <h3>Homepage</h3>
           <input {...register('homepage')}/>
-          {homepage?.length > 0 && (
-            <Link to={homepage}>
-              <ExternalLinkIcon />
-            </Link>
-          )}
-        </div>
+        </label>
+        {homepage?.length > 0 && (
+          <Hyperlink href={homepage}>
+            🡽
+          </Hyperlink>
+        )}
       </li>
-      <li>
-        <div>
-          <label>Description</label>
+      <li id="description">
+        <label>
+          <h3>Description</h3>
           <Tabs>
-            <TabList mb="1em">
+            <TabList>
               <Tab>Markdown</Tab>
               <Tab>Preview</Tab>
             </TabList>
-            <TabPanels>
-              <TabPanel>
-                <Textarea
-                  placeholder="Enter a markdown formatted description."
-                  minH={32}
-                  {...register('description')}
-                />
-              </TabPanel>
-              <TabPanel>
-                <Markdown>
-                  {description}
-                </Markdown>
-              </TabPanel>
-            </TabPanels>
+            <TabPanel>
+              <textarea
+                id="description"
+                placeholder="Enter a markdown formatted description."
+                {...register('description')}
+              />
+            </TabPanel>
+            <TabPanel>
+              <Markdown>
+                {description}
+              </Markdown>
+            </TabPanel>
           </Tabs>
-        </div>
+        </label>
       </li>
-      <li>
-        <div>
-          <label>Animation</label>
-          {typeof animation === 'string' && (
-            <>
-              <p>
-                {decodeURI(animation.replace(
-                  /^ipfs:\/\/[^/]+\//, ''
-                ))}
-              </p>
-              {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
-              <Link to={httpURL(animation)!}>
-                {/* <ExternalLinkIcon /> */}
-              </Link>
-            </>
-          )}
-          {(
-            typeof File !== 'undefined'
-            && animation instanceof File
-            && (
-              <div>
-                <p>{animation.name}</p>
-                <Link to={URL.createObjectURL(animation)}>
-                  {/* <ExternalLinkIcon /> */}
-                </Link>
-              </div>
-            )
-          )}
-          <input
-            type="file"
-            accept="model/gltf+json,model/gltf-binary,video/*,.gltf,.glb"
-            onChange={configAnimation}
-          />
-        </div>
+      <li id="animation">
+        <MediaDisplay
+          content={animation}
+          prop="animation"
+          accept="model/gltf+json,model/gltf-binary,video/*,.gltf,.glb"
+          {...{ name, setValue }}
+        />
       </li>
       <li id="attributes">
-        <label>Attributes</label>
-        <button onClick={addRow}>
-          {/* <AddIcon /> */}
-        </button>
+        <label>
+          <h3>Attributes</h3>
+          <button onClick={addRow}>
+            ➕
+          </button>
+        </label>
         {attributes?.length > 0 && (
-          <section>
-            <ul>
-              <li>Name</li>
-              <li>Value</li>
-              <li>Type</li>
-            </ul>
-            {attributes.map((_: Attribute, index: number) => (
-              <AttrRow
-                key={index}
-                {...{
-                  attributes, setValue, index,
-                }}
-              />
-            ))}
-          </section>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Value</th>
+                <th>Type</th>
+                <th/>
+              </tr>
+            </thead>
+            <tbody>
+              {attributes.map((_: Attribute, index: number) => (
+                <AttrRow
+                  key={index}
+                  {...{
+                    attributes, setValue, index,
+                  }}
+                />
+              ))}
+            </tbody>
+          </table>
         )}
       </li>
     </ul>

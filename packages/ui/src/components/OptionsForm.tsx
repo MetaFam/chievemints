@@ -46,8 +46,9 @@ export const OptionsForm: React.FC<{
   useEffect(() => {
     if(purpose === 'update') {
       setValue('metadata', incomingData)
+      setValue('uri', incomingURI)
     }
-  }, [setValue, purpose, incomingData])
+  }, [setValue, purpose, incomingData, incomingURI])
 
   const buildMeta = useCallback(async (data: FormValues) => {
     const {

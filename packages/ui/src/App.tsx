@@ -1,7 +1,6 @@
 
 import { Helmet } from 'react-helmet'
 import { Web3ContextProvider } from '@/lib/hooks'
-import { ClimbingBoxLoader } from 'react-spinners'
 import {
   ApolloClient,
   InMemoryCache,
@@ -14,6 +13,7 @@ import {
   Route,
 } from 'react-router-dom'
 import React from 'react'
+import { Spinner } from './components/Spinner'
 
 const Home = React.lazy(() => import('./pages/home'))
 const New = React.lazy(() => import('./pages/new'))
@@ -31,10 +31,7 @@ const client = new ApolloClient({
 const App: React.FC = () => (
   <>
     <Helmet>
-      <link
-        rel="shortcut icon"
-        href="favicon.svg"
-      />
+      <link rel="shortcut icon" href="favicon.svg"/>
       <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
@@ -42,7 +39,7 @@ const App: React.FC = () => (
     </Helmet>
     <ApolloProvider {...{ client }}>
       <Web3ContextProvider>
-        <React.Suspense fallback={<ClimbingBoxLoader/>}>
+        <React.Suspense fallback={<Spinner/>}>
           <Router>
             <Routes>
               <Route path="/new" element={<New/>} />

@@ -18,6 +18,16 @@
 body {
   background-color: var(--bg-color);
   color: var(--font-color);
+
+  & :any-link {
+    color: var(--highlight);
+    transition: opacity 0.1s;
+  }
+  
+  & :any-link:hover {
+    opacity: 95%;
+    text-shadow: 0 0 0.1em #FFFFFFBB;
+  }
 }
 
 [role="tooltip"] {

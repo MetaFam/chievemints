@@ -11,7 +11,7 @@
   font-size: 110%;
   margin-block: 3rem;
 
-  @media (width < 30rem) {
+  @media (width < 40rem) {
     grid-template-columns: 1fr 1fr;
     grid-template-areas: 
       "limit offset"

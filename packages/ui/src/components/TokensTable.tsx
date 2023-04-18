@@ -4,7 +4,7 @@ import Tippy from '@tippyjs/react'
 import { extractMessage, httpURL, regexify } from '@/lib/helpers'
 import type { TokenState } from '@/lib/types'
 import Markdown from 'react-markdown'
-import React, { useMemo, useRef, useEffect } from 'react'
+import React from 'react'
 import { ClimbingBoxLoader } from 'react-spinners'
 import { Link } from 'react-router-dom'
 import '../styles/TokensTable.css'
@@ -12,8 +12,8 @@ import '../styles/TokensTable.css'
 type IndexedToken = { token: TokenState, index: number }
 type Token = { token: TokenState }
 
-const Id:React.FC<IndexedToken> = ({ token }) => (
-  <div className="idElem">
+const Index:React.FC<IndexedToken> = ({ token }) => (
+  <div className="index">
     <Tippy
       content={token.id != null ? (
         regexify(token.id)
@@ -21,7 +21,7 @@ const Id:React.FC<IndexedToken> = ({ token }) => (
         '𝚄𝚗𝚔𝚗𝚘𝚠𝚗'
       )}
     >
-      <p id="id">
+      <p className="content">
         <span>{token.index}</span>
         {token.gates != null && (
           <span title={`Controls Token #${token.gates}`}>
@@ -37,24 +37,36 @@ const Id:React.FC<IndexedToken> = ({ token }) => (
 )
 
 const Error:React.FC<Token> = ({ token }) => (
-  <div className="errorElem">
-    <p className="error">{extractMessage(token.error)}</p>
+  <div className="error">
+    <p className="content">{extractMessage(token.error)}</p>
   </div>
 )
 
-const Loading:React.FC<
-  Token & { label?: string }
-> = (
+const Loading:React.FC<{ label?: string }> = (
   ({ label = 'Loading Metadata…', ...props }) => (
-    <div className="loadElem">
-      <p className="loading" {...props}>{label}</p>
+    <div className="loading">
+      <p className="content" {...props}>{label}</p>
     </div>
   )
 )
 
+const Finding:React.FC<{ label?: string }> = (
+  ({ label = 'Finding Metadata…', ...props }) => (
+    <div className="finding">
+      <p className="content" {...props}>{label}</p>
+    </div>
+  )
+)
+
+declare module 'csstype' {
+  interface Properties {
+    '--img-bg'?: string
+  }
+}
+
 const Image:React.FC<Token> = ({ token }) => (
-  <div className="imgElem">
-    <Link to={`/view/${regexify(token.id)}`} className="image">
+  <div className="img" style={{ '--img-bg': `#${token.metadata.background_color}` }}>
+    <Link to={`/view/${regexify(token.id)}`} className="content">
       {token.metadata?.image && (
         <img
           src={httpURL(token.metadata.image) ?? undefined}
@@ -66,61 +78,66 @@ const Image:React.FC<Token> = ({ token }) => (
 )
 
 const Description:React.FC<Token> = ({ token }) => (
-  <div className="descElem">
-    <h2>
-      {token.metadata?.name ?? (
-        <em>Untitled</em>
-      )}
-      {token.gates == null ? '' : (
-        token.gates === 0 ? (
-          ' for all tokens'
-        ) : (
-          <>
-            {' '}for{' '}
-            <Link to={`/view/${token.gates}`}>
-              #{token.gates}
-            </Link>
-          </>
-        )
-      )}
-    </h2>
-    {token.is?.disabling && (
-      <p>
-        This token <b>disables</b> the following permission for{' '}
-        <Link to={`/view/i:${token.gates}`}>
-          the token at index #{token.gates}
-        </Link>:
-      </p>
-    )}
-    {token.is?.gating && (
-      <p>
-        This token gives holders the following permission for{' '}
-        {token.gates === 0 ? (
-          'all tokens'
-        ) : (
-          <Link to={`/view/${token.gates}`}>
+  <div className="text">
+    <div className="title">
+      <h2 className="content">
+        {token.metadata?.name ?? (
+          <em>Untitled</em>
+        )}
+        {token.gates == null ? '' : (
+          token.gates === 0 ? (
+            ' for all tokens'
+          ) : (
+            <>
+              {' '}for{' '}
+              <Link to={`/view/${token.gates}`}>
+                #{token.gates}
+              </Link>
+            </>
+          )
+        )}
+      </h2>
+    </div>
+    <div className="desc">
+      {token.is?.disabling && (
+        <p className="content">
+          This token <b>disables</b> the following permission for{' '}
+          <Link to={`/view/i:${token.gates}`}>
             the token at index #{token.gates}
-          </Link>
-        )}:
-      </p>
-    )}
-    <Markdown linkTarget="_blank">
-      {token.is?.disabling || token.is?.gating ? (
-        `> ${token.metadata.description.replace(/\n/g, "\n> ")}`
-      ) : (
-        token.metadata?.description ?? (
-          '*No Description*'
-        )
+          </Link>:
+        </p>
       )}
-    </Markdown>
+      {token.is?.gating && (
+        <p className="content">
+          This token gives holders the following permission for{' '}
+          {token.gates === 0 ? (
+            'all tokens'
+          ) : (
+            <Link to={`/view/${token.gates}`}>
+              the token at index #{token.gates}
+            </Link>
+          )}:
+        </p>
+      )}
+      <Markdown linkTarget="_blank" className="content">
+        {token.is?.disabling || token.is?.gating ? (
+          `> ${token.metadata.description.replace(/\n/g, "\n> ")}`
+        ) : (
+          token.metadata?.description ?? (
+            '*No Description*'
+          )
+        )}
+      </Markdown>
+    </div>
   </div>
 )
 
 const LinkLink:React.FC<Token> = ({ token }) => (
-  <div className="homepageElem">
+  <div className="homepage">
     {token.metadata?.external_url && (
       <Tippy content={token.metadata.external_url}>
         <a
+          className="content"
           href={token.metadata.external_url}
           target="_blank" rel="noreferrer"
         >
@@ -132,51 +149,54 @@ const LinkLink:React.FC<Token> = ({ token }) => (
 )
 
 const URI:React.FC<Token> = ({ token }) => (
-  <nav className="metaElem">
-    {token.uri && (
-      <ul className="links">
-        <li>
+  (token.uri && (
+    <nav className="metainfo">
+      <ul>
+        <li className="source">
           <Tippy content={token.uri}>
             <a
-              className="meta"
+              className="content"
               href={httpURL(token.uri) ?? undefined}
               target="_blank" rel="noreferrer"
             >
               🔗
             </a>
-          </Tippy>
+          </Tippy>  
         </li>
-        <li>
+        <li className="clipboard">
           <Tippy content="Copy to Clipboard">
-            <button onClick={() => {
-              if(token.uri && window.isSecureContext) {
-                navigator?.clipboard?.writeText(token.uri)
-              }
-            }}>
+            <button
+              className="content"
+              onClick={() => {
+                if(token.uri && window.isSecureContext) {
+                  navigator?.clipboard?.writeText(token.uri)
+                }
+              }}
+            >
               📋
             </button>
           </Tippy>
         </li>
       </ul>
-    )}
-  </nav>
+    </nav>
+  ))
 )
 
 const Total:React.FC<Token> = ({ token }) => {
   const label = `${token.total?.toString()} minted of ${token.max?.toString()} total`
 
   return (
-    <div>
-      <Link to={`/owners/${regexify(token.id)}`}>
+    <div className="quantity">
+      <Link to={`/owners/${regexify(token.id)}`} className="content">
         <Tippy content={label}><>
           <sup>{
             token.total?.toString()
-            ?? <ClimbingBoxLoader color="#FE0235"/>
+            ?? <ClimbingBoxLoader size={4} color="#FE0235"/>
           }</sup>
           {'⁄'}
           <sub>{
-            Number(token.max) === -1 ? '∞' : token.max?.toString()
-            ?? <ClimbingBoxLoader color="#EF2299"/>
+            Number(token.max) < 0 ? '∞' : token.max?.toString()
+            ?? <ClimbingBoxLoader size={4} color="#EF2299"/>
           }</sub>
         </></Tippy>
       </Link>
@@ -188,25 +208,25 @@ const Actions:React.FC<Token> = ({ token }) => {
   const id = regexify(token.id)
 
   return (
-    <nav>
-      <ul className="links">
-        <li>
+    <nav className="actions">
+      <ul>
+        <li className="edit">
           <Tippy content="Edit Metadata">
-            <Link to={`/edit/${id}`}>
+            <Link to={`/edit/${id}`} className="content">
               ✏️
             </Link>
           </Tippy>
         </li>
-        <li>
+        <li className="view">
           <Tippy content="View This NFT">
-            <Link to={`/view/${id}`}>
+            <Link to={`/view/${id}`} className="content">
               👁
             </Link>
           </Tippy>
         </li>
-        <li>
+        <li className="disburse">
           <Tippy content="Disburse This NFT">
-            <Link to={`/disburse/${id}`}>
+            <Link to={`/disburse/${id}`} className="content">
               💸
             </Link>
           </Tippy>
@@ -226,20 +246,18 @@ export const TokensTable: React.FC<{
       }
       return (
         <article className="token" key={index}>
-          <Id {...{ token, index }}/>
+          <Index {...{ token, index }}/>
           {(() => {
-            if(!token.uri && token.error) {
+            if(token.error) {
               return <Error {...{ token }}/>
             }
             if(!token.metadata) {
               return (
-                <Loading
-                  label={
-                    token.uri ? 'Loading' : 'Finding'
-                    + ' Metadata…'
-                  }
-                  {...{ token }}
-                />
+                !token.uri ? (
+                  <Finding/>
+                ) : (
+                  <Loading/>
+                )
               )
             }
             return (
@@ -250,7 +268,7 @@ export const TokensTable: React.FC<{
               </>
             )
           })()}
-          {token.uri && <URI {...{ token }}/>}
+          <URI {...{ token }}/>
           <Total {...{ token }}/>
           <Actions {...{ token }}/>
         </article>

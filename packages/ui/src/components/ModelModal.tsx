@@ -26,9 +26,9 @@ export const ModelModal: React.FC<ModelModalProps> = ({
   }
 
   return (
-    <Modal {...{ isOpen, onClose }}>
-      <ModalOverlay/>
-      <ModalContent
+    <dialog {...{ isOpen, onClose }}>
+      {/* <ModalOverlay/> */}
+      <form
         onSubmit={(evt: FormEvent) => {
           evt.preventDefault()
           evt.stopPropagation()
@@ -38,59 +38,58 @@ export const ModelModal: React.FC<ModelModalProps> = ({
           )
           onClose()
         }}
-        as="form"
       >
-        <ModalHeader>Add Model</ModalHeader>
-        <ModalCloseButton/>
-        <ModalBody>
-          <FormControl id="mimetype">
-            <FormLabel>Model Type:</FormLabel>
-            <Select
-              ml={5} w="calc(100% - 2rem)"
-              value={type}
-              onChange={({ target: { value } }) => setType(value)}
-            >
-              <chakra.optgroup style={{ padding: 0 }}>
-                <chakra.option value="model/gltf-binary">Binary glTF</chakra.option>
-                <chakra.option value="model/gltf+json">glTF</chakra.option>
-                <chakra.option value="model/fbx">FBX</chakra.option>
-                <chakra.option value="application/x-blender">Blender</chakra.option>
-                <chakra.option value="model/vox">VOX</chakra.option>
-                <chakra.option value="model/vrm">VRM</chakra.option>
-              </chakra.optgroup>
-              <chakra.optgroup>
-                <chakra.option value="other" fontStyle="italic">
-                  Other
-                </chakra.option>
-              </chakra.optgroup>
-            </Select>
+        <header>
+          <h2>Add Model</h2>
+          <button>❌</button>
+        </header>
+        <main>
+          <fieldset id="mimetype">
+            <label>
+              <h3>Model Type</h3>
+              <select
+                value={type}
+                onChange={({ target: { value } }) => setType(value)}
+              >
+                <optgroup style={{ padding: 0 }}>
+                  <option value="model/gltf-binary">Binary glTF</option>
+                  <option value="model/gltf+json">glTF</option>
+                  <option value="model/fbx">FBX</option>
+                  <option value="application/x-blender">Blender</option>
+                  <option value="model/vox">VOX</option>
+                  <option value="model/vrm">VRM</option>
+                </optgroup>
+                <optgroup>
+                  <option value="other">Other</option>
+                </optgroup>
+              </select>
+            </label>
             {type === 'other' && (
-              <Input
-                ml={5} mt={3} w="calc(100% - 2rem)" placeholder="Mime Type"
+              <input
+                placeholder="Mime Type"
                 required={true} value={specifiedType}
                 onChange={({ target: { value } }) => (
                   setSpecifiedType(value)
                 )}
               />
             )}
-          </FormControl>
-          <FormControl id="model" mt={5}>
-            <FormLabel>Model File:</FormLabel>
-            <Input
-              id="file" required={true} type="file"
-              ml={5} w="calc(100% - 2rem)" h="auto"
-            />
-          </FormControl>
-        </ModalBody>
+          </fieldset>
+          <fieldset id="model">
+            <label>
+              <h3>Model File:</h3>
+              <input
+                id="file" required={true} type="file"
+              />
+            </label>
+          </fieldset>
+        </main>
 
-        <ModalFooter>
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button colorScheme="blue" ml={3} type="submit">
-            Add
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        <footer>
+          <button onClick={onClose}>Cancel</button>
+          <button>Add</button>
+        </footer>
+      </form>
+    </dialog>
   )
 }
 

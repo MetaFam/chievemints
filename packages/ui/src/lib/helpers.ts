@@ -9,7 +9,10 @@ import { ipfsLinkPattern } from '@/config'
 import JSON5 from 'json5'
 import { NFTStorage } from 'nft.storage'
 
-export const httpURL = (uri?: Maybe<string>) => {
+export function httpURL(uri?: null): undefined
+export function httpURL(uri: string): string
+
+export function httpURL(uri?: Maybe<string>) {
   const [, protocol, origCID, path] = (
     uri?.match(/^(ip[nf]s):(?:\/\/)?([^/]+)(?:\/(.*))?$/) ?? []
   )
@@ -32,7 +35,7 @@ export const httpURL = (uri?: Maybe<string>) => {
     )
   }
 
-  return uri
+  return uri ?? undefined
 }
 
 export const capitalize = (str: string) => {

@@ -51,7 +51,7 @@ export const Edit = () => {
   }, [roContract, tokenId])
 
   return (
-    <main>
+    <main id="edit">
       <Helmet>
         <title>’𝖈𝖍𝖎𝖊𝖛𝖊: ℰ𝒹𝒾𝓉 #{tokenId && regexify(tokenId)}</title>
       </Helmet>

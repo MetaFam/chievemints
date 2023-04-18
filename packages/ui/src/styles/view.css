@@ -1,4 +1,4 @@
-.h1 {
+h1 {
   font-size: clamp(2rem, 8vw - 3ch, 10rem);
   text-align: center;
 }
@@ -17,7 +17,7 @@
   padding: 0;
 }
 
-#main {
+main {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -33,15 +33,5 @@
     text-indent: 1em;
     margin: auto 0.75em;
     text-align: justify;
-  }
-
-  & :any-link {
-    color: var(--highlight);
-    transition: opacity 0.1s;
-  }
-
-  & :any-link:hover {
-    opacity: 95%;
-    text-shadow: 0 0 0.1em #FFFFFFBB;
   }
 }

@@ -4,13 +4,13 @@ import React, {
   ChangeEvent, FormEvent, useCallback, useEffect, useState
 } from 'react'
 import { SubmitButton } from './SubmitButton'
-import { ButtonProps } from '@chakra-ui/react'
 import { extractMessage } from '@/lib/helpers'
 import { BarLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
+
 export const MaxForm = (
   { tokenId, purpose = 'create', perUser = false, ...props }:
-  ButtonProps & {
+  {
     tokenId?: string
     perUser?: boolean
     purpose: string
