@@ -11,7 +11,7 @@ import type { ERC1155Metadata } from '@/lib/types'
 import { HomeLink, ThreeDScene } from '@/components'
 import { useWeb3 } from '@/lib/hooks'
 import { FadeLoader } from 'react-spinners'
-import '../styles/view.css'
+import vs from '../styles/view.module.css'
 
 export const View: React.FC<{ tokenId: string, header?: boolean }> = (
   ({ tokenId, header = true }) => {
@@ -93,13 +93,13 @@ export const View: React.FC<{ tokenId: string, header?: boolean }> = (
             <object
               data={httpURL(image as string) ?? undefined}
               title={name}
-              className="image"
+              className={vs.image}
               style={{ backgroundColor: `#${bg}` }}
             />
           )}
           {description && (
             <Markdown
-              className="markdown"
+              className={vs.markdown}
               remarkPlugins={[remarkGfm]}
               linkTarget="_blank"
             >
@@ -123,7 +123,7 @@ export const View: React.FC<{ tokenId: string, header?: boolean }> = (
                 return (
                   <ThreeDScene
                     model={url}
-                    className="model"
+                    className={vs.model}                            
                     {...{ bg }}
                   />
                 )

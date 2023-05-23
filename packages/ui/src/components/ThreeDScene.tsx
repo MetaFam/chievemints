@@ -39,28 +39,30 @@ export const ThreeDScene = (
   return (
     <Suspense fallback={null}>
       <LoggingErrorBoundary>
-        <Canvas {...{ className }}>
-          {args?.length === 3 && (
-            <color attach="background" {...{ args }}/>
-          )}
-          <ambientLight intensity={0.2} />
-          <directionalLight
-            intensity={0.75}
-            position={[0, 0, 5]}
-          />
-          <Model
-            {...{ model }}
-            group={{
-              onPointerEnter: () => setPaused(true),
-              onPointerLeave: () => setPaused(false),
-            }}
-          />
-          <OrbitControls
-            autoRotate={!paused}
-            autoRotateSpeed={3.5}
-            makeDefault
-          />
-        </Canvas>
+        <section {...{ className }}>
+          <Canvas>
+            {args?.length === 3 && (
+              <color attach="background" {...{ args }}/>
+            )}
+            <ambientLight intensity={0.2} />
+            <directionalLight
+              intensity={0.75}
+              position={[0, 0, 5]}
+            />
+            <Model
+              {...{ model }}
+              group={{
+                onPointerEnter: () => setPaused(true),
+                onPointerLeave: () => setPaused(false),
+              }}
+            />
+            <OrbitControls
+              autoRotate={!paused}
+              autoRotateSpeed={3.5}
+              makeDefault
+            />
+          </Canvas>
+        </section>
       </LoggingErrorBoundary>
     </Suspense>
   )

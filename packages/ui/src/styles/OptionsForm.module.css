@@ -2,9 +2,7 @@ button.full {
   width: 100%;
 }
 
-main#edit {
-  width: 100%;
-
+#form {
   & ul {
     list-style: none;
     padding-inline-start: 0;
@@ -14,10 +12,6 @@ main#edit {
     }
   }
 
-  & [role="tab"][aria-selected="true"] {
-    background-color: #f5f5f577;
-  }
-
   & [role="tablist"] {
     display: flex;
     border-bottom: none;
@@ -25,7 +19,7 @@ main#edit {
     & > [role="tab"] {
       flex-grow: 1;
       text-align: center;
-      border: 1px solid white;
+      border-width: 1px;
       border-style: solid solid none solid;
       border-radius: 1rem 1rem 0 0;
     }
@@ -39,7 +33,7 @@ main#edit {
     }
 
     & h3:after {
-      content: ": ";
+      content: ": ";
     }
 
     & input {

@@ -19,7 +19,7 @@ import {
   Tab, Tabs, TabList, TabPanel,
 } from 'react-tabs'
 import { ThreeDScene } from './ThreeDScene'
-import '../styles/NFTForm.css'
+import fs from '../styles/NFTForm.module.css'
 
 const AttrRow: React.FC<{
   attributes: Array<Attribute>
@@ -139,7 +139,7 @@ const AttrRow: React.FC<{
           }
         })()}
       </td>
-      <td className='actions'>
+      <td className={fs.actions}>
         <button
           onClick={() => setFormValue(
             'attributes',
@@ -181,7 +181,6 @@ const Hyperlink: React.FC<React.PropsWithChildren<{
   ) : (
     <Link {...{ to: href }}>{children}</Link>
   ))
-
 }
 
 const MediaDisplay: React.FC<{
@@ -237,8 +236,8 @@ const MediaDisplay: React.FC<{
   }
 
   return (
-    <label className="media">
-      <div className="selector">
+    <label className={fs.media}>
+      <div className={fs.selector}>
         <h3>{capitalize(prop)}</h3>
         <input
           type="file"
@@ -246,10 +245,10 @@ const MediaDisplay: React.FC<{
           {...{ accept }}
         />
         {filename && <h4>{filename}</h4>}
-        {!content && <div className="btn">Set</div>}
+        {!content && <div className={fs.btn}>Set</div>}
       </div>
       {content && (
-        <div className="content">
+        <div className={fs.content}>
           {(() => {
             const url = (
               (content instanceof File) ? (
@@ -271,7 +270,7 @@ const MediaDisplay: React.FC<{
               case 'model': {
                 return (
                   <ThreeDScene
-                    className="model"
+                    className={fs.model}
                     model={url}
                   />
                 )
@@ -376,13 +375,13 @@ export const NFTForm: React.FC<{
 
   return (
     <ul>
-      <li id="name">
+      <li id={fs.name}>
         <label>
           <h3>Name</h3>
           <input {...register('name')}/>
         </label>
       </li>
-      <li id="image" style={{ '--img-bg': color }}>
+      <li id={fs.image} style={{ '--img-bg': color }}>
         <MediaDisplay
           content={image}
           prop="image"
@@ -390,7 +389,7 @@ export const NFTForm: React.FC<{
           {...{ name, setValue }}
         />
       </li>
-      <li id="background">
+      <li id={fs.background}>
         <label>
           <h3>Background</h3>
           <input
@@ -399,7 +398,7 @@ export const NFTForm: React.FC<{
           />
         </label>
       </li>
-      <li id="homepage">
+      <li id={fs.homepage}>
         <label>
           <h3>Homepage</h3>
           <input {...register('homepage')}/>
@@ -410,7 +409,7 @@ export const NFTForm: React.FC<{
           </Hyperlink>
         )}
       </li>
-      <li id="description">
+      <li id={fs.description}>
         <label>
           <h3>Description</h3>
           <Tabs>
@@ -420,7 +419,6 @@ export const NFTForm: React.FC<{
             </TabList>
             <TabPanel>
               <textarea
-                id="description"
                 placeholder="Enter a markdown formatted description."
                 {...register('description')}
               />
@@ -433,7 +431,7 @@ export const NFTForm: React.FC<{
           </Tabs>
         </label>
       </li>
-      <li id="animation">
+      <li id={fs.animation}>
         <MediaDisplay
           content={animation}
           prop="animation"
@@ -441,7 +439,7 @@ export const NFTForm: React.FC<{
           {...{ name, setValue }}
         />
       </li>
-      <li id="attributes">
+      <li id={fs.attributes}>
         <label>
           <h3>Attributes</h3>
           <button onClick={addRow}>

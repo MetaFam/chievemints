@@ -15,9 +15,9 @@ import { useNavigate } from 'react-router-dom'
 import { useConfig } from '@/config'
 import { toast } from 'react-toastify'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
-import '../styles/OptionsForm.css'
 import { createPortal } from 'react-dom'
 import { Values } from '@/lib/types'
+import os from '../styles/OptionsForm.module.css'
 
 export const OptionsForm: React.FC<{
   purpose?: 'create' | 'update'
@@ -304,7 +304,7 @@ export const OptionsForm: React.FC<{
   )
 
   return (
-    <div>
+    <div id={os.form}>
       {createPortal(
         <Settings/>, document.body,
       )}
