@@ -186,6 +186,8 @@ export const Web3ContextProvider: React.FC<{ children: ReactNode }> = (
     )
 
     const connect = useCallback(async () => {
+      console.debug('Connecting…')
+
       if(web3Modal == null) {
         throw new Error(`Web3Modal is ${web3Modal}`)
       }

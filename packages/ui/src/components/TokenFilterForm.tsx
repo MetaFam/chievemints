@@ -4,6 +4,7 @@ import React, {
   FormEventHandler, HTMLAttributes, SetStateAction, useEffect,
 } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import tffs from '../styles/TokenFilterForm.module.css'
 
 export type FilterValues = {
   limit: number
@@ -49,7 +50,7 @@ export const TokenFilterForm: React.FC<{
     <section>
       <form
         onSubmit={handleSubmit(submit) as FormEventHandler}
-        className="filter"
+        id={tffs.form}
         {...props}
       >
         <fieldset>

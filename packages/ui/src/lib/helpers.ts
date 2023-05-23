@@ -102,12 +102,22 @@ export const switchTo = async (chain: number) => {
   }
 }
 
-export const ipfsify = async ({
+export async function ipfsify(
+  { filesOrURL, storage }:
+  { filesOrURL: NamedString | string | File, storage: NFTStorage }
+): Promise<string>
+export async function ipfsify(
+  { filesOrURL, storage }:
+  { filesOrURL: Array<NamedString> | FileList,  storage: NFTStorage }
+): Promise<Array<string>>
+export async function ipfsify({
   storage, filesOrURL,
 }: {
-  filesOrURL: FileListish
+  filesOrURL: (
+    string | NamedString | Array<NamedString> | File | FileList
+  )
   storage: NFTStorage,
-}) => {
+}) {
   let value = filesOrURL
   if(
     value == null
@@ -151,7 +161,15 @@ export const ipfsify = async ({
       ))
     )
   )
-  return `ipfs://${root.toString()}/${list[0].name}`
+  return (
+    list.length === 1 ? (
+      `ipfs://${root.toString()}/${list[0].name}`
+    ) : (
+      list.map((entry) => (
+        `ipfs://${root.toString()}/${entry.name}`
+      ))
+    )
+  )
 }
 
 export const regexify = (str?: string) => {

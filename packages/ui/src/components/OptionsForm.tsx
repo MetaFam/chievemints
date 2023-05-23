@@ -4,7 +4,7 @@ import {
 import {
   ipfsify, isSet, isEmpty, regexify, extractMessage,
 } from '@/lib/helpers'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useWeb3 } from '@/lib/hooks'
 import { useForm } from 'react-hook-form'
 import JSON5 from 'json5'
@@ -16,6 +16,8 @@ import { useConfig } from '@/config'
 import { toast } from 'react-toastify'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import '../styles/OptionsForm.css'
+import { createPortal } from 'react-dom'
+import { Values } from '@/lib/types'
 
 export const OptionsForm: React.FC<{
   purpose?: 'create' | 'update'
@@ -36,24 +38,46 @@ export const OptionsForm: React.FC<{
   const {
     register, handleSubmit, watch, setValue: setValue,
     formState: { isSubmitting: processing },
-  } = useForm()
+  } = useForm<FormValues>({
+    defaultValues: {
+      uri: incomingURI,
+    },
+  })
+  const [metadata, setMetadata] = (
+    useState<Maybe<ERC1155Metadata>>(incomingData ?? {})
+  )
   const [tab, setTab] = useState(FIELD_FORM)
-  const { Settings, storage } = useConfig()
-  const metadata = watch('metadata')
+  const { storage, Settings, openSettings } = useConfig()
+  const values = watch()
   const json5 = watch('json5')
   const uri = watch('uri')
 
-  useEffect(() => {
-    if(purpose === 'update') {
-      setValue('metadata', incomingData)
-      setValue('uri', incomingURI)
+  const buildMeta = useCallback(async ({
+    data, ipfs = true,
+  }: { data: FormValues, ipfs?: boolean }) => {
+    const wrapIPFS = async (filesOrURL: unknown) => {
+      const isFile = filesOrURL instanceof File
+      const isString = typeof filesOrURL === 'string'
+      if(isFile || isString) {
+        if(ipfs) {
+          return await ipfsify({ filesOrURL, storage })
+        } else {
+          return (
+            isFile ? (
+              URL.createObjectURL(filesOrURL)
+            ) : (
+              filesOrURL
+            )
+          )
+        }
+      } else {
+        throw new Error(`Unknown Media Type: ${typeof image}`)
+      }
     }
-  }, [setValue, purpose, incomingData, incomingURI])
 
-  const buildMeta = useCallback(async (data: FormValues) => {
     const {
       name, description, homepage, color,
-      images, animation, attributes,
+      image, animation, attributes,
     } = data
 
     const metadata: ERC1155Metadata = {
@@ -69,16 +93,12 @@ export const OptionsForm: React.FC<{
       metadata.external_url = homepage
     }
 
-    if(Array.isArray(images) && images.some((img) => img != null)) {
-      metadata.image = await ipfsify({ filesOrURL: images, storage })
-    } else if(!Array.isArray(images)) {
-      console.warn(`Unknown Image Type: ${typeof images}`)
+    if(image) {
+      metadata.image = await wrapIPFS(image)
     }
 
-    if(animation instanceof File || typeof animation === 'string') {
-      metadata.animation_url = await ipfsify({ filesOrURL: animation, storage })
-    } else if (animation != null) {
-      console.warn(`Unknown Animation Type: ${typeof animation}`)
+    if(animation) {
+      metadata.animation_url = await wrapIPFS(animation)
     }
 
     if(color?.startsWith('#')) {
@@ -130,7 +150,7 @@ export const OptionsForm: React.FC<{
         }
       } catch(error) {
         console.error({ error })
-        toast(extractMessage(error))
+        toast(extractMessage(error), { type: 'error' })
       }
     },
     [rwContract, tokenId, purpose, navigate],
@@ -143,7 +163,7 @@ export const OptionsForm: React.FC<{
         switch(tab) {
           case FIELD_FORM: {
             const content = JSON.stringify(
-              await buildMeta(data), null, 2
+              await buildMeta({ data }), null, 2
             )
             return { name, content }
           }
@@ -169,9 +189,7 @@ export const OptionsForm: React.FC<{
       if(metadata == null) {
         throw new Error(`Metadata is \`${JSON5.stringify(metadata)}\`.`)
       } else if(metadata !== '') {
-        console.log({metadata})
         metadata = await ipfsify({ filesOrURL: metadata, storage })
-        console.log({metadata})
       }
       await configure({ metadata })
     } catch(error) {
@@ -180,77 +198,154 @@ export const OptionsForm: React.FC<{
     }
   }, [buildMeta, configure, storage, tab])
 
-  const onSelect = useCallback((idx: number, previous: number) => {
-    switch(idx) {
-      case FIELD_FORM: {
-        let metaPromise
-        switch(previous) {
-          case URI_FORM: {
-            if(uri && uri !== '') {
-              metaPromise = (
-                fetch(uri)
-                .then((res) => res.text())
-                .then((txt) => JSON5.parse(txt))
+  const changeTo = useMemo(() => ({
+    fields: async (previous: number) => {
+      let metaPromise
+      switch(previous) {
+        case URI_FORM: {
+          if(uri && uri !== '') {
+            metaPromise = (
+              fetch(uri)
+              .then((res) => res.text())
+              .then<ERC1155Metadata>(
+                (txt) => JSON5.parse(txt)
               )
-            }
-            break
+            )
           }
-          case JSON5_FORM: {
-            if(json5 && json5 !== '') {
-              metaPromise = Promise.resolve(JSON5.parse(json5))
-            }
-            break
+          break
+        } 
+        case JSON5_FORM: {
+          if(json5 && json5 !== '') {
+            metaPromise = Promise.resolve<ERC1155Metadata>(
+              JSON5.parse(json5)
+            )
           }
+          break
         }
-        if(metaPromise) {
-          setValue('metadata', null)
-          metaPromise.then((meta) => setValue('metadata', meta))
-        } else {
-          toast.warn('No metadata specified.')
-        }
-        break
       }
-      case URI_FORM: {
-        break
+
+      if(metaPromise) {
+        setMetadata(null)
+        metaPromise
+        .then((meta) => {
+          const types = [
+            { image: 'image' },
+            { animation: 'animation_url' },
+          ] as const
+          for(const typeSet of types) {
+            const type = Object.keys(typeSet)[0] as keyof typeof typeSet
+            const key = typeSet[type] as Values<typeof typeSet>
+            if(
+              typeof meta[key] === 'string'
+              && (meta[key] as string).startsWith('blob:')
+            ) {
+              meta[key] = values[type] as string
+            }
+          }
+          setMetadata(meta)
+        })
+      } else {
+        toast.warn('No metadata specified.')
+      }
+    },
+    uri: async (previous: number) => {
+      return previous
+    },
+    json5: async (previous: number) => {
+      let metaPromise
+      switch(previous) {
+        case FIELD_FORM: {
+          metaPromise = (
+            buildMeta({ data: values, ipfs: false })
+          )
+          break
+        }
+        case URI_FORM: {
+          if(uri && uri !== '') {
+            metaPromise = (
+              fetch(uri)
+              .then<ERC1155Metadata>((res) => res.json())
+            )
+          }
+          break
+        }
+      }
+      if(metaPromise) {
+        setMetadata(null)
+        setMetadata(await metaPromise)
+      } else {
+        toast('No metadata found.')
       }
     }
-    setTab(idx)
-  }, [])
+  }), [uri, json5, buildMeta, values])
+
+  const onSelect = useCallback(
+    (idx: number, previous: number) => {
+      if(idx === previous) return
+
+      let changePromise
+      switch(idx) {
+        case FIELD_FORM: {
+          changePromise = changeTo.fields(previous)
+          break
+        }
+        case URI_FORM: {
+          changePromise = changeTo.uri(previous)
+          break
+        }
+        case JSON5_FORM: {
+          changePromise = changeTo.json5(previous)
+          break
+        }
+      }
+      changePromise.then(() => setTab(idx))
+    },
+    [changeTo],
+  )
 
   return (
     <div>
-      <Settings highlight={['nftStorageAPIToken']}/>
+      {createPortal(
+        <Settings/>, document.body,
+      )}
       <form onSubmit={handleSubmit(submit)}>
-        <SubmitButton {...{ purpose, processing }} className="full"/>
+        <SubmitButton
+          className="full"
+          {...{ purpose, processing, openSettings }}
+        />
         <Tabs {...{ onSelect }}>
           <TabList>
             <Tab>Fields</Tab>
             <Tab>URI</Tab>
             <Tab>JSON5</Tab>
           </TabList>
-          {[NFTForm, URIForm, JSONForm].map((Form, idx) => (
-            <TabPanel key={idx}>
-              <Form {...{
-                register,
-                watch,
-                setValue,
-                tokenId,
-                metadata,
-              }} />
-            </TabPanel>
-          ))}
+          {[NFTForm, URIForm, JSONForm].map(
+            (Form, idx) => (
+              <TabPanel key={idx}>
+                <Form {...{
+                  register,
+                  watch,
+                  setValue,
+                  tokenId,
+                  metadata,
+                }} />
+              </TabPanel>
+            )
+          )}
         </Tabs>
         <SubmitButton
           requireStorage={true}
           className="full"
-          {...{ purpose, processing }}
+          {...{ purpose, processing, openSettings }}
         />
       </form>
-      <MaxForm {...{ tokenId, purpose }}/>
-      <MaxForm
-        perUser={true}
-        {...{ tokenId, purpose }}
-      />
+      <section id="maxes">
+        <MaxForm {...{ tokenId, purpose }}/>
+        <MaxForm
+          perUser={true}
+          {...{ tokenId, purpose }}
+        />
+      </section>
     </div>
   )
 }

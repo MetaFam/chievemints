@@ -1,0 +1,27 @@
+#style {
+  padding: 0;
+
+  & h2 {
+    margin-block: 0.25rem;
+    border-bottom: 3px double #333;
+  }
+
+  & main, & footer {
+    padding-inline: 1em;
+  }
+
+  & main input {
+    margin-inline-start: 1em;
+    width: 30ch;
+  }
+
+  & footer {
+    margin-block: 1rem;
+    display: flex;
+    justify-content: end;
+
+    & button:first-child {
+      margin-inline-end: 1em;
+    }
+  }
+}

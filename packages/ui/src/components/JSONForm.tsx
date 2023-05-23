@@ -2,7 +2,8 @@ import React, { useEffect } from 'react'
 import { FieldValues, UseFormRegister } from 'react-hook-form'
 import JSON5 from 'json5'
 import { ERC1155Metadata } from '@/lib/types'
-import '../styles/JSONForm.css'
+import { HashLoader } from 'react-spinners'
+import jf from '../styles/JSONForm.module.css'
 
 export const JSONForm: React.FC<{
   register: UseFormRegister<FieldValues>
@@ -12,14 +13,23 @@ export const JSONForm: React.FC<{
   register, metadata, setValue
 }) => {
   useEffect(() => {
-    setValue('json5', JSON5.stringify(metadata, null, 2))
+    if(metadata) {
+      setValue('json5', JSON5.stringify(metadata, null, 2))
+    }
   }, [metadata, setValue])
 
   return (
-    <textarea
-      placeholder="Enter JSON5 token metadata…"
-      {...register('json5')}
-    />
+    metadata == null ? (
+      <section id={jf.loading}>
+        <HashLoader color="#EB6300"/>
+        <p>Fetching metadata…</p>
+      </section>
+    ) : (
+      <textarea
+        placeholder="Enter JSON5 token metadata…"
+        {...register('json5')}
+      />
+    )
   )
 }
 

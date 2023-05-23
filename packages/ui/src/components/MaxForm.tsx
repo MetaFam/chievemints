@@ -56,12 +56,11 @@ export const MaxForm = (
   }, [max, perUser, rwContract, tokenId])
 
   return (
-    <form onSubmit={save}>
+    <form onSubmit={save} className="max">
       <label>
-        {perUser && 'Per User'} Maximum Mintable
-      </label>
-      {max == null ? (
-        <div>
+        <h3>{perUser && 'Per User'} Maximum Mintable</h3>
+        {max == null ? (
+          <div>
             <BarLoader color="#2768ff"/>
             <p>Loading…</p>
           </div>
@@ -73,11 +72,13 @@ export const MaxForm = (
               setMax(value.trim().replace(/^0+([^0])/, '$1'))
             }}
           />
-        )}  
+        )}
+      </label>
       <SubmitButton
         label={`Set ${perUser ? 'Per User': ''} Max`}
         disabled={!/^-?\d+$/.test(max)}
         requireStorage={false}
+        short={true}
         {...{ purpose, processing, ...props }}
       />
     </form>

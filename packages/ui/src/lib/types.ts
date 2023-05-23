@@ -40,8 +40,8 @@ export type ERC1155Metadata = {
   attributes?: Array<Attribute>
   properties?: { wearables?: Record<string, string> }
   external_url?: string
-  image?: string
-  animation_url?: string
+  image?: string | File
+  animation_url?: string | File
   background_color?: string
 
 } & {
@@ -92,7 +92,7 @@ export type FormValues = {
   name?: string
   description?: string
   homepage?: string
-  images?: FileListish
+  image?: Fileish
   color?: string
   animation?: Fileish
   attributes?: Array<Attribute>

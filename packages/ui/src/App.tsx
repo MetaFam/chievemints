@@ -14,6 +14,7 @@ import {
 } from 'react-router-dom'
 import React from 'react'
 import { Spinner } from './components/Spinner'
+import { ToastContainer } from 'react-toastify'
 
 const Home = React.lazy(() => import('./pages/home'))
 const New = React.lazy(() => import('./pages/new'))
@@ -54,6 +55,12 @@ const App: React.FC = () => (
         </React.Suspense>
       </Web3ContextProvider>
     </ApolloProvider>
+    <ToastContainer
+      position="bottom-center"
+      autoClose={15000}
+      closeOnClick
+      pauseOnHover
+    />
   </>
 )
 

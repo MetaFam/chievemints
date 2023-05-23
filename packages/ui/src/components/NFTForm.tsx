@@ -7,7 +7,7 @@ import {
   Attribute, ERC1155Metadata, Maybe, OpenSeaAttribute,
 } from '@/lib/types'
 import React, {
-  ChangeEvent, useCallback, useEffect,
+  ChangeEvent, useCallback, useEffect, useState,
 } from 'react'
 import Markdown from 'react-markdown'
 import {
@@ -62,6 +62,26 @@ const AttrRow: React.FC<{
         />
       </td>
       <td>
+        <select
+          value={type}
+          onChange={
+            ({ target: { value } }: ChangeEvent<HTMLSelectElement>) => {
+              setType(value)
+            }
+          }
+        >
+          <option value="string">String</option>
+          <option value="date">Date</option>
+          <option value="number">Number</option>
+          <option value="boost_percentage">
+            Boost Percentage
+          </option>
+          <option value="boost_number">
+            Boost Number
+          </option>
+        </select>
+      </td>
+      <td>
         {(() => {
           switch (type) {
             case 'date': {
@@ -72,7 +92,10 @@ const AttrRow: React.FC<{
                     if(!isEmpty(value)) {
                       try {
                         return (
-                          new Date(value).toDateString()
+                          new Date(value)
+                          .toLocaleDateString(
+                            'sv', { timeZone: 'GMT' },
+                          )
                         )
                       } catch(e) {
                         console.error(e)
@@ -115,26 +138,6 @@ const AttrRow: React.FC<{
             }
           }
         })()}
-      </td>
-      <td>
-        <select
-          value={type}
-          onChange={
-            ({ target: { value } }: ChangeEvent<HTMLSelectElement>) => {
-              setType(value)
-            }
-          }
-        >
-          <option value="string">String</option>
-          <option value="date">Date</option>
-          <option value="number">Number</option>
-          <option value="boost_percentage">
-            Boost Percentage
-          </option>
-          <option value="boost_number">
-            Boost Number
-          </option>
-        </select>
       </td>
       <td className='actions'>
         <button
@@ -190,14 +193,32 @@ const MediaDisplay: React.FC<{
 }> = ({
   content, name = 'Alt', prop, setValue, accept = '*/*',
 }) => {
-  const [filename, setFilename] = React.useState<Maybe<string>>(null)
+  const [filename, setFilename] = (
+    useState<Maybe<string>>(null)
+  )
+  const [type, setType] = useState<Maybe<string>>(null)
 
   useEffect(() => {
-    if(typeof content === 'string') {
-      setFilename(content.replace(
-        /^(https?:\/\/[^/]+\/|ip[nf]s:\/\/(.+\/)?)/, ''
-      ))
+    let file = (
+      (typeof content === 'string') ? content : content?.name
+    )
+    file = file?.replace(
+      /^(https?:\/\/[^/]+\/|ip[nf]s:\/\/(.+\/)?)/, ''
+    )
+    setFilename(file)
+
+    const ext = file?.split('.').pop()
+    let type = 'none'
+    if(['mp4', 'avif', 'webm'].includes(ext)) {
+      type = 'video'
+    } else if(['mp3', 'wav', 'ogg', 'flac'].includes(ext)) {
+      type = 'audio'
+    } else if(['gltf', 'glb'].includes(ext)) {
+      type = 'model'
+    } else if(file != null) {
+      type = 'image'
     }
+    setType(type)
   }, [content])
 
   const set = ({ target: { files } }: (
@@ -237,20 +258,28 @@ const MediaDisplay: React.FC<{
                 httpURL(content)
               )
             )
-            const ext = filename?.split('.').pop()
-            if(['mp4', 'avif', 'webm'].includes(ext)) {
-              return (
-                <video>
-                  <source src={url}/>
-                </video>
-              )
+            switch(type) {
+              case 'none': {
+                return null
+              }
+              case 'video': {
+                return <video><source src={url}/></video>
+              }
+              case 'audio': {
+                return <audio><source src={url}/></audio>
+              }
+              case 'model': {
+                return (
+                  <ThreeDScene
+                    className="model"
+                    model={url}
+                  />
+                )
+              }
+              default: {
+                return <img alt={name} src={url}/>
+              }
             }
-            if(['gltf', 'glb'].includes(ext)) {
-              return <ThreeDScene model={url}/>
-            }
-            return (
-              <img alt={name} src={url}/>
-            )
           })()}
           <button onClick={remove}>❌</button>
         </div>
@@ -288,7 +317,6 @@ export const NFTForm: React.FC<{
         animation_url: 'animation',
       })
       .forEach(([prop, name]) => {
-        console.info({ name, m: metadata[prop] })
         setValue(name ?? prop, metadata[prop])
       })
 
@@ -425,8 +453,8 @@ export const NFTForm: React.FC<{
             <thead>
               <tr>
                 <th>Name</th>
-                <th>Value</th>
                 <th>Type</th>
+                <th>Value</th>
                 <th/>
               </tr>
             </thead>

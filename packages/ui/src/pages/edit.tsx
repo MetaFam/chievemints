@@ -28,7 +28,7 @@ export const Edit = () => {
           const metaURI = await roContract.uri(tokenId)
           const url = httpURL(metaURI)
           if(!metaURI || metaURI === '') {
-            throw new Error('No metadata URI.')
+            setMetadata({})
           } else {
             const response = await fetch(url)
             const body = await response.text()

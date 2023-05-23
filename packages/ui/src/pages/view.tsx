@@ -7,7 +7,7 @@ import JSON5 from 'json5'
 import {
   regexify, deregexify, httpURL,
 } from '@/lib/helpers'
-import type { ERC1155Metadata, Styles } from '@/lib/types'
+import type { ERC1155Metadata } from '@/lib/types'
 import { HomeLink, ThreeDScene } from '@/components'
 import { useWeb3 } from '@/lib/hooks'
 import { FadeLoader } from 'react-spinners'
@@ -86,7 +86,6 @@ export const View: React.FC<{ tokenId: string, header?: boolean }> = (
         )}
         <header><HomeLink/></header>
         <header>
-          <HomeLink/>
           {name && <h1>{name}</h1>}
         </header>
         <main>

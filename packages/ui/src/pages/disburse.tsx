@@ -177,7 +177,7 @@ const Disburse = () => {
   }
 
   return (
-    <div>
+    <main>
       <Helmet>
         <title>Disburse NFT #{tokenId}</title>
         <meta name="description" content="Distribute A ’Chievemint NFT" />
@@ -226,18 +226,25 @@ const Disburse = () => {
             <li key={idx}>{addr}</li>
           ))}
         </ol>
-        <input type="radio" name="op" value="mint">Mint</input>
-        <input type="radio" name="op" value="whitelist">Whitelist</input>
-        <input type="checkbox" name="skip" value="true">
-          Skip existing holders
-        </input>
+        <label>
+          <span>Mint</span>
+          <input type="radio" name="op" value="mint"/>
+        </label>
+        <label>
+          <span>Whitelist</span>
+          <input type="radio" name="op" value="whitelist"/>
+        </label>
+        <label>
+          <span>Skip existing holders</span>
+          <input type="checkbox" name="skip" value="true"/>
+        </label>
         {!rwContract ? (
           <button onClick={connect}>Connect</button>
         ) : (
           <button type="submit">Distribute</button>
         )}
       </form>
-    </div>
+    </main>
   )
 }
 

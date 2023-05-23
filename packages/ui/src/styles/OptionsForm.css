@@ -40,7 +40,6 @@ main#edit {
 
     & h3:after {
       content: ": ";
-      margin-inline-end: 0.5rem;
     }
 
     & input {
@@ -49,97 +48,28 @@ main#edit {
     }
   }
 
-  & .media {
-    flex-direction: column;
+  & #maxes {
+    display: grid;
+    grid-template-columns: repeat(2, max-content) 1fr;
+    gap: 0rem;
+    place-items: center;
+
+    & label > *:first-child {
+      text-align: right;
+    }
 
     & input {
-      display: none;
+      width: 5rem;
+      text-align: center;
     }
 
-    & > * {
-      display: flex;
-    }
-
-    & .selector {
-      align-items: center;
-    }
-
-    & h4 {
+    & .net-submit {
+      width: max-content;
       margin-block: 0rem;
     }
 
-    .btn {
-      background-color: var(--font-color);
-      color: var(--bg-color);
-      padding: 0.5rem;
-    }
-
-    & img, & video, & canvas {
-      object-fit: contain;
-      background-color: var(--img-bg, inherit);
-      max-height: 20rem;
-      max-width: min(100%, 40rem);
-      flex-grow: 1;
-      padding: 0.5rem;
-    }
-  }
-
-  & #homepage {
-    display: flex;
-    align-items: center;
-
-    & label {
-      flex-grow: 1;
-    }
-  }
-
-  & #description {
-    & label {
-      display: block;
-    }
-
-    & label, & .react-tabs {
-      display: block;
-    }
-
-    & [role="tabpanel"] {
-      &:last-of-type, & textarea {
-        max-width: 35rem;
-        height: 3rem;
-        margin-inline: auto;
-      }
-    }
-
-    & [role="tablist"] {
-      margin-block-end: 0rem;
-
-      & [role="tab"] {
-        margin-block-end: 0rem;
-      }
-
-      &:has(li[role="tab"][aria-selected="true"]:last-of-type)
-      ~ [role="tabpanel"] {
-        padding: 0.5rem;
-      }
-    }
-
-    & [role="tabpanel"] {
-      background-color: #f5f5f577;
-      padding-block: 0.5rem;
-
-      & > *:first-child {
-        margin-block-start: 0rem;
-      }
-
-      & > *:last-child {
-        margin-block-end: 0rem;
-      }
-    }
-  }
-
-  & #attributes {
-    & .actions {
-      display: flex;
+    & .max, & label {
+      display: contents;
     }
   }
 }

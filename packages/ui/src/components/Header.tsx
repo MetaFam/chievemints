@@ -1,15 +1,16 @@
 import { LinkedSVG } from '@/components'
 import React, { HTMLAttributes } from 'react'
 import Tippy from '@tippyjs/react'
+import Hs from '../styles/Header.module.css'
 
 export const Header: React.FC<
   HTMLAttributes<HTMLDivElement>
   & { links?: Record<'cup' | 'sign', string> }
 > = ({ links = { cup: '/new', sign: '/' }, ...props }) => (
-  <header {...props}>
+  <header id={Hs.style} {...props}>
     <Tippy content="Create A New Token Type">
       <LinkedSVG
-        id="cup"
+        id={Hs.cup}
         className="link"
         svg="logo.svg"
         href={links.cup}
@@ -17,8 +18,8 @@ export const Header: React.FC<
     </Tippy>
     <Tippy content="List Existing Tokens">
       <LinkedSVG
-        id="sign"
-        className="link"
+        id={Hs.sign}
+        className={Hs.link}
         svg="header.svg"
         href={links.sign}
       />

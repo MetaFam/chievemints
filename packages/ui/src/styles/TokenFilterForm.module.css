@@ -1,4 +1,4 @@
-.filter {
+#form {
   width: min(100%, 30rem);
   margin-inline: auto;
   display: grid;

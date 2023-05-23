@@ -1,5 +1,5 @@
 h1 {
-  font-size: clamp(2rem, 8vw - 3ch, 10rem);
+  font-size: clamp(2rem, 10vmin - 3ch, 12rem);
   text-align: center;
 }
 
@@ -28,8 +28,8 @@ main {
   margin-bottom: 3rem;
 
   & p {
-    font-size: clamp(1.5rem, 3vw - 1ch, 4rem);
-    max-width: 45ch;
+    font-size: clamp(1.5rem, 3vmin - 1ch, 4rem);
+    max-width: 65ch;
     text-indent: 1em;
     margin: auto 0.75em;
     text-align: justify;

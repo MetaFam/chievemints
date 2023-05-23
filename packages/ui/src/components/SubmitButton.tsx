@@ -14,12 +14,16 @@ export const SubmitButton: React.FC<{
   processing?: boolean
   label?: string
   requireStorage?: boolean
+  short?: boolean
+  openSettings?: () => void
 } & ButtonHTMLAttributes<HTMLButtonElement>> = ({
   purpose = 'create',
   processing = false,
+  short = false,
   // onClick,
-  requireStorage,
+  requireStorage = true,
   label = `${capitalize(purpose)} NFT`,
+  openSettings,
   ...props
 }) => {
   const {
@@ -33,7 +37,9 @@ export const SubmitButton: React.FC<{
   const desiredNetwork = (
     offChain ? NETWORKS.contract.name : null
   )
-  const { storage } = useConfig({ requireStorage })
+  const {
+    storage,
+  } = useConfig({ requireStorage })
 
   const onClick = useCallback(async (evt: MouseEvent<HTMLButtonElement>) => {
     try {
@@ -46,17 +52,21 @@ export const SubmitButton: React.FC<{
         evt.preventDefault()
         switchTo(NETWORKS.contract.chainId)
       } else if(!storage && requireStorage) {
-        // openSettings()
+        evt.preventDefault()
+        openSettings()
       } else {
         // onClick?.apply(null, [evt])
       }
     } finally {
       setWorking(false)
     }
-  }, [connect, offChain, requireStorage, storage, userProvider])
+  }, [connect, offChain, openSettings, requireStorage, storage, userProvider])
 
   return <>
-    <button {...{ onClick, ...props }}>
+    <button
+      className="net-submit"
+      {...{ onClick, ...props }}
+    >
       {(() => {
         if(processing || working) {
           return (
@@ -68,16 +78,20 @@ export const SubmitButton: React.FC<{
         } else if(!userProvider) {
           return `Connect To ${capitalize(purpose)}`
         } else if(offChain) {
-          return `Connect To The ${desiredNetwork} Network To ${capitalize(purpose)}`
+          return `Connect To ${
+            !short ? 'The ' : ''
+          }${desiredNetwork}${
+            !short ? ` Network To ${capitalize(purpose)}` : ''
+          }`
         } else if(!rwContract) {
           return 'Contract Not Connected'
         } else if(requireStorage && !storage) {
           return <>
-            Missing
+            Missing{' '}
             <a target="_blank" rel="noreferrer" href="//nft.storage">
               NFT.Storage
             </a>
-            Token
+            {' '}Token
           </>
         } else {
           return label
