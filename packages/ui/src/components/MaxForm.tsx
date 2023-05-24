@@ -8,13 +8,16 @@ import { extractMessage } from '@/lib/helpers'
 import { BarLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
 
+type MaxFormProps = {
+  tokenId?: string
+  perUser?: boolean
+  purpose: string
+} & React.HTMLProps<HTMLFormElement>
+
+
 export const MaxForm = (
   { tokenId, purpose = 'create', perUser = false, ...props }:
-  {
-    tokenId?: string
-    perUser?: boolean
-    purpose: string
-  }
+  MaxFormProps
 ) => {
   const [max, setMax] = useState<Maybe<string>>(null)
   const [processing, setProcessing] = useState(false)
@@ -56,7 +59,7 @@ export const MaxForm = (
   }, [max, perUser, rwContract, tokenId])
 
   return (
-    <form onSubmit={save} className="max">
+    <form onSubmit={save} {...props}>
       <label>
         <h3>{perUser && 'Per User'} Maximum Mintable</h3>
         {max == null ? (
@@ -79,7 +82,8 @@ export const MaxForm = (
         disabled={!/^-?\d+$/.test(max)}
         requireStorage={false}
         short={true}
-        {...{ purpose, processing, ...props }}
+        className="full"
+        {...{ purpose, processing }}
       />
     </form>
   )

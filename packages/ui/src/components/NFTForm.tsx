@@ -7,7 +7,7 @@ import {
   Attribute, ERC1155Metadata, Maybe, OpenSeaAttribute,
 } from '@/lib/types'
 import React, {
-  ChangeEvent, useCallback, useEffect, useState,
+  ChangeEvent, useCallback, useEffect, useRef, useState,
 } from 'react'
 import Markdown from 'react-markdown'
 import {
@@ -141,6 +141,7 @@ const AttrRow: React.FC<{
       </td>
       <td className={fs.actions}>
         <button
+          type="button"
           onClick={() => setFormValue(
             'attributes',
             [
@@ -153,6 +154,7 @@ const AttrRow: React.FC<{
           ➕
         </button>
         <button
+          type="button"
           onClick={() => setFormValue(
             'attributes',
             [
@@ -195,6 +197,7 @@ const MediaDisplay: React.FC<{
   const [filename, setFilename] = (
     useState<Maybe<string>>(null)
   )
+  const input = useRef<HTMLInputElement>(null)
   const [type, setType] = useState<Maybe<string>>(null)
 
   useEffect(() => {
@@ -242,10 +245,18 @@ const MediaDisplay: React.FC<{
         <input
           type="file"
           onChange={set}
+          ref={input}
           {...{ accept }}
         />
         {filename && <h4>{filename}</h4>}
-        {!content && <div className={fs.btn}>Set</div>}
+        {!content &&(
+          <button
+            type="button"
+            onClick={() => input.current?.click()}
+          >
+            Set
+          </button>
+          )}
       </div>
       {content && (
         <div className={fs.content}>
@@ -280,7 +291,7 @@ const MediaDisplay: React.FC<{
               }
             }
           })()}
-          <button onClick={remove}>❌</button>
+          <button type="button" onClick={remove}>❌</button>
         </div>
       )}
     </label>
@@ -442,7 +453,7 @@ export const NFTForm: React.FC<{
       <li id={fs.attributes}>
         <label>
           <h3>Attributes</h3>
-          <button onClick={addRow}>
+          <button type="button" onClick={addRow}>
             ➕
           </button>
         </label>

@@ -1,5 +1,3 @@
-@import url('general.css');
-
 .link {
   position: relative;
   z-index: 1;
@@ -14,6 +12,7 @@ footer {
   position: fixed;
   bottom: 0;
   left: 50%;
+  margin-top: 3rem;
 }
 
 main {

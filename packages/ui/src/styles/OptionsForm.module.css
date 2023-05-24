@@ -42,6 +42,10 @@ button.full {
     }
   }
 
+  & form {
+    margin-block-end: 2rem;
+  }
+
   & #maxes {
     display: grid;
     grid-template-columns: repeat(2, max-content) 1fr;

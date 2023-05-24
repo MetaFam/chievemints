@@ -19,6 +19,10 @@
   flex-grow: 0;
 }
 
+.grow1 {
+  flex-grow: 1;
+}
+
 .full {
   width: 100%;
 }

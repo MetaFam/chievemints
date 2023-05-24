@@ -25,7 +25,6 @@
 
   & .content, & img {
     height: 20rem;
-    max-width: min(100%, 40rem);
   }
 
   & img {
@@ -33,6 +32,10 @@
     background-color: var(--img-bg, inherit);
     flex-grow: 1;
     padding: 0.5rem;
+  }
+
+  & section {
+    flex-grow: 1;
   }
 }
 

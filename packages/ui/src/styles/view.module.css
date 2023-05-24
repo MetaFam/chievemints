@@ -37,7 +37,7 @@
   border-radius: 2.5rem;
   padding: 0;
   width: 80dvw;
-  height: min(55ch, 100dvh);
+  height: min(75ch, 100dvh);
   overflow: hidden;
   outline: 4px double #000;
 }
