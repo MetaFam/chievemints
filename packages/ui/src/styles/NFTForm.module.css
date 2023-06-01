@@ -49,9 +49,7 @@
 }
 
 #description {
-  label& {
-    display: block;
-  }
+  display: block;
 
   & label, & .react-tabs {
     display: block;

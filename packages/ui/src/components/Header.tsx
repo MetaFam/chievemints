@@ -19,7 +19,7 @@ export const Header: React.FC<
     <Tippy content="List Existing Tokens">
       <LinkedSVG
         id={Hs.sign}
-        className={Hs.link}
+        className="link"
         svg="header.svg"
         href={links.sign}
       />

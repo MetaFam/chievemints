@@ -10,7 +10,7 @@ import { rolePermissions, tokenPermissions } from '@/config'
 import { CircleLoader } from 'react-spinners'
 import Tippy from '@tippyjs/react'
 import { toast } from 'react-toastify'
-import '../styles/new.css'
+import ns from '../styles/new.module.css'
 
 export const New = () => (
   <section>
@@ -136,83 +136,82 @@ const Content: React.FC = () => {
 
   if(!rwContract || !tokenId || working) {
     return (
-      <main>
-        <div className="flexCol">
-          <h1>Create a New Token Type</h1>
-          {(() => {
-            if(connecting) {
-              return (
-                <section>
-                  <CircleLoader color="#FF7301" size={100}/>
-                  <p>Connecting…</p>
-                </section>
-              )
-            }
-            if(working) {
-              return (
-                <section>
-                  <CircleLoader color="#6EA8FF" size={100}/>
-                  <p>Reserving your token…</p>
-                </section>
-              )
-            }
-            if(!tokenId) {
-              return (
-                <form onSubmit={handleSubmit(reserve)}>
-                  <div>
-                    <label>Admin</label>
-                    <input
-                      {...register('maintainer')}
-                      placeholder="Maintainer Address (default Creator)"
-                    />
-                  </div>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Role</th>
-                        <th>
-                          <Tippy content="Give the admin these roles:">
-                            <span>Grant</span>
-                          </Tippy>
-                        </th>
-                        <th>
-                          <Tippy content="Prevent these permissions from being checked:">
-                            <span>Disable</span>
-                          </Tippy>
-                        </th>
-                        <th>Description</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {roles.map((role, idx) => (
-                        <tr key={idx}>
-                          <td>{role}</td>
-                          <td>
-                            <input type="checkbox" {...register(`grant(${role})`)}/>
-                          </td>
-                          <td>
-                            <input type="checkbox" {...register(`disable(${role})`)}/>
-                          </td>
-                          <td>
-                            {rolePermissions[role as keyof typeof rolePermissions]}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  <SubmitButton
-                    purpose="create"
-                    label="Reserve an ID"
-                    requireStorage={false}
-                  />
-                </form>
-              )
-            }
+      <main id={ns.new}>
+        <h1>Create a New Token Type</h1>
+        {(() => {
+          if(connecting) {
             return (
-              <p>¿How’d we get here?</p>
+              <section>
+                <CircleLoader color="#FF7301" size={100}/>
+                <h2>Connecting…</h2>
+              </section>
             )
-          })()}
-        </div>
+          }
+          if(working) {
+            return (
+              <section>
+                <CircleLoader color="#6EA8FF" size={100}/>
+                <h2>Reserving your token…</h2>
+              </section>
+            )
+          }
+          if(!tokenId) {
+            return (
+              <form onSubmit={handleSubmit(reserve)}>
+                <label id={ns.admin}>
+                  <h2>Admin</h2>
+                  <input
+                    {...register('maintainer')}
+                    placeholder="Maintainer Address (default Creator)"
+                  />
+                </label>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Role</th>
+                      <th>
+                        <Tippy content="Give the admin these roles:">
+                          <span>Grant</span>
+                        </Tippy>
+                      </th>
+                      <th>
+                        <Tippy content="Prevent these permissions from being checked:">
+                          <span>Disable</span>
+                        </Tippy>
+                      </th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {roles.map((role, idx) => (
+                      <tr key={idx}>
+                        <td>{role}</td>
+                        <td>
+                          <input type="checkbox" {...register(`grant(${role})`)}/>
+                        </td>
+                        <td>
+                          <input type="checkbox" {...register(`disable(${role})`)}/>
+                        </td>
+                        <td>
+                          {rolePermissions[role as keyof typeof rolePermissions]}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <SubmitButton
+                  purpose="create"
+                  label="Reserve an ID"
+                  className="full"
+                  requireStorage={false}
+                />
+              </form>
+            )
+          }
+          return (
+            <p>¿How’d we get here?</p>
+          )
+        })()}
       </main>
     )
   }

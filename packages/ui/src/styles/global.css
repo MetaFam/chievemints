@@ -7,6 +7,10 @@
   --bg-color: var(--bg-color-light);
   --font-color: var(--font-color-light);
   --highlight: var(--highlight-light);
+  --active-color: rgba(235, 197, 0, 0.75);
+
+  font-size: 1.25rem;
+  line-height: 1.5;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -43,4 +47,17 @@ body {
 
 [role="tooltip"] {
   z-index: 10;
+}
+
+[role="tablist"] {
+  display: flex;
+  border-bottom: none;
+
+  & > [role="tab"] {
+    flex-grow: 1;
+    text-align: center;
+    border-width: 1px;
+    border-style: solid solid none solid;
+    border-radius: 1rem 1rem 0 0;
+  }
 }

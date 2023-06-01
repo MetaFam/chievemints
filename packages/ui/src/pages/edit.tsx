@@ -63,10 +63,10 @@ export const Edit = () => {
         </aside>
       )}
       {metadata === undefined ? (
-        <div>
+        <aside>
           <RingLoader color="#36d7b7"/>
           <span>Loading {metaURI}…</span>
-        </div>
+        </aside>
       ) : (
         <OptionsForm
           purpose="update"

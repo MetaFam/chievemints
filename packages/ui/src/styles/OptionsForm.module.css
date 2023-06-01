@@ -12,19 +12,6 @@ button.full {
     }
   }
 
-  & [role="tablist"] {
-    display: flex;
-    border-bottom: none;
-
-    & > [role="tab"] {
-      flex-grow: 1;
-      text-align: center;
-      border-width: 1px;
-      border-style: solid solid none solid;
-      border-radius: 1rem 1rem 0 0;
-    }
-  }
-
   & label {
     display: flex;
 
