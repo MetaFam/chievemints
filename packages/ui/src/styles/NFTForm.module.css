@@ -25,6 +25,7 @@
 
   & .content, & img {
     height: 20rem;
+    max-width: calc(100% - 1rem);
   }
 
   & img {
@@ -34,7 +35,7 @@
     padding: 0.5rem;
   }
 
-  & section {
+    & section {
     flex-grow: 1;
   }
 }

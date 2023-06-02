@@ -1,3 +1,5 @@
+@custom-media --mobile (width < 40em);
+
 button.full {
   width: 100%;
 }
@@ -55,6 +57,28 @@ button.full {
 
     & .max, & label {
       display: contents;
+    }
+
+    @media (--mobile) {
+      & .max {
+        display: grid;
+        grid-template-areas:
+          "title title"
+          "input submit";
+        grid-template-columns: max-content 1fr;
+
+        & h3 {
+          grid-area: title;
+        }
+
+        & input {
+          grid-area: input;
+        }
+
+        & button {
+          grid-area: submit;
+        }
+      }
     }
   }
 }

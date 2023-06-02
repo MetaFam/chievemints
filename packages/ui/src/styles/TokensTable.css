@@ -1,5 +1,3 @@
-@import(url('./styles/global.css'));
-
 @custom-media --mobile (width < 40em);
 @custom-media --tight (width < 120rem), (40rem <= width <= 1024px);
 

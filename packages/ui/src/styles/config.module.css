@@ -18,7 +18,7 @@
   & footer {
     margin-block: 1rem;
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
 
     & button:first-child {
       margin-inline-end: 1em;
