@@ -1,0 +1,2 @@
+declare const _default: "0x127B81AF011a2DF44F933b2b09c655D59Bb57b3C";
+export default _default;
