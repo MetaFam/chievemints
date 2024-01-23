@@ -1,4 +1,0 @@
-This is a Brave Rewards publisher verification file.
-
-Domain: chiev.es
-Token: 977d0251b6d37692a65669582b398eb106cd4b18ffb1c612bbf583a330bee980
