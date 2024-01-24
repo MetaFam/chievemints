@@ -1,0 +1,41 @@
+._link_1dp5z_1 {
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+}
+
+._footer_1dp5z_7 {
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  place-items: center;
+  position: fixed;
+  bottom: 0;
+  right: 1rem;
+  width: max(100ex, min(50vw, calc(100vw - 1rem)));
+}
+
+._buttons_1dp5z_16 {
+  display: grid;
+  grid-template-columns: repeat(3, 0fr) 1fr;
+  grid-gap: 3rem;
+  gap: 3rem;
+  justify-items: end;
+  width: 100%;
+}
+
+._buttons_1dp5z_16 button {
+    font-size: 1em;
+  }
+
+._main_1dp5z_28 {
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  place-items: center;
+  margin-bottom: 5rem;
+}
+
+._main_1dp5z_28 h1 {
+    text-align: center;
+  }
