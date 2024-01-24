@@ -1,4 +1,5 @@
 import { ExternalProvider } from '@ethersproject/providers'
+import { Chain } from 'viem'
 
 export type Maybe<T> = T | null
 export type Values<T> = T[keyof T]
@@ -12,6 +13,7 @@ export type Optional<T> = T | undefined
 
 export type NetworkInfo = {
   [chainName: string]: {
+    wagmiChain?: Chain
     chainId: number;
     name: string;
     label: string;

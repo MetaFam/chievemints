@@ -81,20 +81,15 @@ const Home = () => {
 
   useEffect(() => {
     if(roContract && bitsLibrary) {
-      roContract.typeSupply()
-      .then((supply: {
-        toBigInt: () => bigint // call-bind?
-      }) => supply.toBigInt())
+      roContract('typeSupply')
       .then(setTypeCount)
-      bitsLibrary.GATING_TYPE()
-      .then((type: { toBigInt: () => bigint }) => type.toBigInt())
+      bitsLibrary('GATING_TYPE')
       .then(setGATING_TYPE)
-      bitsLibrary.DISABLING_TYPE()
-      .then((type: { toBigInt: () => bigint }) => type.toBigInt())
+      bitsLibrary('DISABLING_TYPE')
       .then(setDISABLING_TYPE)
-      bitsLibrary.TYPE_WIDTH()
+      bitsLibrary('TYPE_WIDTH')
       .then(setTYPE_WIDTH)
-      bitsLibrary.TYPE_BOUNDARY()
+      bitsLibrary('TYPE_BOUNDARY')
       .then(setTYPE_BOUNDARY)
     }
   }, [roContract, bitsLibrary])
@@ -113,8 +108,8 @@ const Home = () => {
         await Promise.allSettled(
           tokens.map(async (token, idx) => {
             try {
-              const id: bigint = token.id ?? (
-                (await roContract.tokenByIndex(token.index)).toBigInt()
+              const id: bigint = token.id ? BigInt(token.id) : (
+                await roContract('tokenByIndex', [token.index]) as bigint
               )
 
               const type = (
@@ -160,13 +155,13 @@ const Home = () => {
 
               const responses = await Promise.allSettled([
                 (async () => {
-                  const uri = token.uri ?? await roContract.uri(id)
+                  const uri = token.uri ?? await roContract('uri', [id]) as string
                   if(uri === '') {
                     throw new Error('No URI… Waiting for configuration…')
                   }
                   setToken(idx, { uri })
                   const response = await fetch(
-                    httpURL(uri)!,
+                    httpURL(uri),
                     { signal: controller.current.signal }
                   )
                   if(!response.ok) {
@@ -181,12 +176,12 @@ const Home = () => {
                   }
                 })(),
                 (async () => {
-                  const supply = await roContract.totalSupply(id)
-                  setToken(idx, { total: supply.toBigInt() })
+                  const supply = await roContract('totalSupply', [id]) as bigint
+                  setToken(idx, { total: supply })
                 })(),
                 (async () => {
-                  const max = await roContract.getMax(id)
-                  setToken(idx, { max: max.toBigInt() })
+                  const max = await roContract('getMax', [id]) as bigint
+                  setToken(idx, { max })
                 })(),
               ])
 

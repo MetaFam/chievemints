@@ -1,8 +1,14 @@
+import { useModal } from 'connectkit'
 import {
-  ExternalProvider, Web3Provider, JsonRpcProvider, StaticJsonRpcProvider,
-} from '@ethersproject/providers'
-import { Contract } from '@ethersproject/contracts'
-import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5/react'
+  type PublicClient,
+  type WalletClient,
+  useAccount,
+  useChainId,
+} from 'wagmi'
+import {
+  createPublicClient, createWalletClient, custom, http,
+} from 'viem'
+import 'viem/window'
 import type { Maybe } from '@/lib/types'
 import React, {
   createContext,
@@ -13,20 +19,25 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import providerOptions from '@/lib/walletConnect'
 import { NETWORKS } from '@/lib/networks'
-import { contractNetwork, walletConnectProjectId } from '@/config'
+import { contractNetwork } from '@/config'
+
+export type ContractInterface = (
+  (functionName: string, args?: Array<unknown>) => (
+    Promise<unknown>
+  )
+)
 
 export type Web3ContextType = {
-  userProvider?: Web3Provider
-  ensProvider?: JsonRpcProvider
-  contractProvider?: JsonRpcProvider
-  roContract?: Contract
-  bitsLibrary?: Contract
-  rolesLibrary?: Contract
-  rwContract?: Contract
+  ensClient?: PublicClient
+  contractClient?: PublicClient
+  walletClient?: WalletClient
+  roContract?: ContractInterface
+  bitsLibrary?: ContractInterface
+  rolesLibrary?: ContractInterface
+  rwContract?: ContractInterface
   address?: string
-  chain?: number
+  chainId?: number
   connect: () => Promise<void>
   disconnect: () => void
   connecting: boolean
@@ -58,171 +69,124 @@ export const useWeb3 = (): Web3ContextType => (
   useContext(Web3Context)
 )
 
+type OnConnectCallback = {
+  address?: string
+  connectorId?: string
+}
+
 export const Web3ContextProvider: React.FC<{ children: ReactNode }> = (
   ({ children }) => {
-    const [web3Modal, setWeb3Modal] = (
-      useState(null)
-    )
-    const [userProvider, setUserProvider] = (
-      useState<Web3Provider>()
-    )
-    const [chain, setChain] = useState<number>()
-    const [address, setAddress] = useState<string>()
-    const [connected, setConnected] = useState(false)
     const [contractAddress, setContractAddress] = useState(null)
     const [abi, setABI] = useState(null)
     const [rolesAddress, setRolesAddress] = useState(null)
     const [rolesABI, setRolesABI] = useState(null)
     const [bitsAddress, setBitsAddress] = useState(null)
     const [bitsABI, setBitsABI] = useState(null)
+    const { setOpen } = useModal()
+    const {
+      address,
+      isConnecting: connecting,
+      isConnected: connected,
+    } = useAccount()
+    const chainId = useChainId()
 
-    useEffect(() => {
-      const lib = async () => {
-        if(typeof window !== 'undefined') {
-          const metadata = {
-            name: '’Chievemints',
-            description: 'MetaGame’s NFT ’Chievemints award attestations.',
-            url: 'https://chiev.es',
-            icons: [],
+    const ensClient = useMemo(() => (
+      createPublicClient({
+        chain: NETWORKS.mainnet.wagmiChain,
+        transport: http(),
+      })
+    ), [])
+
+    const contractClient = useMemo(() => (
+      createPublicClient({
+        chain: NETWORKS.contract.wagmiChain,
+        transport: http(),
+      })
+    ), [])
+
+    const walletClient = useMemo(() => (
+      createWalletClient({
+        chain: NETWORKS.contract.wagmiChain,
+        transport: custom(window.ethereum),
+      })
+    ), [])
+
+    const contractReader = useCallback(
+      (address: string, abi: string) => (
+        async (functionName: string, args?: Array<unknown>) => {
+          if(!address) {
+            throw new Error('Contract address not set.')
           }
-
-          setWeb3Modal(
-            createWeb3Modal({
-              projectId: walletConnectProjectId,
-              chains: [NETWORKS[contractNetwork]],
-              ethersConfig: defaultConfig({ metadata }),
+          if(!abi) {
+            throw new Error('Contract ABI not set.')
+          }
+          console.debug('Reading contract…')
+          return (
+            contractClient.readContract({
+              address,
+              abi,
+              functionName,
+              args,
             })
           )
         }
-      }
-
-      lib()
-    }, [])
-
-    const [connecting, setConnecting] = (
-      useState(!!web3Modal?.cachedProvider)
-    )
-
-    const ensProvider = useMemo(
-      () => new StaticJsonRpcProvider(NETWORKS.mainnet.rpcUrl),
-      [],
-    )
-
-    const contractProvider = useMemo(
-      () => (
-        new StaticJsonRpcProvider(NETWORKS.contract.rpcUrl)
       ),
-      [],
+      [contractClient],
     )
 
-    const roContract = useMemo(
-      () => {
-        if(contractAddress && abi) {
-          return (
-            new Contract(contractAddress, abi, contractProvider)
-          )
-        }
-      },
-      [contractProvider, abi, contractAddress],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const roContract = useCallback(
+      contractReader(contractAddress, abi),
+      [contractReader, abi, contractClient],
     )
 
-    const bitsLibrary = useMemo(
-      () => {
-        if(bitsAddress && bitsABI) {
-          return (
-            new Contract(bitsAddress, bitsABI, contractProvider)
-          )
-        }
-      },
-      [contractProvider, bitsABI, bitsAddress],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const bitsLibrary = useCallback(
+      contractReader(bitsAddress, bitsABI),
+      [contractReader, bitsABI, bitsAddress],
     )
 
-    const rolesLibrary = useMemo(
-      () => {
-        if(rolesAddress && rolesABI) {
-          return (
-            new Contract(rolesAddress, rolesABI, contractProvider)
-          )
-        }
-      },
-      [contractProvider, rolesABI, rolesAddress],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const rolesLibrary = useCallback(
+      contractReader(rolesAddress, rolesABI),
+      [contractReader, rolesAddress, rolesABI],
     )
 
-    const rwContract = useMemo(
-      () => {
+    const rwContract = useCallback(
+      async (functionName: string, args?: Array<unknown>) => {
         if(
           contractAddress
           && abi
-          && userProvider
-          && chain === NETWORKS.contract.chainId
+          && chainId === NETWORKS.contract.chainId
         ) {
-          return new Contract(contractAddress, abi, userProvider.getSigner())
-        } else {
-          return undefined
+          console.debug({ walletClient})
+          return walletClient.writeContract({
+            account: address,
+            address: contractAddress,
+            abi,
+            functionName,
+            args,
+          })
         }
       },
-      [userProvider, chain, abi, contractAddress],
+      [
+        contractAddress,
+        abi,
+        chainId,
+        walletClient,
+        address,
+      ],
     )
 
     const disconnect = useCallback(() => {
-      web3Modal?.clearCachedProvider()
-      // clearWalletConnect()
-      setAddress(undefined)
-      setChain(undefined)
-      setUserProvider(undefined)
-      setConnecting(false)
-      setConnected(false)
       setContractAddress(null)
       setABI(null)
-    }, [web3Modal])
-
-    const update = useCallback(
-      async (vider: ExternalProvider) => {
-        const web3Provider = new Web3Provider(vider)
-        await web3Provider.ready
-        setUserProvider(web3Provider)
-
-        setAddress(await (
-          web3Provider.getSigner().getAddress()
-        ))
-
-        setChain(Number((vider as { chainId: string }).chainId))
-      },
-      [],
-    )
+    }, [])
 
     const connect = useCallback(async () => {
       console.debug('Connecting…')
-
-      if(web3Modal == null) {
-        throw new Error(`Web3Modal is ${web3Modal}`)
-      }
-
-      setConnecting(true)
-
-      try {
-        const prov = await web3Modal.connect()
-        await update(prov)
-
-        prov.on('accountsChanged', () => {
-          disconnect()
-        })
-        prov.on('chainChanged', () => {
-          update(prov)
-        })
-      } catch(error) {
-        console.error('`connect` Error', error) // eslint-disable-line no-console
-        disconnect()
-      } finally {
-        setConnecting(false)
-      }
-    }, [disconnect, update, web3Modal])
-
-    useEffect(() => {
-      if(web3Modal?.cachedProvider) {
-        connect()
-      }
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+      setOpen(true)
+    }, [setOpen])
 
     useEffect(() => {
       const libs = async () => {
@@ -242,7 +206,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactNode }> = (
       }
 
       libs()
-    }, [abi, contractAddress, userProvider])
+    }, [abi, contractAddress])
 
     useEffect(() => {
       const libs = async () => {
@@ -266,9 +230,9 @@ export const Web3ContextProvider: React.FC<{ children: ReactNode }> = (
     return (
       <Web3Context.Provider
         value={{
-          userProvider,
-          ensProvider,
-          contractProvider,
+          ensClient,
+          contractClient,
+          walletClient,
           roContract,
           bitsLibrary,
           rolesLibrary,
@@ -278,7 +242,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactNode }> = (
           connecting,
           connected,
           address,
-          chain,
+          chainId,
           contract: {
             address: contractAddress,
             abi,

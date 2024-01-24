@@ -2,7 +2,9 @@ import React, {
   ChangeEvent, FormEvent, ReactNode, useCallback,
   useEffect, useMemo, useState,
 } from 'react'
-import { capitalize, deregexify, extractMessage, httpURL, regexify } from '@/lib/helpers'
+import {
+  deregexify, extractMessage, httpURL, regexify,
+} from '@/lib/helpers'
 import { Maybe, ERC1155Metadata, Optional } from '@/lib/types'
 import { useWeb3 } from '@/lib/hooks'
 import { HomeLink } from '@/components'
@@ -11,10 +13,11 @@ import { Helmet } from 'react-helmet'
 import { ClockLoader, ScaleLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
-import ds from '../styles/disburse.module.css'
+import { normalize } from 'viem/ens'
+import tyl from '../styles/disburse.module.css'
 
 const Address: React.FC<{ name: string }> = ({ name }) => {
-  const { ensProvider } = useWeb3()
+  const { ensClient } = useWeb3()
   const isAddress = useMemo(
     () => /^0x[a-z0-9]{40}$/i.test(name),
     [name],
@@ -24,15 +27,15 @@ const Address: React.FC<{ name: string }> = ({ name }) => {
   )
   useMemo(
     () => {
-      if (!isAddress) {
+      if(!isAddress) {
         const resolve = async () => {
-          const resolved = await ensProvider?.resolveName(name)
+          const resolved = await ensClient.getEnsResolver({ name: normalize(name) })
           setAddress(resolved ?? 'Not Found')
         }
         resolve()
       }
     },
-    [isAddress, ensProvider, name],
+    [isAddress, ensClient, name],
   )
 
   return (
@@ -64,9 +67,9 @@ const Disburse = () => {
   )
   const [error, setError] = useState<string>()
   const [raw, setRaw] = useState('')
-  const [action, setAction] = useState('mint')
+  const [action /* , setAction */] = useState('mint')
   const {
-    ensProvider, address, roContract, rwContract, connect,
+    ensClient, address, roContract, rwContract, connect,
   } = useWeb3()
   const [addresses, setAddresses] = useState<Array<string | ReactNode>>([])
 
@@ -81,7 +84,7 @@ const Disburse = () => {
     }
 
     parse()
-  }, [ensProvider, raw])
+  }, [ensClient, raw])
 
   const name = useMemo(
     () => metadata?.name ?? `#${tokenId}`,
@@ -90,10 +93,10 @@ const Disburse = () => {
 
   useEffect(() => {
     const getBalance = async () => {
-      if (roContract && address && tokenId) {
+      if(roContract && address && tokenId) {
         try {
           setBalance(Number(
-            (await roContract.balanceOf(address, tokenId)).toString()
+            (await roContract('balanceOf', [address, tokenId])).toString()
           ))
         } catch (err) {
           setError((err as Error).message)
@@ -107,10 +110,10 @@ const Disburse = () => {
   useEffect(
     () => {
       const getMetadata = async () => {
-        if (roContract && tokenId) {
+        if(roContract && tokenId) {
           try {
-            const meta = await roContract.uri(tokenId)
-            if (!meta) {
+            const meta = await roContract('uri', [tokenId]) as string
+            if(!meta) {
               setMetadata(null)
             } else {
               const response = await fetch(httpURL(meta)!)
@@ -130,35 +133,31 @@ const Disburse = () => {
   const submit = useCallback(async (evt: FormEvent) => {
     evt.preventDefault()
 
-    if (!rwContract) {
+    if(!rwContract) {
       return toast('Token is not Connected.')
     }
     try {
       const addrs = await Promise.all(
         split(raw)
-          .map(async (name: string) => {
-            const response = await ensProvider?.resolveName(name)
-            if (!response) {
-              throw new Error(`Couldn't Resolve Name: “${name}”`)
-            }
-            return response
-          })
+        .map(async (name: string) => {
+          const response = await ensClient.getEnsResolver({ name: normalize(name) })
+          if(!response) {
+            throw new Error(`Couldn't Resolve Name: “${name}”`)
+          }
+          return response
+        })
       )
       switch (action) {
         case 'mint': {
-          const tx = await rwContract?.['mint(address[],uint256,bytes)'](
-            addrs, tokenId, []
-          )
+          const tx = await rwContract('mint', [addrs, tokenId])
           await tx.wait()
           break
         }
         case 'whitelist': {
           console.debug('whitelist', { addrs })
           addrs.map(async (addr) => {
-            const minterRole = await roContract?.roleIndexForName('Minter')
-            const tx = await rwContract?.['mint(address,uint256,uint256,bytes)'](
-              addr, tokenId, 1, []
-            )
+            const minterRole = await roContract('roleIndexForName', ['Minter']) as string
+            const tx = await rwContract('mint', [addr, minterRole, 1])
           })
           break
         }
@@ -166,12 +165,11 @@ const Disburse = () => {
     } catch (err) {
       toast(extractMessage(err))
     }
-  }, [action, ensProvider, raw, roContract, rwContract, tokenId])
+  }, [action, ensClient, raw, roContract, rwContract, tokenId])
 
-  if (error) {
+  if(error) {
     return (
       <div>
-        {/* <AlertIcon /> */}
         <h2>Error: Loading NFT</h2>
         <p>{error}</p>
       </div>
@@ -179,9 +177,9 @@ const Disburse = () => {
   }
 
   return (
-    <main id={ds.mint}>
+    <main id={tyl.mint}>
       <Helmet>
-        <title>Mint NFT #{regexify(tokenId)                   }</title>
+        <title>Mint NFT #{regexify(tokenId)}</title>
         <meta name="description" content="Mint A ’Chievemint NFT" />
       </Helmet>
 
@@ -189,15 +187,15 @@ const Disburse = () => {
 
       <form onSubmit={submit}>
         {(() => {
-          if (metadata === null) {
+          if(metadata === null) {
             return <p>Token {name} does not exist.</p>
-          } else if (!address) {
+          } else if(!address) {
             return (
               <p>
                 Connect your wallet to distribute “{name}” tokens…
               </p>
             )
-          } else if (balance == null) {
+          } else if(balance == null) {
             return (
               <div>
                 <ClockLoader color="#36d7b7" />
@@ -235,7 +233,7 @@ const Disburse = () => {
             </ol>
           </TabPanel>
         </Tabs>
-        <section className={ds.actions}>
+        <section className={tyl.actions}>
           <label>
             <span>Mint</span>
             <input type="radio" name="op" value="mint" checked/>

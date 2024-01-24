@@ -24,10 +24,10 @@ export const New = () => (
 
 const Content: React.FC = () => {
   const {
-    ensProvider, roContract, rwContract, rolesLibrary,
-    connecting, connect, chain, address,
+    ensClient, roContract, rwContract, rolesLibrary,
+    connecting, address,
   } = useWeb3()
-  const [search, setSearch] = useSearchParams({ tokenId: '' })
+  const [search] = useSearchParams({ tokenId: '' })
   const id = search.get('tokenId')
   const [tokenId, setTokenId] = (
     useState(Array.isArray(id) ? id[0] : id)
@@ -47,18 +47,20 @@ const Content: React.FC = () => {
   useEffect(() => {
     const load = async () => {
       if(roContract) {
-        const numRoles = (await rolesLibrary.roleIndexForName('ReservedLast')) - 1
+        const numRoles = (await rolesLibrary(
+          'roleIndexForName', ['ReservedLast']
+        )) as number - 1
         const roles: Array<string> = await Promise.all(
           Array.from({ length: numRoles }).map(async (_, idx) => (
-            await rolesLibrary.roleNameByIndex(idx + 1)
+            await rolesLibrary('roleNameByIndex', [idx + 1]) as string
           ))
         )
         setRoles(roles)
       }
     }
 
-    // load() // load static list to avoid extraneous permissions
-  }, [roContract])
+    load() // load static list to avoid extraneous permissions
+  }, [roContract, rolesLibrary])
 
   const reserve = useCallback(async (data: Record<string, unknown>) => {
     setWorking(true)
@@ -77,15 +79,14 @@ const Content: React.FC = () => {
       await Promise.all(Object.entries(data).map(
         async ([key, value]: [key: string, value: unknown]) => {
           if(typeof value === 'boolean' && value) {
-            const [, type, role] = key.match(/^(grant|disable)\((.+)\)$/) ?? []
-            const roleId = await rolesLibrary.roleIndexForName(role)
+            const [, type, roleId] = key.match(/^(grant|disable)\((.+)\)$/) ?? []
             switch(type) {
               case 'grant': {
-                grants.push(roleId)
+                grants.push(Number(roleId))
                 break
               }
               case 'disable': {
-                disables.push(roleId)
+                disables.push(Number(roleId))
                 break
               }
               default: {
@@ -104,16 +105,16 @@ const Content: React.FC = () => {
         throw new Error('`maintainer` is not set.')
       }
       if(maintainer.includes('.')) {
-        if(!ensProvider) {
+        if(!ensClient) {
           throw new Error('ENS provider not defined.')
         }
         maintainer = (
-          (await ensProvider.resolveName(maintainer))
+          (await ensClient.getEnsName({ address: maintainer as '0x{string}' }))
           ?? undefined
         )
       }
-      const tx = await rwContract['create(address,uint8[],uint8[])'](
-        maintainer, grants, disables
+      const tx = await rwContract(
+        'create', [maintainer, grants, disables]
       )
       const receipt = await tx.wait()
       const event = receipt.events.find(
@@ -128,11 +129,11 @@ const Content: React.FC = () => {
       setTokenId(id.toHexString())
     } catch(error) {
       toast.error(extractMessage(error))
-      console.error((error as Error).stack)
+      console.error({ error })
     } finally {
       setWorking(false)
     }
-  }, [address, ensProvider, rolesLibrary, rwContract])
+  }, [address, ensClient, rolesLibrary, rwContract])
 
   if(!rwContract || !tokenId || working) {
     return (

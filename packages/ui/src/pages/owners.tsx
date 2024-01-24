@@ -79,7 +79,7 @@ export const Owners = () => {
   }, [decId, startAfter, query, search])
 
   const [title, setTitle] = useState('𝘜𝘯𝘬𝘯𝘰𝘸𝘯')
-  const { ensProvider, roContract } = useWeb3()
+  const { ensClient, roContract } = useWeb3()
   const [error, setError] = useState(
     (query == null ? (
       'Retrieving owners requires access to a subgraph'
@@ -96,9 +96,9 @@ export const Owners = () => {
   useEffect(() => {
     const lookup = async () => {
       if(tokenId) {
-        const uri = await roContract?.uri(tokenId)
+        const uri = await roContract('uri', [tokenId]) as string
         if(!uri) return
-        const response = await fetch(httpURL(uri)!)
+        const response = await fetch(httpURL(uri))
         const data = await response.json()
         setTitle(data.name)
       }
@@ -119,7 +119,9 @@ export const Owners = () => {
                 async (oship: Ownership) => {
                   let { owner } = oship
                   const ens = (
-                    await ensProvider?.lookupAddress(owner)
+                    await ensClient.getEnsName(
+                      { address: owner as '0x{string}'}
+                    )
                   )
                   if(ens) {
                     owner = ens 
@@ -134,7 +136,7 @@ export const Owners = () => {
       }
     }
     process()
-  }, [data, ensProvider])
+  }, [data, ensClient])
 
   if(loading || ownerships == null) return <>Loading…</>
 

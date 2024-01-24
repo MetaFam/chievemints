@@ -1,5 +1,9 @@
 import { contractNetwork } from '@/config'
 import type { NetworkInfo } from '@/types'
+import {
+  type Chain, mainnet, gnosis, localhost,
+  polygon, polygonMumbai, optimism,
+} from 'viem/chains'
 
 declare const MAINNET_RPC: string
 declare const GNOSIS_RPC: string
@@ -15,6 +19,7 @@ const networks = [
 
 export const NETWORKS: NetworkInfo = {
   mainnet: {
+    wagmiChain: mainnet,
     chainId: 1,
     name: 'Ethereum Mainnet',
     label: 'Ethereum',
@@ -27,6 +32,7 @@ export const NETWORKS: NetworkInfo = {
     )),
   },
   gnosis: {
+    wagmiChain: gnosis,
     chainId: 0x64,
     name: 'Gnosis Chain',
     label: 'Gnosis',
@@ -39,6 +45,7 @@ export const NETWORKS: NetworkInfo = {
     )),
   },
   polygon: {
+    wagmiChain: polygon,
     chainId: 137,
     name: 'Polygon',
     label: 'Polygon',
@@ -51,6 +58,7 @@ export const NETWORKS: NetworkInfo = {
     )),
   },
   mumbai: {
+    wagmiChain: polygonMumbai,
     chainId: 80001,
     name: 'Polygon’s Mumbai Testnet',
     label: 'Mumbai',
@@ -64,6 +72,7 @@ export const NETWORKS: NetworkInfo = {
     )),
   },
   optimisticEthereum: {
+    wagmiChain: optimism,
     chainId: 10,
     name: 'Optimism',
     label: 'Optimism',
@@ -76,6 +85,7 @@ export const NETWORKS: NetworkInfo = {
     )),
   },
   localhost: {
+    wagmiChain: localhost,
     chainId: 0x7a69,
     name: 'Ganache',
     label: 'Ganache',

@@ -1,4 +1,5 @@
-import { capitalize, switchTo } from '@/lib/helpers'
+import { PacmanLoader } from 'react-spinners'
+import { capitalize, useSwitchTo } from '@/lib/helpers'
 import { NETWORKS } from '@/lib/networks'
 import React, {
   ButtonHTMLAttributes,
@@ -6,8 +7,7 @@ import React, {
 } from 'react'
 import { useWeb3 } from '@/lib/hooks'
 import { useConfig } from '@/config'
-import { PacmanLoader } from 'react-spinners'
-import '../styles/SubmitButton.css'
+import tyl from '../styles/SubmitButton.module.css'
 
 export const SubmitButton: React.FC<{
   purpose?: string
@@ -16,6 +16,7 @@ export const SubmitButton: React.FC<{
   requireStorage?: boolean
   short?: boolean
   openSettings?: () => void
+  className?: string
 } & ButtonHTMLAttributes<HTMLButtonElement>> = ({
   purpose = 'create',
   processing = false,
@@ -24,14 +25,15 @@ export const SubmitButton: React.FC<{
   requireStorage = true,
   label = `${capitalize(purpose)} NFT`,
   openSettings,
+  className = null,
   ...props
 }) => {
   const {
-    chain, userProvider, connect, rwContract,
+    address, chainId, connect, rwContract,
   } = useWeb3()
   const offChain = useMemo(
-    () => chain !== NETWORKS.contract.chainId,
-    [chain],
+    () => chainId !== NETWORKS.contract.chainId,
+    [chainId],
   )
   const [working, setWorking] = useState(processing)
   const desiredNetwork = (
@@ -40,17 +42,20 @@ export const SubmitButton: React.FC<{
   const {
     storage,
   } = useConfig({ requireStorage })
+  const switchTo = useSwitchTo()
 
   const onClick = useCallback(async (evt: MouseEvent<HTMLButtonElement>) => {
     try {
       setWorking(true)
 
-      if(!userProvider) {
+      console.debug({ rwContract })
+
+      if(!address) {
         evt.preventDefault()
         connect()
       } else if(offChain) {
         evt.preventDefault()
-        switchTo({ chain: NETWORKS.contract.chainId, provider: userProvider })
+        switchTo(NETWORKS.contract.chainId)
       } else if(!storage && requireStorage) {
         evt.preventDefault()
         openSettings()
@@ -60,11 +65,22 @@ export const SubmitButton: React.FC<{
     } finally {
       setWorking(false)
     }
-  }, [connect, offChain, openSettings, requireStorage, storage, userProvider])
+  }, [
+    address,
+    connect,
+    offChain,
+    openSettings,
+    requireStorage,
+    rwContract,
+    storage,
+    switchTo,
+  ])
 
   return <>
     <button
-      className="net-submit"
+      className={
+        [className, tyl.button].filter((e) => !!e).join(' ')
+      }
       {...{ onClick, ...props }}
     >
       {(() => {
@@ -75,7 +91,7 @@ export const SubmitButton: React.FC<{
               <p>{capitalize(purpose).replace(/e$/, '')}ing…</p>
             </>
           )
-        } else if(!userProvider) {
+        } else if(!address) {
           return `Connect To ${capitalize(purpose)}`
         } else if(offChain) {
           return `Connect To ${

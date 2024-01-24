@@ -1,5 +1,5 @@
 import type {
-  CodedError, FileListish, Limits, Maybe,
+  CodedError, Limits, Maybe,
   MetaMaskError, NamedString, NestedError,
   SpanList,
 } from '@/lib/types'
@@ -8,7 +8,8 @@ import { NETWORKS } from '@/lib/networks'
 import { ipfsLinkPattern } from '@/config'
 import JSON5 from 'json5'
 import { NFTStorage } from 'nft.storage'
-import { Web3Provider } from '@ethersproject/providers'
+import { useWeb3 } from './hooks'
+import { TransactionExecutionError } from 'viem'
 
 export function httpURL(uri?: null): undefined
 export function httpURL(uri: string): string
@@ -76,31 +77,34 @@ export const isSet = (
   }
 )
 
-export const switchTo = async (
-  { chain, provider }: { chain: number, provider: Web3Provider }
-) => {
-  const chainId = `0x${chain.toString(16)}`
-  try {
-    await provider.request?.({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId }],
-    })
-  } catch (switchError) {
-    if ((switchError as CodedError).code === 4902) {
-      const chainName = (
-        Object.values(NETWORKS).find(
-          ({ chainId }: { chainId: number }) => (
-            chain === chainId
-          )
-        )?.name
-      )
-      throw new Error(
-        `The network “${chainName ?? '𝓤𝓷𝓴𝓷𝓸𝔀𝓷'}”`
-        + ' is not yet available in your MetaMask.\n\n'
-        + ' Please add it.'
-      )
-    } else {
-      throw switchError
+export const useSwitchTo = () => {
+  const { walletClient } = useWeb3()
+
+  return async (chain: number) => {
+    const chainId = `0x${chain.toString(16)}`
+    console.debug({ chain, chainId })
+    try {
+      walletClient.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId }],
+      })
+    } catch (switchError) {
+      if ((switchError as CodedError).code === 4902) {
+        const chainName = (
+          Object.values(NETWORKS).find(
+            ({ chainId }: { chainId: number }) => (
+              chain === chainId
+            )
+          )?.name
+        )
+        throw new Error(
+          `The network “${chainName ?? '𝓤𝓷𝓴𝓷𝓸𝔀𝓷'}”`
+          + ' is not yet available in your MetaMask.\n\n'
+          + ' Please add it.'
+        )
+      } else {
+        throw switchError
+      }
     }
   }
 }
@@ -223,6 +227,7 @@ export const deregexify = (str?: string) => {
 export const extractMessage = (error: unknown): string => (
   (
     (error as { reason: string }).reason
+    ?? (error as TransactionExecutionError)?.details
     ?? (error as NestedError)?.error?.message
     ?? (error as MetaMaskError)?.data?.message
     ?? (error as Error)?.message

@@ -1,20 +1,23 @@
 
 import { Helmet } from 'react-helmet'
-import { Web3ContextProvider } from '@/lib/hooks'
 import {
   ApolloClient,
   InMemoryCache,
   ApolloProvider,
 } from '@apollo/client'
-import { nftGraph } from '@/config'
 import {
   HashRouter as Router,
   Routes,
   Route,
 } from 'react-router-dom'
 import React from 'react'
-import { Spinner } from './components/Spinner'
+import { WagmiConfig } from 'wagmi'
+import { ConnectKitProvider } from 'connectkit'
 import { ToastContainer } from 'react-toastify'
+import { nftGraph } from '@/config'
+import { Web3ContextProvider } from '@/lib/hooks'
+import { config as wagmiConfig } from './lib/ConnectKit'
+import { Spinner } from './components/Spinner'
 
 const Home = React.lazy(() => import('./pages/home'))
 const New = React.lazy(() => import('./pages/new'))
@@ -39,21 +42,25 @@ const App: React.FC = () => (
       />
     </Helmet>
     <ApolloProvider {...{ client }}>
-      <Web3ContextProvider>
-        <React.Suspense fallback={<Spinner/>}>
-          <Router>
-            <Routes>
-              <Route path="/new" element={<New/>} />
-              <Route path="/view/:nftId" element={<View/>} />
-              <Route path="/self-mint/:nftId" element={<SelfMint/>} />
-              <Route path="/disburse/:nftId" element={<Disburse/>} />
-              <Route path="/owners/:nftId" element={<Owners/>} />
-              <Route path="/edit/:nftId" element={<Edit/>} />
-              <Route path="/" element={<Home/>} />
-            </Routes>
-          </Router>
-        </React.Suspense>
-      </Web3ContextProvider>
+      <WagmiConfig config={wagmiConfig}>
+        <ConnectKitProvider>
+            <Web3ContextProvider>
+              <React.Suspense fallback={<Spinner/>}>
+                <Router>
+                  <Routes>
+                    <Route path="/new" element={<New/>} />
+                    <Route path="/view/:nftId" element={<View/>} />
+                    <Route path="/self-mint/:nftId" element={<SelfMint/>} />
+                    <Route path="/disburse/:nftId" element={<Disburse/>} />
+                    <Route path="/owners/:nftId" element={<Owners/>} />
+                    <Route path="/edit/:nftId" element={<Edit/>} />
+                    <Route path="/" element={<Home/>} />
+                  </Routes>
+                </Router>
+              </React.Suspense>
+            </Web3ContextProvider>
+        </ConnectKitProvider>
+      </WagmiConfig>
     </ApolloProvider>
     <ToastContainer
       position="bottom-center"
