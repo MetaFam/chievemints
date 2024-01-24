@@ -59,3 +59,15 @@ body {
     border-radius: 1rem 1rem 0 0;
   }
 }
+
+.bigNBold, .biggerNBold {
+  font-weight: bold;
+}
+
+.bigNBold {
+  font-size: 1.1em;
+}
+
+.biggerNBold {
+  font-size: 2em;
+}

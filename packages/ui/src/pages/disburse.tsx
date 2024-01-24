@@ -147,7 +147,7 @@ const Disburse = () => {
           return response
         })
       )
-      switch (action) {
+      switch(action) {
         case 'mint': {
           const hash = await rwContract(
             'mint', [addrs, tokenId]
@@ -158,8 +158,10 @@ const Disburse = () => {
         case 'whitelist': {
           console.debug('whitelist', { addrs })
           addrs.map(async (addr) => {
-            const minterRole = await roContract('roleIndexForName', ['Minter']) as string
-            const hash = await rwContract('mint', [addr, minterRole, 1])
+            const minterRole = await roContract(
+              'roleIndexForName', ['Minter']
+            ) as string
+            await rwContract('mint', [addr, minterRole, 1])
           })
           break
         }

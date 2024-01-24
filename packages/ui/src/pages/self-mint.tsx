@@ -24,7 +24,7 @@ export const SelfMint: React.FC<{ tokenId: string }> = ({ tokenId }) => {
     } finally {
       setProcessing(false)
     }
-  }, [address, rwContract, tokenId])
+  }, [address, contractClient, rwContract, tokenId])
 
   return (
     <main id="self-mint">

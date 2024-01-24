@@ -1,7 +1,7 @@
 :root {
 }
 
-#style {
+#header {
   height: max(20vh, 12rem);
   max-width: 100%;
   aspect-ratio: 12 / 5;

@@ -12,12 +12,14 @@ import {
 } from '@/components'
 import { useWeb3 } from '@/lib/hooks'
 import { Helmet } from 'react-helmet'
+import { ConnectKitButton } from 'connectkit'
 import {
   useSearchParams, useNavigate, createSearchParams,
 } from 'react-router-dom'
 import JSON5 from 'json5'
+import Tippy from '@tippyjs/react'
 import { defaults } from '@/config'
-import '../styles/home.css'
+import tyl from '../styles/home.module.css'
 
 const Home = () => {
   const [tokens, setTokens] = useState<Array<TokenState | Error>>([])
@@ -267,13 +269,13 @@ const Home = () => {
         <title>𝔐𝔢𝔱𝔞𝔊𝔞𝔪𝔢’𝔰 ’𝘾𝙝𝙞𝙚𝙫𝙚𝙢𝙞𝙣𝙩𝙨</title>
         <meta 
           name="description"
-          content="MetaGame’s ’Chievemint NFTs"
+          content="MetaGame’s ’Chievemints NFTs"
         />
       </Helmet>
 
       <Header/>
 
-      <main>
+      <main className={tyl.main}>
         <TokenFilterForm
           {...{
             limit, setLimit,
@@ -284,34 +286,43 @@ const Home = () => {
         />
         <TokensTable {...{ tokens }}/>
       </main>
-      <footer>
-        <button
-          onClick={() => {
-            if(visibleList.length > 0) {
-              const potentials = visibleList.map(
-                (entry) => ((entry as Limits)?.high ?? entry) as number
-              )
-              const max = Math.max(...potentials)
-              setVisibleList((vis) => (
-                [...vis, { low: max, high: max + 10 }]
-              ))
-            } else {
-              setLimit((lim) => lim + 10)
-            }
-          }}
-        >
-          <span className="bigNBold">+</span>10
-        </button>
-        <button
-          onClick={() => setOffset((off) => off + limit)}
-        >
-          <span className="biggerNBold">↓</span>{limit}
-        </button>
-        <button
-          onClick={() => setOffset((off) => off - limit)}
-        >
-          <span className="biggerNBold">↑</span>{limit}
-        </button>
+      <footer className={tyl.footer}>
+        <section className={tyl.buttons}>
+          <Tippy content="Add 10 More ’Chieves">
+            <button
+              onClick={() => {
+                if(visibleList.length > 0) {
+                  const potentials = visibleList.map(
+                    (entry) => ((entry as Limits)?.high ?? entry) as number
+                  )
+                  const max = Math.max(...potentials)
+                  setVisibleList((vis) => (
+                    [...vis, { low: max, high: max + 10 }]
+                  ))
+                } else {
+                  setLimit((lim) => lim + 10)
+                }
+              }}
+            >
+              <span className="bigNBold">+</span>10
+            </button>
+          </Tippy>
+          <Tippy content={`Scroll Down ${limit} ’Chieves`}>
+            <button
+              onClick={() => setOffset((off) => off + limit)}
+            >
+              <span className="biggerNBold">⟱</span>{limit}
+            </button>
+          </Tippy>
+          <Tippy content={`Scroll Up ${limit} ’Chieves`}>
+            <button
+              onClick={() => setOffset((off) => off - limit)}
+            >
+              <span className="biggerNBold">⟰</span>{limit}
+            </button>
+          </Tippy>
+          <ConnectKitButton/>
+        </section>
       </footer>
     </>
   )
