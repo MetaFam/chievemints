@@ -6,6 +6,7 @@ import {
   useChainId,
 } from 'wagmi'
 import {
+  Abi,
   createPublicClient, createWalletClient, custom, http,
 } from 'viem'
 import 'viem/window'
@@ -69,11 +70,6 @@ export const useWeb3 = (): Web3ContextType => (
   useContext(Web3Context)
 )
 
-type OnConnectCallback = {
-  address?: string
-  connectorId?: string
-}
-
 export const Web3ContextProvider: React.FC<{ children: ReactNode }> = (
   ({ children }) => {
     const [contractAddress, setContractAddress] = useState(null)
@@ -112,7 +108,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactNode }> = (
     ), [])
 
     const contractReader = useCallback(
-      (address: string, abi: string) => (
+      (address: string, abi: Abi) => (
         async (functionName: string, args?: Array<unknown>) => {
           if(!address) {
             throw new Error('Contract address not set.')
@@ -123,7 +119,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactNode }> = (
           console.debug('Reading contract…')
           return (
             contractClient.readContract({
-              address,
+              address: address as '0x{string}',
               abi,
               functionName,
               args,
@@ -161,8 +157,9 @@ export const Web3ContextProvider: React.FC<{ children: ReactNode }> = (
         ) {
           console.debug({ walletClient})
           return walletClient.writeContract({
-            account: address,
-            address: contractAddress,
+            account: address as '0x{string}',
+            address: contractAddress as '0x{string}',
+            chain: NETWORKS[chainId].wagmiChain,
             abi,
             functionName,
             args,

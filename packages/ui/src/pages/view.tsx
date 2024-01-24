@@ -11,7 +11,7 @@ import type { ERC1155Metadata } from '@/lib/types'
 import { HomeLink, ThreeDScene } from '@/components'
 import { useWeb3 } from '@/lib/hooks'
 import { FadeLoader } from 'react-spinners'
-import vs from '../styles/view.module.css'
+import tyl from '../styles/view.module.css'
 
 export const View: React.FC<{ tokenId: string, header?: boolean }> = (
   ({ tokenId, header = true }) => {
@@ -26,10 +26,10 @@ export const View: React.FC<{ tokenId: string, header?: boolean }> = (
             try {
               let realId = BigInt(tokenId)
               if(realId < 2**32) {
-                realId = await roContract.tokenByIndex(realId)
+                realId = await roContract('tokenByIndex', [realId]) as bigint
               }
 
-              const metadataURI = await roContract.uri(realId)
+              const metadataURI = await roContract('uri', [realId]) as string
               const metadataURL = httpURL(metadataURI)
               if(!metadataURL) {
                 throw new Error(
@@ -74,7 +74,7 @@ export const View: React.FC<{ tokenId: string, header?: boolean }> = (
     } = metadata
 
     return (
-      <div id={vs.style}>
+      <div id={tyl.style}>
         {header && (
           <Helmet>
             <title>{name} (#{regexify(tokenId)})</title>
@@ -93,13 +93,13 @@ export const View: React.FC<{ tokenId: string, header?: boolean }> = (
             <object
               data={httpURL(image as string) ?? undefined}
               title={name}
-              className={vs.image}
+              className={tyl.image}
               style={{ backgroundColor: `#${bg}` }}
             />
           )}
           {description && (
             <Markdown
-              className={vs.markdown}
+              className={tyl.markdown}
               remarkPlugins={[remarkGfm]}
               linkTarget="_blank"
             >
@@ -114,7 +114,7 @@ export const View: React.FC<{ tokenId: string, header?: boolean }> = (
                 return (
                   <video
                     controls autoPlay loop muted
-                    className={vs.video}
+                    className={tyl.video}
                   >
                     <source src={url}/>
                   </video>
@@ -123,7 +123,7 @@ export const View: React.FC<{ tokenId: string, header?: boolean }> = (
                 return (
                   <ThreeDScene
                     model={url}
-                    className={vs.model}                            
+                    className={tyl.model}
                     {...{ bg }}
                   />
                 )
@@ -132,7 +132,7 @@ export const View: React.FC<{ tokenId: string, header?: boolean }> = (
                   <object
                     data={url}
                     title={name}
-                    className={vs.object}
+                    className={tyl.object}
                   />
                 )
               }

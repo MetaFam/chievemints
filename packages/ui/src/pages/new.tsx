@@ -25,7 +25,7 @@ export const New = () => (
 const Content: React.FC = () => {
   const {
     ensClient, roContract, rwContract, rolesLibrary,
-    connecting, address,
+    connecting, address, contractClient,
   } = useWeb3()
   const [search] = useSearchParams({ tokenId: '' })
   const id = search.get('tokenId')
@@ -113,10 +113,10 @@ const Content: React.FC = () => {
           ?? undefined
         )
       }
-      const tx = await rwContract(
+      const hash = await rwContract(
         'create', [maintainer, grants, disables]
-      )
-      const receipt = await tx.wait()
+      ) as '0x{string}'
+      const receipt = await contractClient.waitForTransactionReceipt({ hash })
       const event = receipt.events.find(
         (evt: Event) => evt.event === 'Created'
       )

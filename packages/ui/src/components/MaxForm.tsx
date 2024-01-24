@@ -21,15 +21,15 @@ export const MaxForm = (
 ) => {
   const [max, setMax] = useState<Maybe<string>>(null)
   const [processing, setProcessing] = useState(false)
-  const { roContract, rwContract } = useWeb3()
+  const { roContract, rwContract, contractClient } = useWeb3()
 
   useEffect(() => {
     const load = async () => {
       if(roContract && tokenId) {
         if(perUser){
-          setMax(await roContract.getPerUserMax(BigInt(tokenId)))
+          setMax(await roContract('getPerUserMax', [BigInt(tokenId)]) as string)
         }else{
-          setMax(await roContract.getMax(BigInt(tokenId)))
+          setMax(await roContract('getMax', [BigInt(tokenId)]) as string)
         }
       }
     }
@@ -39,24 +39,28 @@ export const MaxForm = (
   const save = useCallback(async (evt: FormEvent) => {
     evt.preventDefault()
 
-    if (!rwContract) {
+    if(!rwContract) {
       throw new Error('`rwContract` is not defined')
     }
     try {
       setProcessing(true)
-      let tx
-      if (perUser){
-        tx = await rwContract.setPerUserMax(tokenId, max)
+      let hash
+      if(perUser){
+        hash = await rwContract(
+          'setPerUserMax', [tokenId, max]
+        ) as '0x{string}'
       } else {
-        tx = await rwContract.setMax(tokenId, max)
+        hash = await rwContract(
+          'setMax', [tokenId, max]
+        ) as '0x{string}'
       }
-      await tx.wait()
+      await contractClient.waitForTransactionReceipt({ hash })
     } catch(error) {
       toast(extractMessage(error))
     } finally {
       setProcessing(false)
     }
-  }, [max, perUser, rwContract, tokenId])
+  }, [contractClient, max, perUser, rwContract, tokenId])
 
   return (
     <form onSubmit={save} {...props}>

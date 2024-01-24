@@ -25,7 +25,7 @@ export const Edit = () => {
     const getMetadata = async () => {
       if(roContract && tokenId) {
         try {
-          const metaURI = await roContract.uri(tokenId)
+          const metaURI = await roContract('uri', [tokenId]) as string
           const url = httpURL(metaURI)
           if(!metaURI || metaURI === '') {
             setMetadata({})

@@ -69,7 +69,7 @@ const Disburse = () => {
   const [raw, setRaw] = useState('')
   const [action /* , setAction */] = useState('mint')
   const {
-    ensClient, address, roContract, rwContract, connect,
+    ensClient, address, roContract, rwContract, connect, contractClient,
   } = useWeb3()
   const [addresses, setAddresses] = useState<Array<string | ReactNode>>([])
 
@@ -149,15 +149,17 @@ const Disburse = () => {
       )
       switch (action) {
         case 'mint': {
-          const tx = await rwContract('mint', [addrs, tokenId])
-          await tx.wait()
+          const hash = await rwContract(
+            'mint', [addrs, tokenId]
+          ) as '0x{string}'
+          await contractClient.waitForTransactionReceipt({ hash })
           break
         }
         case 'whitelist': {
           console.debug('whitelist', { addrs })
           addrs.map(async (addr) => {
             const minterRole = await roContract('roleIndexForName', ['Minter']) as string
-            const tx = await rwContract('mint', [addr, minterRole, 1])
+            const hash = await rwContract('mint', [addr, minterRole, 1])
           })
           break
         }

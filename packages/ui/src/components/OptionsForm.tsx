@@ -33,7 +33,7 @@ export const OptionsForm: React.FC<{
     const FIELD_FORM = 0
     const URI_FORM = 1
     const JSON5_FORM = 2
-    const { rwContract } = useWeb3()
+    const { rwContract, contractClient } = useWeb3()
     const navigate = useNavigate()
     const {
       register, handleSubmit, watch, setValue: setValue,
@@ -140,10 +140,8 @@ export const OptionsForm: React.FC<{
           throw new Error('metadata is unset.')
         }
         try {
-          const tx = await rwContract.setURI(
-            BigInt(tokenId), metadata
-          )
-          await tx.wait(2)
+          const hash = await rwContract('setURI', [BigInt(tokenId), metadata]) as '0x{string}'
+          await contractClient.waitForTransactionReceipt({ hash })
 
           if (metadata !== '') {
             navigate(`/view/${regexify(tokenId)}`)
