@@ -15,6 +15,7 @@ import { toast } from 'react-toastify'
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
 import { normalize } from 'viem/ens'
 import tyl from '../styles/disburse.module.css'
+import Tippy from '@tippyjs/react'
 
 const Address: React.FC<{ name: string }> = ({ name }) => {
   const { ensClient } = useWeb3()
@@ -29,7 +30,7 @@ const Address: React.FC<{ name: string }> = ({ name }) => {
     () => {
       if(!isAddress) {
         const resolve = async () => {
-          const resolved = await ensClient.getEnsResolver({ name: normalize(name) })
+          const resolved = await ensClient.getEnsAddress({ name: normalize(name) })
           setAddress(resolved ?? 'Not Found')
         }
         resolve()
@@ -140,19 +141,24 @@ const Disburse = () => {
       const addrs = await Promise.all(
         split(raw)
         .map(async (name: string) => {
-          const response = await ensClient.getEnsResolver({ name: normalize(name) })
-          if(!response) {
-            throw new Error(`Couldn't Resolve Name: “${name}”`)
+          let addr = name.trim()
+          if(addr.includes('.')) {
+            addr = await ensClient.getEnsAddress({ name: normalize(name) })
+            if(!addr) {
+              throw new Error(`Couldn't Resolve Name: “${name}”`)
+            }
           }
-          return response
+          return addr
         })
       )
+      console.debug({ addrs })
       switch(action) {
         case 'mint': {
           const hash = await rwContract(
-            'mint', [addrs, tokenId]
+            'mint', [addrs, tokenId, '']
           ) as '0x{string}'
           await contractClient.waitForTransactionReceipt({ hash })
+          toast(`Minted ${addrs.length} token${addrs.length === 1 ? '' : 's'}.`)
           break
         }
         case 'whitelist': {
@@ -168,8 +174,11 @@ const Disburse = () => {
       }
     } catch (err) {
       toast(extractMessage(err))
+      console.error({ err })
     }
-  }, [action, ensClient, raw, roContract, rwContract, tokenId])
+  }, [
+    action, contractClient, ensClient, raw, roContract, rwContract, tokenId
+  ])
 
   if(error) {
     return (
@@ -207,7 +216,11 @@ const Disburse = () => {
               </div>
             )
           } else {
-            return <h1>Mint up to {balance} “{name}” tokens:</h1>
+            return (
+              <Tippy content={`As ${address}`}>
+                <h1>Mint up to {balance} “{name}” tokens:</h1>
+              </Tippy>
+            )
           }
         })()}
         <Tabs>
@@ -240,7 +253,7 @@ const Disburse = () => {
         <section className={tyl.actions}>
           <label>
             <span>Mint</span>
-            <input type="radio" name="op" value="mint" checked/>
+            <input type="radio" name="op" value="mint" defaultChecked/>
           </label>
           <label>
             <span className="strike">Whitelist</span>

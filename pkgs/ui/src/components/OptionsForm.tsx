@@ -55,26 +55,6 @@ export const OptionsForm: React.FC<{
     const buildMeta = useCallback(async ({
       data, ipfs = true,
     }: { data: FormValues, ipfs?: boolean }) => {
-      const wrapIPFS = async (filesOrURL: unknown) => {
-        const isFile = filesOrURL instanceof File
-        const isString = typeof filesOrURL === 'string'
-        if (isFile || isString) {
-          if (ipfs) {
-            return await ipfsify({ filesOrURL, storage })
-          } else {
-            return (
-              isFile ? (
-                URL.createObjectURL(filesOrURL)
-              ) : (
-                filesOrURL
-              )
-            )
-          }
-        } else {
-          throw new Error(`Unknown Media Type: ${typeof image}`)
-        }
-      }
-
       const {
         name, description, homepage, color,
         image, animation, attributes,
@@ -94,11 +74,11 @@ export const OptionsForm: React.FC<{
       }
 
       if (image) {
-        metadata.image = await wrapIPFS(image)
+        metadata.image = image
       }
 
       if (animation) {
-        metadata.animation_url = await wrapIPFS(animation)
+        metadata.animation_url = animation
       }
 
       if (color?.startsWith('#')) {
@@ -308,6 +288,7 @@ export const OptionsForm: React.FC<{
         )}
         <form onSubmit={handleSubmit(submit)}>
           <SubmitButton
+            requireStorage={false}
             className="full"
             {...{ purpose, processing, openSettings }}
           />
@@ -332,7 +313,7 @@ export const OptionsForm: React.FC<{
             )}
           </Tabs>
           <SubmitButton
-            requireStorage={true}
+            requireStorage={false}
             className="full"
             {...{ purpose, processing, openSettings }}
           />

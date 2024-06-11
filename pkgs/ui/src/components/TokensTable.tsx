@@ -231,6 +231,13 @@ const Actions:React.FC<Token> = ({ token }) => {
             </Link>
           </Tippy>
         </li>
+        <li className="permissions">
+          <Tippy content="Adjust NFT Permissions">
+            <Link to={`/permissions/${id}`} className="content">
+              🔒
+            </Link>
+          </Tippy>
+        </li>
       </ul>
     </nav>
   )

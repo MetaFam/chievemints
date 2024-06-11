@@ -70,10 +70,15 @@ if(!apiKey[defaultNetwork]) {
   )
 }
 
+type EtherscannedHardhatConfig = HardhatUserConfig & {
+  etherscan: { apiKey: Record<string, string> }
+  typechain: { target: string, outDir: string }
+}
+
 const gasMultiplier = 1.5
 const infuraId = process.env.INFURA_ID ?? ''
 const alchemyId = process.env.ALCHEMY_ID ?? ''
-const config: HardhatUserConfig = {
+const config: EtherscannedHardhatConfig = {
   defaultNetwork,
 
   paths: {
@@ -300,12 +305,39 @@ task('grant', 'Grant a role')
 
   const roleId = await rolesLibrary.roleIndexForName(role)
   if(roleId === 0) throw new Error(`Can’t find “${role}” (must be capitalized).`)
-  let tx 
+  let tx
   if(token) {
     tx = await contract['grantRole(uint8,address,uint256,bool)'](roleId, user, token, !!args.singleUse)
   } else {
     tx = await contract['grantRole(uint8,address,bool)'](roleId, user, !!args.singleUse)
   }
+  const gas = {
+    limit: tx.gasLimit.toBigInt() as bigint,
+    price: tx.gasPrice.toBigInt() as bigint,
+  }
+  console.log(` ⛽ ${Number((gas.limit * gas.price) / 10n**10n) / 10**8}`)
+  console.info(` 🕋 Tx: ${tx.hash}`)
+})
+
+task('disable', 'Disable a role')
+.addParam('role', 'Role to grant')
+.addParam('index', 'Index of the token to modify')
+.setAction(async (args, { ethers }) => {
+  const { contract, name: contractName } = (
+    load({ filenameBase: 'Bulk*', ethers, config })
+  )
+  let { role, index } = args
+  console.log(
+    ` 🍍 Disabling ${chalk.hex('#E1A47B')(role)} role`
+    + ` on ${chalk.hex('#E16464')(contractName)}`
+    + ` for token index #${chalk.hex('#E11F83')(index)}`
+  )
+  const { contract: rolesLibrary } = (
+    load({ filenameBase: 'Roles*', ethers, config })
+  )
+  const roleId = await rolesLibrary.roleIndexForName(role)
+  if(roleId === 0) throw new Error(`Can’t find “${role}” (must be capitalized).`)
+  let tx = await contract.disableRole(roleId, index)
   const gas = {
     limit: tx.gasLimit.toBigInt() as bigint,
     price: tx.gasPrice.toBigInt() as bigint,

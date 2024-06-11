@@ -39,9 +39,7 @@ export const SubmitButton: React.FC<{
   const desiredNetwork = (
     offChain ? NETWORKS.contract.name : null
   )
-  const {
-    storage,
-  } = useConfig({ requireStorage })
+  const { storage } = useConfig({ requireStorage })
   const switchTo = useSwitchTo()
 
   const onClick = useCallback(async (evt: MouseEvent<HTMLButtonElement>) => {

@@ -15,14 +15,17 @@
     "webpack:watch": "webpack --watch",
     "webpack:serve": "webpack serve",
     "webpack:analyze": "yarn webpack --profile --json > bundle-stats.json && yarn webpack-bundle-analyzer --port 9898 bundle-stats.json dist/",
-    "gh:publish": "gh-pages --dist dist/ --dotfiles --message 'Updatin’ GitHub Pages'"
+    "gh:publish": "gh-pages --dist dist/ --dotfiles --message 'Updatin’ GitHub Pages'",
+    "gh:publish:op": "gh-pages --dist dist/ --dotfiles --remote op-gh --message 'Updatin’ Optimistic GitHub Pages'"
   },
   "dependencies": {
+    "@biconomy/account": "^4.4.6",
     "@react-three/fiber": "^8.13.0",
+    "@tanstack/react-query": "^5.40.1",
     "@tippyjs/react": "^4.2.6",
     "@types/three": "^0.152.1",
     "@walletconnect/web3-provider": "^1.8.0",
-    "connectkit": "^1.6.0",
+    "connectkit": "^1.8.0",
     "dotenv": "^16.0.0",
     "graphql": "^16.5.0",
     "ipfs-http-client": "^57.0.3",
@@ -41,8 +44,8 @@
     "remark-gfm": "^3.0.1",
     "three": "^0.153.0",
     "util": "^0.12.5",
-    "viem": "^1.21.4",
-    "wagmi": "^1.4.13"
+    "viem": "^2.13.8",
+    "wagmi": "^2.9.11"
   },
   "devDependencies": {
     "@babel/core": "^7.18.10",

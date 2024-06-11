@@ -1,0 +1,10 @@
+#free {
+  display: grid;
+  place-items: center;
+
+  & button {
+    border-radius: 0.5rem;
+    font-size: 200%;
+    margin-block-start: 3rem;
+  }
+}

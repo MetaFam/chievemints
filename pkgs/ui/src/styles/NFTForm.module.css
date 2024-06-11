@@ -1,10 +1,6 @@
 .media {
   flex-direction: column;
 
-  & input {
-    display: none;
-  }
-
   & > * {
     display: flex;
   }
@@ -35,7 +31,7 @@
     padding: 0.5rem;
   }
 
-    & section {
+  & section {
     flex-grow: 1;
   }
 }

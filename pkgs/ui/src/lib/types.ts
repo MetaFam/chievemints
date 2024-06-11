@@ -13,7 +13,7 @@ export type Optional<T> = T | undefined
 
 export type NetworkInfo = {
   [chainName: string]: {
-    wagmiChain?: Chain
+    viemChain?: Chain
     chainId: number;
     name: string;
     label: string;
@@ -94,9 +94,9 @@ export type FormValues = {
   name?: string
   description?: string
   homepage?: string
-  image?: Fileish
+  image?: string
   color?: string
-  animation?: Fileish
+  animation?: string
   attributes?: Array<Attribute>
   uri?: string
   json5?: string

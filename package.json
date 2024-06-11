@@ -1,16 +1,16 @@
 {
-  "name": "@chievemints",
+  "name": "@’chievemints",
   "author": {
-    "name": "dysbulic",
-    "email": "dys@dhappy.org"
+    "name": "dys",
+    "email": "d@dhappy.org"
   },
-  "version": "0.3.0",
+  "version": "0.4.19",
   "license": "CC0-1.0",
-  "private": true,
   "scripts": {
     "ui:start": "yarn workspace @chievemints/ui dev",
     "ui:test": "yarn workspace @chievemints/ui test",
     "ui:publish": "yarn ui:build && yarn gh:publish",
+    "ui:publish:op": "yarn ui:build && yarn gh:publish:op",
     "ui:build": "yarn workspace @chievemints/ui build",
     "ui:preview": "yarn workspace @chievemints/ui preview",
     "hh:node": "yarn workspace @chievemints/contracts chain",
@@ -32,11 +32,12 @@
     "ui:theme": "yarn workspace @chievemints/ui theme",
     "ui:watch": "yarn workspace @chievemints/ui watch",
     "cm:grant": "yarn workspace @chievemints/contracts hardhat grant",
+    "cm:disable": "yarn workspace @chievemints/contracts hardhat disable",
     "cm:metadata": "yarn workspace @chievemints/contracts gating-metadata"
   },
   "workspaces": {
     "packages": [
-      "packages/*"
+      "pkgs/*"
     ]
   },
   "packageManager": "yarn@3.2.0",

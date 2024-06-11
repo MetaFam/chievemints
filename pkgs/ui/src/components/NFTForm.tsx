@@ -223,13 +223,11 @@ const MediaDisplay: React.FC<{
     setType(type)
   }, [content])
 
-  const set = ({ target: { files } }: (
-    { target: { files: Maybe<FileList> } }
+  const set = ({ target: { value } }: (
+    { target: { value: string } }
   )) => {
-    if(files.length >= 1 && files[0]) {
-      setValue(prop, files[0])
-      setFilename(files[0].name)
-    }
+    setValue(prop, value)
+    setFilename(value)
   }
 
   const remove = (evt: React.MouseEvent) => {
@@ -243,20 +241,10 @@ const MediaDisplay: React.FC<{
       <div className={fs.selector}>
         <h3>{capitalize(prop)}</h3>
         <input
-          type="file"
           onChange={set}
           ref={input}
-          {...{ accept }}
         />
         {filename && <h4>{filename}</h4>}
-        {!content &&(
-          <button
-            type="button"
-            onClick={() => input.current?.click()}
-          >
-            Set
-          </button>
-          )}
       </div>
       {content && (
         <div className={fs.content}>
@@ -280,10 +268,7 @@ const MediaDisplay: React.FC<{
               }
               case 'model': {
                 return (
-                  <ThreeDScene
-                    className={fs.model}
-                    model={url}
-                  />
+                  <ThreeDScene className={fs.model} model={url}/>
                 )
               }
               default: {

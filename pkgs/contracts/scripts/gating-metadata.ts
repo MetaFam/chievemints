@@ -73,7 +73,7 @@ const main = async () => {
   )
 
   const templates = path.join(metadataDir, 'templates', '*.json5')
-  const files = await Promise.all(
+  const files = await Promise.all(  
     glob.sync(templates).map(async (file) => {
       const type = file.replace(/^.*\//, '').replace(/\.json5$/, '')
       console.debug(
@@ -91,7 +91,7 @@ const main = async () => {
         }
       })
       return new File(
-        JSON.stringify(template, null, 2),
+        [JSON.stringify(template, null, 2)],
         `${type}.json`,
         { type: 'application/json' },
       )

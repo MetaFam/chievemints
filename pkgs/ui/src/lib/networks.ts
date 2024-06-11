@@ -15,7 +15,7 @@ declare const LOCAL_RPC: string
 export const NETWORKS: NetworkInfo = (() => {
   const networks: NetworkInfo = {
     mainnet: {
-      wagmiChain: mainnet,
+      viemChain: mainnet,
       chainId: 1,
       name: 'Ethereum Mainnet',
       label: 'Ethereum',
@@ -28,7 +28,7 @@ export const NETWORKS: NetworkInfo = (() => {
       )),
     },
     gnosis: {
-      wagmiChain: gnosis,
+      viemChain: gnosis,
       chainId: 0x64,
       name: 'Gnosis Chain',
       label: 'Gnosis',
@@ -41,7 +41,7 @@ export const NETWORKS: NetworkInfo = (() => {
       )),
     },
     polygon: {
-      wagmiChain: polygon,
+      viemChain: polygon,
       chainId: 137,
       name: 'Polygon',
       label: 'Polygon',
@@ -54,7 +54,7 @@ export const NETWORKS: NetworkInfo = (() => {
       )),
     },
     mumbai: {
-      wagmiChain: polygonMumbai,
+      viemChain: polygonMumbai,
       chainId: 80001,
       name: 'Polygon’s Mumbai Testnet',
       label: 'Mumbai',
@@ -68,7 +68,7 @@ export const NETWORKS: NetworkInfo = (() => {
       )),
     },
     optimisticEthereum: {
-      wagmiChain: optimism,
+      viemChain: optimism,
       chainId: 10,
       name: 'Optimism',
       label: 'Optimism',
@@ -81,7 +81,7 @@ export const NETWORKS: NetworkInfo = (() => {
       )),
     },
     localhost: {
-      wagmiChain: localhost,
+      viemChain: localhost,
       chainId: 0x7a69,
       name: 'Ganache',
       label: 'Ganache',

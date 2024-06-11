@@ -67,9 +67,7 @@ const Content: React.FC = () => {
 
     try {
       if(!rwContract) {
-        throw new Error(
-          'Connect your wallet to reserve an id.'
-        )
+        throw new Error('Connect your wallet to reserve an id.')
       }
       if(!rolesLibrary){
         throw new Error('Library not loaded.')
@@ -79,14 +77,21 @@ const Content: React.FC = () => {
       await Promise.all(Object.entries(data).map(
         async ([key, value]: [key: string, value: unknown]) => {
           if(typeof value === 'boolean' && value) {
-            const [, type, roleId] = key.match(/^(grant|disable)\((.+)\)$/) ?? []
+            const [, type, role] = key.match(/^(grant|disable)\((.+)\)$/) ?? []
+            console.debug({ rolesLibrary})
+            const roleId = (
+              await rolesLibrary('roleIndexForName', [role]) as number
+            )
+            if(isNaN(roleId)) {
+              throw new Error(`Invalid role id for ${type}: ${role}`)
+            }
             switch(type) {
               case 'grant': {
-                grants.push(Number(roleId))
+                grants.push(roleId)
                 break
               }
               case 'disable': {
-                disables.push(Number(roleId))
+                disables.push(roleId)
                 break
               }
               default: {
@@ -113,10 +118,12 @@ const Content: React.FC = () => {
           ?? undefined
         )
       }
+      console.debug({ maintainer, grants, disables })
       const hash = await rwContract(
         'create', [maintainer, grants, disables]
       ) as '0x{string}'
       const receipt = await contractClient.waitForTransactionReceipt({ hash })
+      console.debug({ receipt })
       const event = receipt.events.find(
         (evt: Event) => evt.event === 'Created'
       )
@@ -133,7 +140,7 @@ const Content: React.FC = () => {
     } finally {
       setWorking(false)
     }
-  }, [address, ensClient, rolesLibrary, rwContract])
+  }, [address, contractClient, ensClient, rolesLibrary, rwContract])
 
   if(!rwContract || !tokenId || working) {
     return (

@@ -88,21 +88,21 @@ export const Web3ContextProvider: React.FC<{ children: ReactNode }> = (
 
     const ensClient = useMemo(() => (
       createPublicClient({
-        chain: NETWORKS.mainnet.wagmiChain,
+        chain: NETWORKS.mainnet.viemChain,
         transport: http(),
       })
     ), [])
 
     const contractClient = useMemo(() => (
       createPublicClient({
-        chain: NETWORKS.contract.wagmiChain,
+        chain: NETWORKS.contract.viemChain,
         transport: http(),
       })
     ), [])
 
     const walletClient = useMemo(() => (
       createWalletClient({
-        chain: NETWORKS.contract.wagmiChain,
+        chain: NETWORKS.contract.viemChain,
         transport: custom(window.ethereum),
       })
     ), [])

@@ -28,3 +28,7 @@ You should now be able to click the trophy in the UI to create a new token type.
 In order to publish the UI, you will need write access to the [’Chievemints GitHub Repository](https://github.com/MetaFam/chievemints/). Given that, just run `yarn ui:publish`.
 
 ![Flashy Octo](packages/ui/public/favicon.svg)
+
+## Uploading Metadata
+
+The gating tokens need to have metadata files uploaded to IPFS in order for them to display correctly. This is done by running the `yarn gating-metadata` task in the `packages/contracts/` subdirectory.

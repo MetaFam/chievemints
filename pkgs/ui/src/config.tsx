@@ -3,7 +3,7 @@ import React, {
   useCallback, useMemo, useRef, useState, forwardRef,
 } from 'react'
 import { Maybe } from './lib/types'
-import cs from './styles/config.module.css'
+import tyl from './styles/config.module.css'
 
 declare const CHAIN_NAME: string
 declare const IPFS_LINK_PATTERN: string
@@ -112,7 +112,7 @@ export const Settings = forwardRef<
   )
 
   return (
-    <dialog {...{ ref }} id={cs.style}>
+    <dialog {...{ ref }} className={tyl.dialog}>
       <form
         onSubmit={() => {
           setAPIToken(internalAPIToken)
