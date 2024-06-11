@@ -9,7 +9,7 @@ export const config = createConfig(
       [optimism.id]: (
         import.meta.env.VITE_ALCHEMY_ID
         ? (
-          http(`https://op-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_ALCHEMY_ID}`)
+          http(`https://opt-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_ALCHEMY_ID}`)
         ) : (
           (() => { throw new Error('Missing $ALCHEMY_ID') })()
         )
@@ -26,7 +26,7 @@ export const config = createConfig(
 
     // Optional
     appDescription: 'MetaGame’s ’Chievemints accomplishment attestations.',
-    appUrl: 'https://chiev.es',
+    appUrl: window.location.host,
     appIcon: 'https://chiev.es/logo.svg', // max. 1MiB
   }),
 )

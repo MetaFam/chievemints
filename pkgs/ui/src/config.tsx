@@ -51,7 +51,7 @@ export const nftBase = (
   (typeof NFT_BASE !== 'undefined') ? (
     NFT_BASE
   ) : (
-    'https://chiev.es/#/view'
+    `https://${window.location.host}/#/view`
   )
 )
 
