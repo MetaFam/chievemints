@@ -5,7 +5,8 @@ import {
 } from '@esbuild-plugins/node-globals-polyfill'
 import TSConfigPathsPlugin from 'vite-tsconfig-paths'
 import NodePolyfillsPlugin from 'rollup-plugin-polyfill-node'
-import CommonJSPlugin from '@rollup/plugin-commonjs'
+import ViteCommonJSPlugin from 'vite-plugin-commonjs'
+import RollupCommonJSPlugin from '@rollup/plugin-commonjs'
 import InjectPlugin from '@rollup/plugin-inject'
 import { defines, hideValues } from './src/lib/build'
 
@@ -23,25 +24,48 @@ export default defineConfig(
         //   mainFields: ['browser'],
         // }),
         TSConfigPathsPlugin(),
+        ViteCommonJSPlugin({
+          filter(id) {
+            const match = (
+              /\/node_modules\//.test(id)
+              && (
+                /cookie/.test(id)
+                || /react/.test(id)
+              ) &&
+              !/\.(m|t)js$/.test(id)
+            )
+            console.info({ id, match })
+            return match
+          },
+          dynamic: { onFiles(files) {
+            console.info({ files })
+            return files
+          } },
+        }),
         NodePolyfillsPlugin({
           // include: null,
         }),
         react(),
       ],
       build: {
-        target: ['ES2020'],
+        target: ['ES2022'],
         minify: false,
         sourcemap: true,
-        modulePreload: {
-          polyfill: false,
-        },
+        // modulePreload: {
+        //   polyfill: false,
+        // },
         commonjsOptions: {
           // exclude: [/tslib/],
-          include: [/node_modules/],
-          transformMixedEsModules: true,
+          include: [
+            /react/,
+            /rehackt/,
+            /cookie/,
+            /set-cookie-parser/,
+          ],
+          // transformMixedEsModules: true,
           ignoreGlobal: false,
-          requireReturnsDefault: false,
-          // defaultIsModuleExports: true,
+          requireReturnsDefault: 'auto',
+          defaultIsModuleExports: 'auto',
           // dynamicRequireTargets: ['**/elliptic/**'],
         },
         rollupOptions: {
@@ -54,11 +78,12 @@ export default defineConfig(
           // },
           plugins: [
             InjectPlugin({ Buffer: ['buffer', 'Buffer'] }),
-            CommonJSPlugin(),
+            RollupCommonJSPlugin(),
           ],
         },
       },
       optimizeDeps: {
+        include: ['cookie', 'set-cookie-parser'],
         esbuildOptions: {
           sourcemap: true,
           define: {
@@ -70,7 +95,6 @@ export default defineConfig(
               buffer: true
             }),
           ],
-          mainFields: ['module', 'main'],
         },
       },
       resolve: {
