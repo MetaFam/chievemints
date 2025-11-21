@@ -1,11 +1,10 @@
 import React, { useCallback, useState } from 'react'
-import { deregexify, extractMessage, regexify } from '@/lib/helpers'
-import { useParams } from 'react-router-dom'
-import { View } from './view'
-import { Helmet } from 'react-helmet-async'
+import { useParams } from 'react-router'
 import { toast } from 'react-toastify'
+import { deregexify, extractMessage, regexify } from '@/lib/helpers'
 import { SubmitButton } from '@/components'
 import { useWeb3 } from '@/lib/hooks'
+import { View } from './view'
 
 export const SelfMint: React.FC<{ tokenId: string }> = ({ tokenId }) => {
   const { rwContract, address, contractClient } = useWeb3()
@@ -28,11 +27,8 @@ export const SelfMint: React.FC<{ tokenId: string }> = ({ tokenId }) => {
 
   return (
     <main id="self-mint">
-      <Helmet>
-        <title>Self-Mint NFT #{regexify(tokenId)}</title>
-        <meta name="description" content="Mint a ’Chievemint NFT" />
-      </Helmet>
-
+      <title>{`Self-Mint NFT #${regexify(tokenId)}`}</title>
+      <meta name="description" content="Mint a ’Chievemint NFT" />
 
       <form onSubmit={mint}>
         <SubmitButton purpose="mint" {...{ processing }}/>

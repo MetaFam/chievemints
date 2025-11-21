@@ -14,7 +14,7 @@ import {
   FieldValues, UseFormRegister, UseFormSetValue,
   UseFormWatch,
 } from 'react-hook-form'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import {
   Tab, Tabs, TabList, TabPanel,
 } from 'react-tabs'

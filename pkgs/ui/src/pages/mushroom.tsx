@@ -1,22 +1,21 @@
 import React from 'react'
-import { Helmet } from 'react-helmet-async'
 import { BiconomyPaymaster, BiconomySmartAccountV2, Bundler, DEFAULT_ECDSA_OWNERSHIP_MODULE, DEFAULT_ENTRYPOINT_ADDRESS, ECDSAOwnershipValidationModule, PaymasterMode, WalletClientSigner, createSmartAccountClient } from '@biconomy/account'
-import { Header } from '@/components'
 import {
   createWalletClient, http, encodeFunctionData, parseAbi, custom,
 } from 'viem'
-import { useAccount } from 'wagmi'
 import { optimism } from 'viem/chains'
+import { useAccount } from 'wagmi'
+import { toast } from 'react-toastify'
+import { Header } from '@/components'
 import ABI from '../contracts/optimisticEthereum/BulkDisbursableNFTs.abi';
 import tyl from '../styles/mushroom.module.css'
-import { toast } from 'react-toastify'
 
 export const FreeMushroom = () => (
   <section id={tyl.free}>
-    <Helmet>
-      <title>’𝖈𝖍𝖎𝖊𝖛𝖊: Free Mushroom</title>
-    </Helmet>
+    <title>’𝖈𝖍𝖎𝖊𝖛𝖊: Free Mushroom</title>
+
     <Header/>
+
     <Content/>
   </section>
 )

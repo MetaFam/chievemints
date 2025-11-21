@@ -1,23 +1,22 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { type TransactionReceipt, type Log, parseEventLogs } from 'viem'
 import { useForm } from 'react-hook-form'
-import { Helmet } from 'react-helmet-async'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
+import { CircleLoader } from 'react-spinners'
+import { toast } from 'react-toastify'
+import Tippy from '@tippyjs/react'
 import { OptionsForm, Header, SubmitButton } from '@/components'
 import { useWeb3 } from '@/lib/hooks'
 import { extractMessage } from '@/lib/helpers'
 import { rolePermissions, tokenPermissions } from '@/config'
-import { CircleLoader } from 'react-spinners'
-import Tippy from '@tippyjs/react'
-import { toast } from 'react-toastify'
 import ns from '../styles/new.module.css'
 
 export const New = () => (
   <section>
-    <Helmet>
-      <title>’𝖈𝖍𝖎𝖊𝖛𝖊: Ⲛⲉⲱ Ⲧⲟⲕⲉⲛ</title>
-    </Helmet>
+    <title>’𝖈𝖍𝖎𝖊𝖛𝖊: Ⲛⲉⲱ Ⲧⲟⲕⲉⲛ</title>
+
     <Header/>
+
     <Content/>
   </section>
 )

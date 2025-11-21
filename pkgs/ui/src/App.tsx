@@ -1,5 +1,4 @@
 
-import { Helmet } from 'react-helmet-async'
 import {
   ApolloClient,
   InMemoryCache,
@@ -9,8 +8,9 @@ import {
   HashRouter as Router,
   Routes,
   Route,
-} from 'react-router-dom'
+} from 'react-router'
 import React from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WagmiProvider } from 'wagmi'
 import { ConnectKitProvider } from 'connectkit'
 import { ToastContainer } from 'react-toastify'
@@ -18,8 +18,6 @@ import { nftGraph } from '@/config'
 import { Web3ContextProvider } from '@/lib/hooks'
 import { config as wagmiConfig } from './lib/ConnectKit'
 import { Spinner } from './components/Spinner'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { HelmetProvider } from 'react-helmet-async'
 
 const Home = React.lazy(() => import('./pages/home'))
 const New = React.lazy(() => import('./pages/new'))
@@ -40,46 +38,43 @@ const queryClient = new QueryClient();
 
 const App: React.FC = () => (
   <>
-    <HelmetProvider>
-      <Helmet>
-        <link rel="shortcut icon" href="favicon.svg"/>
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0"
-        />
-      </Helmet>
-      <ApolloProvider client={apolloClient}>
-        <WagmiProvider config={wagmiConfig}>
-          <QueryClientProvider client={queryClient}>
-            <ConnectKitProvider>
-                <Web3ContextProvider>
-                  <React.Suspense fallback={<Spinner/>}>
-                    <Router>
-                      <Routes>
-                        <Route path="/new" element={<New/>} />
-                        <Route path="/view/:nftId" element={<View/>} />
-                        <Route path="/self-mint/:nftId" element={<SelfMint/>} />
-                        <Route path="/disburse/:nftId" element={<Disburse/>} />
-                        <Route path="/owners/:nftId" element={<Owners/>} />
-                        <Route path="/edit/:nftId" element={<Edit/>} />
-                        <Route path="/permissions/:nftId" element={<Permissions/>} />
-                        <Route path="/mushy" element={<FreeMushroom/>} />
-                        <Route path="/" element={<Home/>} />
-                      </Routes>
-                    </Router>
-                  </React.Suspense>
-                </Web3ContextProvider>
-            </ConnectKitProvider>
-          </QueryClientProvider>
-        </WagmiProvider>
-      </ApolloProvider>
-      <ToastContainer
-        position="bottom-center"
-        autoClose={15000}
-        closeOnClick
-        pauseOnHover
-      />
-    </HelmetProvider>
+    <link rel="shortcut icon" href="favicon.svg"/>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <ApolloProvider client={apolloClient}>
+      <WagmiProvider config={wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          <ConnectKitProvider>
+              <Web3ContextProvider>
+                <React.Suspense fallback={<Spinner/>}>
+                  <Router>
+                    <Routes>
+                      <Route path="/new" element={<New/>} />
+                      <Route path="/view/:nftId" element={<View/>} />
+                      <Route path="/self-mint/:nftId" element={<SelfMint/>} />
+                      <Route path="/disburse/:nftId" element={<Disburse/>} />
+                      <Route path="/owners/:nftId" element={<Owners/>} />
+                      <Route path="/edit/:nftId" element={<Edit/>} />
+                      <Route path="/permissions/:nftId" element={<Permissions/>} />
+                      <Route path="/mushy" element={<FreeMushroom/>} />
+                      <Route path="/" element={<Home/>} />
+                    </Routes>
+                  </Router>
+                </React.Suspense>
+              </Web3ContextProvider>
+          </ConnectKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </ApolloProvider>
+    <ToastContainer
+      position="bottom-center"
+      autoClose={15000}
+      closeOnClick
+      pauseOnHover
+    />
   </>
 )
 

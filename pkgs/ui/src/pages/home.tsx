@@ -1,6 +1,12 @@
 import React, {
   useState, useEffect, useCallback, useRef,
 } from 'react'
+import { ConnectKitButton } from 'connectkit'
+import {
+  useSearchParams, useNavigate, createSearchParams,
+} from 'react-router'
+import JSON5 from 'json5'
+import Tippy from '@tippyjs/react'
 import {
   extractMessage, httpURL, toSpanList,
 } from '@/lib/helpers'
@@ -11,13 +17,6 @@ import {
   Header, TokenFilterForm, TokensTable,
 } from '@/components'
 import { useWeb3 } from '@/lib/hooks'
-import { Helmet } from 'react-helmet-async'
-import { ConnectKitButton } from 'connectkit'
-import {
-  useSearchParams, useNavigate, createSearchParams,
-} from 'react-router-dom'
-import JSON5 from 'json5'
-import Tippy from '@tippyjs/react'
 import { defaults } from '@/config'
 import tyl from '../styles/home.module.css'
 
@@ -265,13 +264,11 @@ const Home = () => {
 
   return (
     <>
-      <Helmet>
-        <title>𝔐𝔢𝔱𝔞𝔊𝔞𝔪𝔢’𝔰 ’𝘾𝙝𝙞𝙚𝙫𝙚𝙢𝙞𝙣𝙩𝙨</title>
-        <meta
-          name="description"
-          content="MetaGame’s ’Chievemints NFTs"
-        />
-      </Helmet>
+      <title>𝔐𝔊’𝔰 ’𝘾𝙝𝙞𝙚𝙫𝙚𝙢𝙞𝙣𝙩𝙨</title>
+      <meta
+        name="description"
+        content="MetaGame’s ’Chievemints NFTs"
+      />
 
       <Header/>
 

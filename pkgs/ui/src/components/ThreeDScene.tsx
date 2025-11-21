@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react'
-import { Canvas, PrimitiveProps } from '@react-three/fiber'
+import { Canvas } from '@react-three/fiber'
 import { OrbitControls, useGLTF } from '@react-three/drei'
 import { Maybe } from '@/lib/types'
 import LoggingErrorBoundary from './LoggingErrorBoundary'
@@ -9,7 +9,7 @@ export const Model = (
   {
     model: string
     group: Record<string, (() => void)>
-    props?: PrimitiveProps
+    props?: any
   }
 ) => {
   const { scene } = useGLTF(model)

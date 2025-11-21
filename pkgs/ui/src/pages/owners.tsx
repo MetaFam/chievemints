@@ -1,14 +1,14 @@
 import { gql, useLazyQuery } from '@apollo/client'
 import React, { useEffect, useMemo, useState } from 'react'
-import contractAddress from '../contracts/polygon/BulkDisbursableNFTs.address'
 import {
   useParams, useSearchParams, Link,
-} from 'react-router-dom'
+} from 'react-router'
 import { httpURL, deregexify, capitalize } from '@/lib/helpers'
 import { HomeLink } from '@/components'
 import { useWeb3 } from '@/lib/hooks'
 import { contractNetwork } from '@/config'
 import { Maybe } from '@/lib/types'
+import contractAddress from '../contracts/polygon/BulkDisbursableNFTs.address'
 
 const LIMIT = 100 // The Graph's return limit
 
@@ -19,7 +19,7 @@ const ownersQuery = {
       $contractAddress: String
       $startAfter: String
     ) {
-      nfts(where:{ 
+      nfts(where:{
         contract: $contractAddress,
         tokenID: $tokenId
       }) {
@@ -42,7 +42,7 @@ export type Ownership = {
 }
 
 export const Owners = () => {
-  const { nftId } = useParams() 
+  const { nftId } = useParams()
   const tokenId = useMemo(() => (
     deregexify(Array.isArray(nftId) ? nftId[0] : nftId)
   ), [nftId])
@@ -124,11 +124,11 @@ export const Owners = () => {
                     )
                   )
                   if(ens) {
-                    owner = ens 
+                    owner = ens
                   }
                   const { quantity, id } = oship
                   return { owner, quantity, id }
-                }  
+                }
               )
             )
           )

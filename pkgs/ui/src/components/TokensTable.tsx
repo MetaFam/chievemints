@@ -6,7 +6,7 @@ import type { TokenState } from '@/lib/types'
 import Markdown from 'react-markdown'
 import React from 'react'
 import { ClimbingBoxLoader } from 'react-spinners'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import '../styles/TokensTable.css'
 
 type IndexedToken = { token: TokenState, index: number }
@@ -119,15 +119,23 @@ const Description:React.FC<Token> = ({ token }) => (
           )}:
         </p>
       )}
-      <Markdown linkTarget="_blank" className="content">
-        {token.is?.disabling || token.is?.gating ? (
-          `> ${token.metadata.description.replace(/\n/g, "\n> ")}`
-        ) : (
-          token.metadata?.description ?? (
-            '*No Description*'
-          )
-        )}
-      </Markdown>
+      <section className="content">
+        <Markdown
+          components={{
+            a: (props) => (
+              <a {...props} target="_blank" rel="noopener noreferrer" />
+            )
+          }}
+        >
+          {token.is?.disabling || token.is?.gating ? (
+            `> ${token.metadata.description.replace(/\n/g, "\n> ")}`
+          ) : (
+            token.metadata?.description ?? (
+              '*No Description*'
+            )
+          )}
+        </Markdown>
+      </section>
     </div>
   </div>
 )

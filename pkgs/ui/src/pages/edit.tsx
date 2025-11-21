@@ -1,16 +1,15 @@
 import React, {
   ReactNode, useEffect, useMemo, useState,
 } from 'react'
-import { useParams } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
+import { useParams } from 'react-router'
 import JSON5 from 'json5'
+import { RingLoader } from 'react-spinners'
 import { useWeb3 } from '@/lib/hooks'
 import {
   httpURL, regexify, deregexify, extractMessage,
 } from '@/lib/helpers'
 import { HomeLink, OptionsForm } from '@/components'
 import type { ERC1155Metadata, Maybe } from '@/lib/types'
-import { RingLoader } from 'react-spinners'
 import '../styles/edit.css'
 
 export const Edit = () => {
@@ -52,10 +51,10 @@ export const Edit = () => {
 
   return (
     <main id="edit">
-      <Helmet>
-        <title>’𝖈𝖍𝖎𝖊𝖛𝖊: ℰ𝒹𝒾𝓉 #{tokenId && regexify(tokenId)}</title>
-      </Helmet>
+      <title>{`’𝖈𝖍𝖎𝖊𝖛𝖊: ℰ𝒹𝒾𝓉${tokenId == null ? '' : ` #${regexify(tokenId)}`}`}</title>
+
       <HomeLink/>
+
       {error && (
         <aside className="error">
           <span>`setMetadata` Error</span>

@@ -2,20 +2,19 @@ import React, {
   ChangeEvent, FormEvent, ReactNode, useCallback,
   useEffect, useMemo, useState,
 } from 'react'
+import { useParams } from 'react-router'
+import { ClockLoader, ScaleLoader } from 'react-spinners'
+import { toast } from 'react-toastify'
+import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
+import { normalize } from 'viem/ens'
+import Tippy from '@tippyjs/react'
 import {
   deregexify, extractMessage, httpURL, regexify,
 } from '@/lib/helpers'
 import { Maybe, ERC1155Metadata, Optional } from '@/lib/types'
 import { useWeb3 } from '@/lib/hooks'
 import { HomeLink } from '@/components'
-import { useParams } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
-import { ClockLoader, ScaleLoader } from 'react-spinners'
-import { toast } from 'react-toastify'
-import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
-import { normalize } from 'viem/ens'
 import tyl from '../styles/disburse.module.css'
-import Tippy from '@tippyjs/react'
 
 const Address: React.FC<{ name: string }> = ({ name }) => {
   const { ensClient } = useWeb3()
@@ -191,10 +190,8 @@ const Disburse = () => {
 
   return (
     <main id={tyl.mint}>
-      <Helmet>
-        <title>Mint NFT #{regexify(tokenId)}</title>
-        <meta name="description" content="Mint A ’Chievemint NFT" />
-      </Helmet>
+      <title>{`Mint NFT #${regexify(tokenId)}`}</title>
+      <meta name="description" content="Mint A ’Chievemint NFT" />
 
       <HomeLink />
 

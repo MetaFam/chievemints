@@ -1,8 +1,8 @@
-import { Maybe } from '@/lib/types'
 import React, {
   ReactNode, useCallback, useRef, useState,
 } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
+import { Maybe } from '@/lib/types'
 
 export const Anchor = ({ name }: { name: string }) => {
   const anchor = name.toLowerCase().replace(/\s+/g, '-')

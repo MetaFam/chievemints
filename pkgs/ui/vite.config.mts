@@ -37,13 +37,12 @@ export default defineConfig(
         },
         commonjsOptions: {
           // exclude: [/tslib/],
-          include: [/react-helmet-async/, /node_modules/],
+          include: [/node_modules/],
           transformMixedEsModules: true,
           ignoreGlobal: false,
           requireReturnsDefault: false,
           // defaultIsModuleExports: true,
           // dynamicRequireTargets: ['**/elliptic/**'],
-          // esmExternals: ['react-helmet-async']
         },
         rollupOptions: {
           // external: ["react", "react-dom"],
@@ -60,7 +59,6 @@ export default defineConfig(
         },
       },
       optimizeDeps: {
-        include: ['react-helmet-async'],
         esbuildOptions: {
           sourcemap: true,
           define: {
@@ -81,8 +79,6 @@ export default defineConfig(
           https: 'https-browserify',
           stream: 'stream-browserify',
           util: 'util',
-          react: 'react',
-          'react-dom': 'react-dom',
         },
       },
       define,

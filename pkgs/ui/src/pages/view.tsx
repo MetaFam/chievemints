@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { useParams } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
+import { useParams } from 'react-router'
 import JSON5 from 'json5'
+import { FadeLoader } from 'react-spinners'
 import {
   regexify, deregexify, httpURL,
 } from '@/lib/helpers'
 import type { ERC1155Metadata } from '@/lib/types'
 import { HomeLink, ThreeDScene } from '@/components'
 import { useWeb3 } from '@/lib/hooks'
-import { FadeLoader } from 'react-spinners'
 import tyl from '../styles/view.module.css'
 
 export const View: React.FC<{ tokenId: string, header?: boolean }> = (
@@ -76,13 +75,10 @@ export const View: React.FC<{ tokenId: string, header?: boolean }> = (
     return (
       <div id={tyl.style}>
         {header && (
-          <Helmet>
-            <title>{name} (#{regexify(tokenId)})</title>
-            <meta
-              name="description"
-              content={description}
-            />
-          </Helmet>
+          <>
+            <title>{`${name} (#${regexify(tokenId)})`}</title>
+            <meta name="description" content={description}/>
+          </>
         )}
         <header><HomeLink/></header>
         <header>
@@ -98,13 +94,18 @@ export const View: React.FC<{ tokenId: string, header?: boolean }> = (
             />
           )}
           {description && (
-            <Markdown
-              className={tyl.markdown}
-              remarkPlugins={[remarkGfm]}
-              linkTarget="_blank"
-            >
-              {description}
-            </Markdown>
+            <section className={tyl.markdown}>
+              <Markdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  a: (props) => (
+                    <a {...props} target="_blank" rel="noopener noreferrer" />
+                  )
+                }}
+                >
+                {description}
+              </Markdown>
+            </section>
           )}
           {animation && (
             (() => {

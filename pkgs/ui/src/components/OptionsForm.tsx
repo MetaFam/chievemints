@@ -11,7 +11,7 @@ import JSON5 from 'json5'
 import {
   ERC1155Metadata, FormValues, Maybe, OpenSeaAttribute, Attribute,
 } from '@/lib/types'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { useConfig } from '@/config'
 import { toast } from 'react-toastify'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'

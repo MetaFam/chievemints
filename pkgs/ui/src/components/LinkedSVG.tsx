@@ -1,7 +1,7 @@
 import React, {
-  SyntheticEvent, useCallback, useEffect, useRef,
+  SyntheticEvent, useCallback, useRef,
 } from 'react'
-import { Link, LinkProps } from 'react-router-dom'
+import { Link } from 'react-router'
 
 export const LinkedSVG = React.forwardRef<
   HTMLObjectElement,

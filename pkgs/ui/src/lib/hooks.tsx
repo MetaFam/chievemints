@@ -96,7 +96,11 @@ export const Web3ContextProvider: React.FC<{ children: ReactNode }> = (
     const contractClient = useMemo(() => (
       createPublicClient({
         chain: NETWORKS.contract.viemChain,
-        transport: http(NETWORKS.contract.rpcUrl),
+        transport: (NETWORKS.contract.rpcUrl ? (
+          http(NETWORKS.contract.rpcUrl)
+        ) : (
+          http()
+        )),
       })
     ), [])
 
