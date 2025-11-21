@@ -1,0 +1,2 @@
+export default '0x3c5EC782Dd6D0496f83Cc747BB512b8D61779274';
+//# sourceMappingURL=Bits.address.js.map
