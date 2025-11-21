@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react'
 import { deregexify, extractMessage, regexify } from '@/lib/helpers'
 import { useParams } from 'react-router-dom'
 import { View } from './view'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 import { toast } from 'react-toastify'
 import { SubmitButton } from '@/components'
 import { useWeb3 } from '@/lib/hooks'
@@ -44,7 +44,7 @@ export const SelfMint: React.FC<{ tokenId: string }> = ({ tokenId }) => {
 }
 
 export const SelfMintPage = () => {
-  const { nftId } = useParams() 
+  const { nftId } = useParams()
   const tokenId = deregexify(
     Array.isArray(nftId) ? nftId[0] : nftId
   )

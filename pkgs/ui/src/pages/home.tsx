@@ -11,7 +11,7 @@ import {
   Header, TokenFilterForm, TokensTable,
 } from '@/components'
 import { useWeb3 } from '@/lib/hooks'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 import { ConnectKitButton } from 'connectkit'
 import {
   useSearchParams, useNavigate, createSearchParams,
@@ -267,7 +267,7 @@ const Home = () => {
     <>
       <Helmet>
         <title>𝔐𝔢𝔱𝔞𝔊𝔞𝔪𝔢’𝔰 ’𝘾𝙝𝙞𝙚𝙫𝙚𝙢𝙞𝙣𝙩𝙨</title>
-        <meta 
+        <meta
           name="description"
           content="MetaGame’s ’Chievemints NFTs"
         />

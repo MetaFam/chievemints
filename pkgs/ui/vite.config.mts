@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import {
   NodeGlobalsPolyfillPlugin as ESBuildGlobalsPolyfillsPlugin
 } from '@esbuild-plugins/node-globals-polyfill'
-import TSConfigPathsPlugin  from 'rollup-plugin-tsconfig-paths'
+import TSConfigPathsPlugin from 'vite-tsconfig-paths'
 import NodePolyfillsPlugin from 'rollup-plugin-polyfill-node'
 import CommonJSPlugin from '@rollup/plugin-commonjs'
 import InjectPlugin from '@rollup/plugin-inject'
@@ -14,7 +14,7 @@ export default defineConfig(
     const env = loadEnv(mode, process.cwd())
     const define = defines(env)
     console.debug({ define: hideValues(define) })
-    
+
     return {
       plugins: [
         // ResolvePlugin({
@@ -37,13 +37,13 @@ export default defineConfig(
         },
         commonjsOptions: {
           // exclude: [/tslib/],
-          include: [/node_modules/],
+          include: [/react-helmet-async/, /node_modules/],
           transformMixedEsModules: true,
           ignoreGlobal: false,
           requireReturnsDefault: false,
           // defaultIsModuleExports: true,
           // dynamicRequireTargets: ['**/elliptic/**'],
-          // esmExternals: ['react-helmet']
+          // esmExternals: ['react-helmet-async']
         },
         rollupOptions: {
           // external: ["react", "react-dom"],
@@ -60,6 +60,7 @@ export default defineConfig(
         },
       },
       optimizeDeps: {
+        include: ['react-helmet-async'],
         esbuildOptions: {
           sourcemap: true,
           define: {
@@ -71,6 +72,7 @@ export default defineConfig(
               buffer: true
             }),
           ],
+          mainFields: ['module', 'main'],
         },
       },
       resolve: {
@@ -79,6 +81,8 @@ export default defineConfig(
           https: 'https-browserify',
           stream: 'stream-browserify',
           util: 'util',
+          react: 'react',
+          'react-dom': 'react-dom',
         },
       },
       define,

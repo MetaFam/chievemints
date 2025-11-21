@@ -42,5 +42,7 @@ export type { Bits } from "./src/BulkDisbursableNFTs.sol/Bits";
 export { Bits__factory } from "./factories/src/BulkDisbursableNFTs.sol/Bits__factory";
 export type { BulkDisbursableNFTs } from "./src/BulkDisbursableNFTs.sol/BulkDisbursableNFTs";
 export { BulkDisbursableNFTs__factory } from "./factories/src/BulkDisbursableNFTs.sol/BulkDisbursableNFTs__factory";
+export type { EnumerableERC1155 } from "./src/EnumerableERC1155";
+export { EnumerableERC1155__factory } from "./factories/src/EnumerableERC1155__factory";
 export type { Roles } from "./src/Roles";
 export { Roles__factory } from "./factories/src/Roles__factory";

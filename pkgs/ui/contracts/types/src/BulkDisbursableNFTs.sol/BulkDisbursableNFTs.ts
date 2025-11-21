@@ -32,6 +32,7 @@ export interface BulkDisbursableNFTsInterface extends utils.Interface {
   functions: {
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
+    "balanceOfBatch(address)": FunctionFragment;
     "burn(address,uint256,uint256)": FunctionFragment;
     "burnBatch(address,uint256[],uint256[])": FunctionFragment;
     "create(uint8[],uint8[])": FunctionFragment;
@@ -75,8 +76,11 @@ export interface BulkDisbursableNFTsInterface extends utils.Interface {
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
     "tokenByIndex(uint256)": FunctionFragment;
+    "tokenExists(uint256)": FunctionFragment;
     "tokenIndex(uint256)": FunctionFragment;
     "tokenOfOwnerByIndex(address,uint256)": FunctionFragment;
+    "tokensByPage(uint256,uint256)": FunctionFragment;
+    "tokensOfOwner(address)": FunctionFragment;
     "totalSupply(uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "typeSupply()": FunctionFragment;
@@ -89,7 +93,8 @@ export interface BulkDisbursableNFTsInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "balanceOf"
-      | "balanceOfBatch"
+      | "balanceOfBatch(address[],uint256[])"
+      | "balanceOfBatch(address)"
       | "burn"
       | "burnBatch"
       | "create(uint8[],uint8[])"
@@ -133,8 +138,11 @@ export interface BulkDisbursableNFTsInterface extends utils.Interface {
       | "supportsInterface"
       | "symbol"
       | "tokenByIndex"
+      | "tokenExists"
       | "tokenIndex"
       | "tokenOfOwnerByIndex"
+      | "tokensByPage"
+      | "tokensOfOwner"
       | "totalSupply"
       | "transferOwnership"
       | "typeSupply"
@@ -149,8 +157,12 @@ export interface BulkDisbursableNFTsInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "balanceOfBatch",
+    functionFragment: "balanceOfBatch(address[],uint256[])",
     values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "balanceOfBatch(address)",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "burn",
@@ -364,12 +376,24 @@ export interface BulkDisbursableNFTsInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "tokenExists",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "tokenIndex",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "tokenOfOwnerByIndex",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "tokensByPage",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "tokensOfOwner",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
@@ -402,7 +426,11 @@ export interface BulkDisbursableNFTsInterface extends utils.Interface {
 
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "balanceOfBatch",
+    functionFragment: "balanceOfBatch(address[],uint256[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "balanceOfBatch(address)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
@@ -535,9 +563,21 @@ export interface BulkDisbursableNFTsInterface extends utils.Interface {
     functionFragment: "tokenByIndex",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "tokenExists",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "tokenIndex", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tokenOfOwnerByIndex",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "tokensByPage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "tokensOfOwner",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -718,11 +758,16 @@ export interface BulkDisbursableNFTs extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    balanceOfBatch(
+    "balanceOfBatch(address[],uint256[])"(
       accounts: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
+
+    "balanceOfBatch(address)"(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { count: BigNumber }>;
 
     burn(
       owner: PromiseOrValue<string>,
@@ -968,6 +1013,11 @@ export interface BulkDisbursableNFTs extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { id: BigNumber }>;
 
+    tokenExists(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     tokenIndex(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -978,6 +1028,17 @@ export interface BulkDisbursableNFTs extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { id: BigNumber }>;
+
+    tokensByPage(
+      page: PromiseOrValue<BigNumberish>,
+      perPage: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]] & { tokenIds: BigNumber[] }>;
+
+    tokensOfOwner(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]] & { tokenIds: BigNumber[] }>;
 
     totalSupply(
       id: PromiseOrValue<BigNumberish>,
@@ -1021,11 +1082,16 @@ export interface BulkDisbursableNFTs extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  balanceOfBatch(
+  "balanceOfBatch(address[],uint256[])"(
     accounts: PromiseOrValue<string>[],
     ids: PromiseOrValue<BigNumberish>[],
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
+
+  "balanceOfBatch(address)"(
+    owner: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   burn(
     owner: PromiseOrValue<string>,
@@ -1269,6 +1335,11 @@ export interface BulkDisbursableNFTs extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  tokenExists(
+    id: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   tokenIndex(
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -1279,6 +1350,17 @@ export interface BulkDisbursableNFTs extends BaseContract {
     index: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  tokensByPage(
+    page: PromiseOrValue<BigNumberish>,
+    perPage: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  tokensOfOwner(
+    owner: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
 
   totalSupply(
     id: PromiseOrValue<BigNumberish>,
@@ -1320,11 +1402,16 @@ export interface BulkDisbursableNFTs extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    balanceOfBatch(
+    "balanceOfBatch(address[],uint256[])"(
       accounts: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
+
+    "balanceOfBatch(address)"(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     burn(
       owner: PromiseOrValue<string>,
@@ -1564,6 +1651,11 @@ export interface BulkDisbursableNFTs extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    tokenExists(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     tokenIndex(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1574,6 +1666,17 @@ export interface BulkDisbursableNFTs extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    tokensByPage(
+      page: PromiseOrValue<BigNumberish>,
+      perPage: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    tokensOfOwner(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
 
     totalSupply(
       id: PromiseOrValue<BigNumberish>,
@@ -1706,9 +1809,14 @@ export interface BulkDisbursableNFTs extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    balanceOfBatch(
+    "balanceOfBatch(address[],uint256[])"(
       accounts: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "balanceOfBatch(address)"(
+      owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1954,6 +2062,11 @@ export interface BulkDisbursableNFTs extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    tokenExists(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     tokenIndex(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1962,6 +2075,17 @@ export interface BulkDisbursableNFTs extends BaseContract {
     tokenOfOwnerByIndex(
       owner: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    tokensByPage(
+      page: PromiseOrValue<BigNumberish>,
+      perPage: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    tokensOfOwner(
+      owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2006,9 +2130,14 @@ export interface BulkDisbursableNFTs extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    balanceOfBatch(
+    "balanceOfBatch(address[],uint256[])"(
       accounts: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "balanceOfBatch(address)"(
+      owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2254,6 +2383,11 @@ export interface BulkDisbursableNFTs extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    tokenExists(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     tokenIndex(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -2262,6 +2396,17 @@ export interface BulkDisbursableNFTs extends BaseContract {
     tokenOfOwnerByIndex(
       owner: PromiseOrValue<string>,
       index: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    tokensByPage(
+      page: PromiseOrValue<BigNumberish>,
+      perPage: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    tokensOfOwner(
+      owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

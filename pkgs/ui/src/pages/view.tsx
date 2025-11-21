@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { useParams } from 'react-router-dom'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 import JSON5 from 'json5'
 import {
   regexify, deregexify, httpURL,
@@ -145,7 +145,7 @@ export const View: React.FC<{ tokenId: string, header?: boolean }> = (
 )
 
 export const ViewPage = () => {
-  const { nftId } = useParams() 
+  const { nftId } = useParams()
   const tokenId = deregexify(
     Array.isArray(nftId) ? nftId[0] : nftId
   )

@@ -2,7 +2,7 @@ import React, {
   ReactNode, useEffect, useMemo, useState,
 } from 'react'
 import { useParams } from 'react-router-dom'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 import JSON5 from 'json5'
 import { useWeb3 } from '@/lib/hooks'
 import {

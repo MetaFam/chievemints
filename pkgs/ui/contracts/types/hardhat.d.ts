@@ -85,6 +85,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.BulkDisbursableNFTs__factory>;
     getContractFactory(
+      name: "EnumerableERC1155",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.EnumerableERC1155__factory>;
+    getContractFactory(
       name: "Roles",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Roles__factory>;
@@ -179,6 +183,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.BulkDisbursableNFTs>;
+    getContractAt(
+      name: "EnumerableERC1155",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.EnumerableERC1155>;
     getContractAt(
       name: "Roles",
       address: string,

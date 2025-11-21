@@ -1,16 +1,12 @@
 // SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155BurnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155SupplyUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "./EnumerableERC1155.sol";
 import "./Roles.sol";
-
-// import "hardhat/console.sol";
 
 library Bits {
   // Each _WIDTH is the number of Bits given to the
@@ -117,199 +113,132 @@ library Bits {
 }
 
 
-
-
-
 contract BulkDisbursableNFTs is
- Initializable, ERC1155Upgradeable, OwnableUpgradeable,
- ERC1155BurnableUpgradeable, ERC1155SupplyUpgradeable, UUPSUpgradeable
+  Initializable,
+  OwnableUpgradeable,
+  EnumerableERC1155,
+  UUPSUpgradeable
 {
-  struct CheckableList {
-    uint256[] entries;
-    mapping (uint256 => uint256) indices;
-  }
-
-  // Note that because the contract is proxied, the
-  // storage members and order cannot change
-  string public name;
-  string public symbol;
-
-  mapping (uint256 => string) private uris;
-
-  // To allow enumeration of all the tokens, a list is kept.
-  CheckableList private tokens;
-
-  // Permissioning tokens are tracked in a separate list.
-  CheckableList private permissions;
-
-  // To allow listing the tokens held by a user, a map
-  // of owner to a list of tokens is maintained.
-  mapping (address => CheckableList) private owned;
-
-  // To allow listing the owners of a token, a map
-  // of owner to a list of tokens is maintained.
-  mapping (uint256 => address[]) private owners;
-
-  mapping (uint256 => uint256) public uintValues;
-  mapping (uint256 => int256) public intValues;
+  mapping(uint256 => uint256) public uintValues;
+  mapping(uint256 => int256) public intValues;
 
   /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() initializer {}
 
-  function initialize(
-    string calldata _name,
-    string calldata _symbol
-  )
-    initializer
+  function initialize(string calldata _name, string calldata _symbol)
     public
+    initializer
   {
     __Ownable_init();
-    __ERC1155_init("Error: Single Token URI Not Used");
-    __ERC1155Burnable_init();
-    __ERC1155Supply_init();
+    __EnumerableERC1155_init("Error: Single Token URI Not Used");
     __UUPSUpgradeable_init();
-
-    // Token id 0 is reserved, so it is skipped.
-    tokens.entries.push(0);
 
     setDescription(_name, _symbol);
   }
 
-  function setDescription(
-    string calldata _name,
-    string calldata _symbol
-  )
-    public
-    virtual
-    onlyOwner
-  {
-    name = _name;
-    symbol = _symbol;
-  }
-
   /**
-   * @notice This function returns the gating token with the given
-   * role. It is possible for gating tokens to operate only on a
-   * single other token, but this method checks id zero which
-   * represents the role applies to all tokens.
+   * @notice Returns the gating token with the given role for all tokens.
    */
   function roleToken(Roles.Role role)
     public
-    virtual
     view
+    virtual
     returns (uint256 id)
   {
     id = roleToken(role, 0);
   }
 
   /**
-   * @notice Creates the gating token for oprtations on a single
-   * other token, given by id.
+   * @notice Creates the gating token for operations on a single token.
    */
-  function roleToken(
-    Roles.Role role,
-    uint256 index
-  )
+  function roleToken(Roles.Role role, uint256 index)
     public
-    virtual
     view
+    virtual
     returns (uint256 id)
   {
     require(
       index < 2**Bits.COUNTER_WIDTH,
-      string(abi.encodePacked(
-        "Indices can be at most ",
-        Strings.toString(Bits.COUNTER_WIDTH),
-        " bits."
-      ))
+      string(
+        abi.encodePacked(
+          "Indices can be at most ",
+          Strings.toString(Bits.COUNTER_WIDTH),
+          " bits."
+        )
+      )
     );
 
     id = (
-      Bits.GATING_TYPE
-      | (uint(role) << Bits.ROLE_BOUNDARY)
-      | (role == Roles.Role.Superuser ? Bits.UNIQUENESS_MASK : 0)
-      | index
+      Bits.GATING_TYPE |
+      (uint256(role) << Bits.ROLE_BOUNDARY) |
+      (role == Roles.Role.Superuser ? Bits.UNIQUENESS_MASK : 0) |
+      index
     );
   }
 
   /**
-   * @notice Checks if the message sender has the specified gating
-   * role.
+   * @notice Checks if the message sender has the specified gating role.
    */
-  function hasRole(Roles.Role role)
-    public
-    virtual
-    view
-    returns (bool has)
-  {
+  function hasRole(Roles.Role role) public view virtual returns (bool has) {
     has = hasRole(role, _msgSender());
   }
 
   /**
-   * @notice Checks if the specified user has the given gating
-   * role.
+   * @notice Checks if the specified user has the given gating role.
    */
-  function hasRole(
-    Roles.Role role,
-    address user
-  )
+  function hasRole(Roles.Role role, address user)
     public
-    virtual
     view
+    virtual
     returns (bool has)
   {
     has = hasRole(role, user, 0);
   }
 
   /**
-   * @notice Checks if the message sender has the specified gating
-   * role for the listed token id.
+   * @notice Checks if the message sender has the specified gating role for the token.
    */
-  function hasRole(
-    Roles.Role role,
-    uint256 id
-  )
+  function hasRole(Roles.Role role, uint256 id)
     public
-    virtual
     view
+    virtual
     returns (bool has)
   {
     has = hasRole(role, _msgSender(), id);
   }
 
   /**
-   * @notice Checks if the specified user has the given gating
-   * role for the listed token id.
+   * @notice Checks if the specified user has the given gating role for the token.
    */
-  function hasRole(
-    Roles.Role role,
-    address user,
-    uint256 id
-  )
+  function hasRole(Roles.Role role, address user, uint256 id)
     public
-    virtual
     view
+    virtual
     returns (bool has)
   {
-    has = gateToken(role, user, tokens.indices[id]) != 0;
+    uint256 index = 0;
+    if (id != 0) {
+      try this.tokenIndex(id) returns (uint256 idx) {
+        index = idx;
+      } catch {
+        return false;
+      }
+    }
+    has = gateToken(role, user, index) != 0;
   }
 
-  function gateToken(
-    Roles.Role role,
-    address user,
-    uint256 index
-  )
+  function gateToken(Roles.Role role, address user, uint256 index)
     public
-    virtual
     view
+    virtual
     returns (uint256 id)
   {
     uint256 gate = roleToken(role);
 
     uint256 disablingId = gate | Bits.DISABLING_TYPE | index;
-    if(tokens.indices[disablingId] != 0) {
+    try this.tokenIndex(disablingId) returns (uint256) {
       return disablingId;
-    }
+    } catch {}
 
     uint256[8] memory ids = [
       gate | Bits.USE_ONCE | Bits.INTERNAL_MASK | index,
@@ -321,8 +250,9 @@ contract BulkDisbursableNFTs is
       gate | index,
       gate
     ];
-    for(uint8 i = 0; i < ids.length; i++) {
-      if(balanceOf(user, ids[i]) > 0) {
+
+    for (uint8 i = 0; i < ids.length; i++) {
+      if (balanceOf(user, ids[i]) > 0) {
         return ids[i];
       }
     }
@@ -330,98 +260,64 @@ contract BulkDisbursableNFTs is
   }
 
   /**
-   * @notice Checks if the message sender holds a Superuser token
-   * or is the contract owner.
+   * @notice Checks if the message sender is a Superuser or contract owner.
    */
-  function isSuper()
-    public
-    virtual
-    view
-    returns (bool superuser)
-  {
+  function isSuper() public view virtual returns (bool superuser) {
     superuser = isSuper(_msgSender(), 0);
   }
 
   /**
-   * @notice Checks if the specified user holds a Superuser token
-   * or is the contract owner.
+   * @notice Checks if the specified user is a Superuser or contract owner.
    */
-  function isSuper(address user)
-    public
-    virtual
-    view
-    returns (bool superuser)
-  {
+  function isSuper(address user) public view virtual returns (bool superuser) {
     superuser = isSuper(user, 0);
   }
-  
+
   /**
-   * @notice Checks if the specified user holds a Superuser token
-   * or is the contract owner.
-  */
+   * @notice Checks if the message sender is a Superuser for the token.
+   */
   function isSuper(uint256 tokenId)
     public
-    virtual
     view
+    virtual
     returns (bool superuser)
   {
     superuser = isSuper(_msgSender(), tokenId);
   }
 
   /**
-   * @notice Checks if the specified user holds a Superuser token
-   * or is the contract owner.
-  */
+   * @notice Checks if the specified user is a Superuser for the token.
+   */
   function isSuper(address user, uint256 tokenId)
     public
-    virtual
     view
+    virtual
     returns (bool superuser)
   {
-    superuser = (
-      hasRole(Roles.Role.Superuser, user, tokenId)
-      || user == owner()
-    );
+    superuser = (hasRole(Roles.Role.Superuser, user, tokenId) || user == owner());
   }
 
   /**
-   * @notice Create an all-token gating token for the listed
-   * role given to the specified user.
+   * @notice Grant an all-token role to a user.
    */
-  function grantRole(
-    Roles.Role role,
-    address user
-  )
+  function grantRole(Roles.Role role, address user) public virtual {
+    grantRole(role, user, 0, false);
+  }
+
+  /**
+   * @notice Grant an all-token role to a user.
+   */
+  function grantRole(Roles.Role role, address user, bool singleUse)
     public
     virtual
   {
-     grantRole(role, user, 0, false);
+    grantRole(role, user, 0, singleUse);
   }
 
   /**
-   * @notice Create an all-token gating token for the listed
-   * role given to the specified user.
+   * @notice Grant a token-specific role to a user.
    */
-  function grantRole(
-    Roles.Role role,
-    address user,
-    bool singleUse
-  )
-    public
-    virtual
-  {
-     grantRole(role, user, 0, singleUse);
-  }
-
-  /**
-   * @notice Create an gating token for the given listed
-   * role given to the specified user.
-   */
-  function grantRole(
-    Roles.Role role,
-    address user,
-    uint256 id
-  )
+  function grantRole(Roles.Role role, address user, uint256 id)
     public
     virtual
   {
@@ -429,21 +325,15 @@ contract BulkDisbursableNFTs is
   }
 
   /**
-   * @notice Create an gating token for the given listed
-   * role given to the specified user.
+   * @notice Grant a token-specific role to a user.
    */
-  function grantRole(
-    Roles.Role role,
-    address user,
-    uint256 id,
-    bool singleUse
-  )
+  function grantRole(Roles.Role role, address user, uint256 id, bool singleUse)
     public
     virtual
   {
-    _grantRole(role, user, id == 0 ? 0 : tokenIndex(id), singleUse, false);
+    uint256 index = id == 0 ? 0 : tokenIndex(id);
+    _grantRole(role, user, index, singleUse, false);
   }
-
 
   function _grantRole(
     Roles.Role role,
@@ -451,45 +341,39 @@ contract BulkDisbursableNFTs is
     uint256 index,
     bool singleUse,
     bool local
-  )
-    internal
-    virtual
-  {
-    if(!local) {
-      if(role == Roles.Role.Superuser) {
+  ) internal virtual {
+    if (!local) {
+      uint256 tokenId = index == 0 ? 0 : tokenByIndex(index);
+      if (role == Roles.Role.Superuser) {
         require(
-          isSuper(tokens.entries[index]),
+          isSuper(tokenId),
           "You must be a Superuser to create other Superusers."
         );
       } else {
         require(
-          hasRole(
-            Roles.Role.Caster, index) 
-            || isSuper(tokens.entries[index]
-          ),
+          hasRole(Roles.Role.Caster, tokenId) || isSuper(tokenId),
           "You must have the Caster role to assign new roles."
         );
       }
     }
+
     uint256 id = (
-      roleToken(role, index)
-      | (local ? Bits.INTERNAL_MASK : 0)
-      | (singleUse ? Bits.USE_ONCE : 0)
+      roleToken(role, index) |
+      (local ? Bits.INTERNAL_MASK : 0) |
+      (singleUse ? Bits.USE_ONCE : 0)
     );
     _setMax(id, getMax(id) + 1, true);
     _mint(user, id, 1, "");
   }
 
-  function disableRole(Roles.Role toDisable, uint256 disablingIndex)
-    public
-  {
+  function disableRole(Roles.Role toDisable, uint256 disablingIndex) public {
     uint256 id = roleToken(toDisable, disablingIndex);
     id |= Bits.DISABLING_TYPE;
 
-    uint256 index = tokens.entries.length;
-    tokens.entries.push(id);
-    tokens.indices[id] = index;
+    // This registers the token in the enumerable list
+    _mint(address(0), id, 0, "");
   }
+
   /**
    * @return metadata The metadata URI associated with the given token.
    */
@@ -502,19 +386,16 @@ contract BulkDisbursableNFTs is
   {
     metadata = uris[id];
 
-    if(bytes(metadata).length == 0) {
+    if (bytes(metadata).length == 0) {
       uint256 tokenType = id & Bits.TYPE_MASK;
-      if(
-        tokenType == Bits.GATING_TYPE
-        || tokenType == Bits.GATING_TYPE | Bits.DISABLING_TYPE
+      if (
+        tokenType == Bits.GATING_TYPE ||
+        tokenType == (Bits.GATING_TYPE | Bits.DISABLING_TYPE)
       ) {
         uint256 generic = (
-          id & (
-            ~Bits.COUNTER_MASK
-            & ~Bits.NO_MATCH_FLAGS
-            & ~Bits.TYPE_MASK
-          )
-          | Bits.GATING_TYPE
+          id &
+          (~Bits.COUNTER_MASK & ~Bits.NO_MATCH_FLAGS & ~Bits.TYPE_MASK) |
+          Bits.GATING_TYPE
         );
         metadata = uris[generic];
       }
@@ -524,13 +405,7 @@ contract BulkDisbursableNFTs is
   /**
    * @notice Set the metadata URI for the given token.
    */
-  function setURI(
-    uint256 id,
-    string calldata newURI
-  )
-    public
-    virtual
-  {
+  function setURI(uint256 id, string calldata newURI) public virtual {
     require(
       hasRole(Roles.Role.Configurer, id) || isSuper(id),
       "You must have a Configurer token to change metadata."
@@ -545,28 +420,17 @@ contract BulkDisbursableNFTs is
   event Created(uint256 id, address controller);
 
   /**
-   * @notice Call `create` with the message sender as the
-   * maintainer.
-   * @return id The reserved token id.
+   * @notice Create a new token type with the message sender as maintainer.
    */
-  function create()
-    public
-    virtual
-    returns (uint256 id)
-  {
-    Roles.Role[] memory roles = new Roles.Role [](0);
+  function create() public virtual returns (uint256 id) {
+    Roles.Role[] memory roles = new Roles.Role[](0);
     id = create(_msgSender(), roles, roles);
   }
 
   /**
-   * @notice Call `create` with the message sender as the
-   * maintainer.
-   * @return id The reserved token id.
+   * @notice Create a new token type with the message sender as maintainer.
    */
-  function create(
-    Roles.Role[] memory grants,
-    Roles.Role[] memory disables
-  )
+  function create(Roles.Role[] memory grants, Roles.Role[] memory disables)
     public
     virtual
     returns (uint256 id)
@@ -575,21 +439,14 @@ contract BulkDisbursableNFTs is
   }
 
   /**
-   * @notice Reserve a new token id & mint gating tokens
-   * with the Minter, Configurer, & Limiter for the
-   * listed maintainer.
-   * @return id The reserved token id.
+   * @notice Create a new token type with specified maintainer and roles.
    */
   function create(
     address maintainer,
     Roles.Role[] memory grants,
     Roles.Role[] memory disables
-  )
-    public
-    virtual
-    returns (uint256 id)
-  {
-    uint256 index = tokens.entries.length;
+  ) public virtual returns (uint256 id) {
+    uint256 index = typeSupply() + 1;
     id = Bits.VANILLA_TYPE | index;
 
     require(
@@ -597,62 +454,49 @@ contract BulkDisbursableNFTs is
       "You must have a Creator token to create new tokens."
     );
 
-    tokens.entries.push(id);
-    tokens.indices[id] = index;
-    for(uint256 i = 0; i < grants.length; i++) {
+    // Mint zero tokens to register it in the enumerable list
+    _mint(address(0), id, 0, "");
+
+    for (uint256 i = 0; i < grants.length; i++) {
       _grantRole(grants[i], maintainer, index, false, true);
     }
-    for(uint256 i = 0; i < disables.length; i++) {
+    for (uint256 i = 0; i < disables.length; i++) {
       disableRole(disables[i], index);
     }
     setPerUserMax(id, 1);
 
     emit Created(id, maintainer);
-    uint256 gate = gateToken(
-      Roles.Role.Creator, _msgSender(), 0
-    );
-    if(gate & Bits.USE_ONCE == Bits.USE_ONCE) {
+
+    uint256 gate = gateToken(Roles.Role.Creator, _msgSender(), 0);
+    if ((gate & Bits.USE_ONCE) == Bits.USE_ONCE) {
       _burn(_msgSender(), gate, 1);
     }
-    setPerUserMax(id,1);
   }
 
   /**
-   * @notice Create new tokens instances.
-   * @return minted If a token instance was actually created.
-   * If the token to be minted is unique & the user already
-   * has one, the function will succeed and return `false`.
+   * @notice Create new token instances.
    */
   function mint(
     address recipient,
     uint256 id,
     uint256 amount,
     bytes memory data
-  )
-    public
-    virtual
-    returns (bool minted)
-  {
-    if((id & Bits.UNIQUE) == Bits.UNIQUE && balanceOf(recipient, id) > 0) {
+  ) public virtual returns (bool minted) {
+    if ((id & Bits.UNIQUE) == Bits.UNIQUE && balanceOf(recipient, id) > 0) {
       return false;
     }
     _mint(recipient, id, amount, data);
-    return true; // Also a transfer event is conditionally emitted
+    return true;
   }
 
   /**
-   * @notice Mint a given token to a group of
-   * addresses.
+   * @notice Mint a given token to a group of addresses.
    */
-  function mint(
-    address[] memory to,
-    uint256 id,
-    bytes memory data
-  )
+  function mint(address[] memory to, uint256 id, bytes memory data)
     public
     virtual
   {
-    for(uint256 i = 0; i < to.length; ++i) {
+    for (uint256 i = 0; i < to.length; ++i) {
       mint(to[i], id, 1, data);
     }
   }
@@ -663,19 +507,14 @@ contract BulkDisbursableNFTs is
   }
 
   /**
-   * @notice Set the maximum number of tokens
-   * allowed to be minted. Trumps the Minter role.
+   * @notice Set the maximum number of tokens allowed to be minted.
    */
   function setMax(uint256 id, int64 max) public {
     _setMax(id, max, false);
   }
 
-  /**
-   * @notice Set the maximum number of tokens
-   * allowed to be minted. Trumps the Minter role.
-   */
   function _setMax(uint256 id, int64 max, bool local) internal virtual {
-    if(!local) {
+    if (!local) {
       require(
         hasRole(Roles.Role.Limiter, id) || isSuper(id),
         "You must have a Limiter token to change quantity."
@@ -685,29 +524,17 @@ contract BulkDisbursableNFTs is
     intValues[key] = max;
   }
 
-  /**
-   * @notice Set the maximum number of tokens
-   * allowed to be minted. Trumps the Minter role.
-   */
   function getPerUserMax(uint256 id) public view returns (int256 max) {
     uint256 key = uint256(keccak256(abi.encodePacked("per user max", id)));
-    max = intValues[key]; 
+    max = intValues[key];
   }
-  
-  /**
-   * @notice Set the maximum number of tokens
-   * allowed to be minted. Trumps the Minter role.
-  */
+
   function setPerUserMax(uint256 id, int64 max) public {
     uint256 key = uint256(keccak256(abi.encodePacked("per user max", id)));
     intValues[key] = max;
   }
 
-  function burn(
-    address owner,
-    uint256 id,
-    uint256 quantity
-  )
+  function burn(address owner, uint256 id, uint256 quantity)
     public
     virtual
     override
@@ -720,65 +547,8 @@ contract BulkDisbursableNFTs is
   }
 
   /**
-   * @return count The number of types of tokens.
+   * @dev Hook called before any token transfer.
    */
-  function typeSupply()
-    public
-    view
-    virtual
-    returns (uint256 count)
-  {
-    count = tokens.entries.length - 1;
-  }
-
-  function tokenOfOwnerByIndex(
-    address owner,
-    uint256 index
-  )
-    public
-    view
-    virtual
-    returns (uint256 id)
-  {
-    require(
-      index < owned[owner].entries.length,
-      "ERC-1155 Enumerable: token index out of bounds"
-    );
-    id = owned[owner].entries[index];
-  }
-
-  function tokenByIndex(uint256 index)
-    public
-    view
-    virtual
-    returns (uint256 id)
-  {
-    require(
-      index > 0,
-      "ERC-1155 Enumerable: tokens indexed from 1"
-    );
-    require(
-      index <= tokens.entries.length,
-      "ERC-1155 Enumerable: token index out of bounds"
-    );
-
-    id = tokens.entries[index];
-  }
-
-  function tokenIndex(uint256 id)
-    public
-    view
-    virtual
-    returns (uint256 index)
-  {
-    index = tokens.indices[id];
-    require(
-      index != 0,
-      "The requested token does not exist."
-    );
-  }
-
-  // The following functions are overrides required by Solidity.
   function _beforeTokenTransfer(
     address operator,
     address from,
@@ -786,50 +556,48 @@ contract BulkDisbursableNFTs is
     uint256[] memory ids,
     uint256[] memory amounts,
     bytes memory data
-  )
-    internal
-    override(ERC1155Upgradeable, ERC1155SupplyUpgradeable)
-  {
-    for(uint256 i = 0; i < ids.length; ++i) {
-      if(!isSuper(ids[i])) {
-        if(ids[i] & Bits.INTERNAL_MASK != Bits.INTERNAL_MASK) {
+  ) internal override {
+    // Handle permission checks
+    for (uint256 i = 0; i < ids.length; ++i) {
+      if (!isSuper(ids[i])) {
+        if ((ids[i] & Bits.INTERNAL_MASK) != Bits.INTERNAL_MASK) {
           Roles.Role needed = (
-            from == address(0) ? (
-              Roles.Role.Minter
-            ) : (
-              Roles.Role.Transferer
-            )
+            from == address(0) ? Roles.Role.Minter : Roles.Role.Transferer
           );
-          if(needed == Roles.Role.Minter) {
+
+          if (needed == Roles.Role.Minter) {
             int256 max = getMax(ids[i]);
-            // it should be possible to fool this by splitting the mint
-            // up into separate entries with the same id
             require(
               max < 0 || int256(totalSupply(ids[i]) + amounts[i]) <= max,
               "Maximum mint allowance exceeded."
             );
+
             int256 perUserMax = getPerUserMax(ids[i]);
             require(
-              perUserMax < 0 || int256(balanceOf(to, ids[i]) + amounts[i]) <= perUserMax,
+              perUserMax < 0 ||
+                int256(balanceOf(to, ids[i]) + amounts[i]) <= perUserMax,
               "Maximum per user allowance exceeded."
             );
-            if(ids[i] & Bits.TYPE_MASK == Bits.GATING_TYPE) {
+
+            if ((ids[i] & Bits.TYPE_MASK) == Bits.GATING_TYPE) {
               require(
                 hasRole(Roles.Role.Caster, ids[i]),
                 "You must have a Caster token to mint token gates."
               );
             } else {
-              uint256 gate = gateToken(needed, _msgSender(), tokenIndex(ids[i]));
+              uint256 index = tokenIndex(ids[i]);
+              uint256 gate = gateToken(needed, _msgSender(), index);
               require(
                 hasRole(needed, ids[i]),
                 "You must have a Minter token to generate tokens."
               );
-              if(gate & Bits.USE_ONCE > 0) {
+              if ((gate & Bits.USE_ONCE) > 0) {
                 _burn(_msgSender(), gate, 1);
               }
             }
-          } else { // Transferer (or Burner)
-            if(to != address(0)) {
+          } else {
+            // Transferer (or Burner)
+            if (to != address(0)) {
               require(
                 hasRole(needed, ids[i]),
                 "You must have a Transferer token to transfer tokens."
@@ -839,37 +607,11 @@ contract BulkDisbursableNFTs is
         }
       }
     }
-    if(to != address(0)) {
-      for(uint256 i = 0; i < ids.length; ++i) {
-        if(tokens.indices[ids[i]] == 0) {
-          tokens.entries.push(ids[i]);
-          tokens.indices[ids[i]] = tokens.entries.length;
-        }
-        if(owned[to].indices[ids[i]] == 0) {
-          owned[to].entries.push(ids[i]);
-          owned[to].indices[ids[i]] = owned[to].entries.length;
-        }
-      }
-    }
-    if(from != address(0)) {
-      for(uint256 i = 0; i < ids.length; ++i) {
-        if(balanceOf(from, ids[i]) <= amounts[i]) {
-          uint256 index = owned[from].indices[ids[i]] - 1;
-          delete owned[from].entries[index];
-          delete owned[from].indices[ids[i]];
-        }
-      }
-    } 
-    super._beforeTokenTransfer(
-      operator, from, to, ids, amounts, data
-    );
+
+    super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
   }
 
-  function _authorizeUpgrade(address)
-    internal
-    view
-    override
-  {
+  function _authorizeUpgrade(address) internal view override {
     require(
       hasRole(Roles.Role.Maintainer) || isSuper(),
       "You must have a Maintainer token to upgrade the contract."

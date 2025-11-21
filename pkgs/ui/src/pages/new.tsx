@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Event } from 'ethers'
+import { type TransactionReceipt, type Log, parseEventLogs } from 'viem'
 import { useForm } from 'react-hook-form'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 import { useSearchParams } from 'react-router-dom'
 import { OptionsForm, Header, SubmitButton } from '@/components'
 import { useWeb3 } from '@/lib/hooks'
@@ -25,7 +25,7 @@ export const New = () => (
 const Content: React.FC = () => {
   const {
     ensClient, roContract, rwContract, rolesLibrary,
-    connecting, address, contractClient,
+    connecting, address, contractClient, contract,
   } = useWeb3()
   const [search] = useSearchParams({ tokenId: '' })
   const id = search.get('tokenId')
@@ -122,18 +122,22 @@ const Content: React.FC = () => {
       const hash = await rwContract(
         'create', [maintainer, grants, disables]
       ) as '0x{string}'
-      const receipt = await contractClient.waitForTransactionReceipt({ hash })
-      console.debug({ receipt })
-      const event = receipt.events.find(
-        (evt: Event) => evt.event === 'Created'
+      const receipt: TransactionReceipt = await (
+        contractClient.waitForTransactionReceipt({ hash })
       )
+      const [event] = parseEventLogs({
+        abi: contract.abi,
+        logs: receipt.logs,
+        eventName: 'Created',
+      }) as Array<{ args: Array<unknown> }>
       if(!event) {
         throw new Error(
           'Couldn’t find a creation event.'
         )
       }
+      console.debug({ event })
       const [id] = event.args
-      setTokenId(id.toHexString())
+      setTokenId(id)
     } catch(error) {
       toast.error(extractMessage(error))
       console.error({ error })

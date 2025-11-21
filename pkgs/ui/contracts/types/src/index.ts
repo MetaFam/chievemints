@@ -3,4 +3,5 @@
 /* eslint-disable */
 import type * as bulkDisbursableNfTsSol from "./BulkDisbursableNFTs.sol";
 export type { bulkDisbursableNfTsSol };
+export type { EnumerableERC1155 } from "./EnumerableERC1155";
 export type { Roles } from "./Roles";

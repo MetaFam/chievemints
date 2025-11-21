@@ -58,8 +58,8 @@ const Finding:React.FC<{ label?: string }> = (
   )
 )
 
-declare module 'csstype' {
-  interface Properties {
+declare module 'react' {
+  interface CSSProperties {
     '--img-bg'?: string
   }
 }
@@ -161,7 +161,7 @@ const URI:React.FC<Token> = ({ token }) => (
             >
               🔗
             </a>
-          </Tippy>  
+          </Tippy>
         </li>
         <li className="clipboard">
           <Tippy content="Copy to Clipboard">

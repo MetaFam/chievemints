@@ -51,7 +51,7 @@ library Roles {
     // Oracles provide information about the world.
     // Trusted information like the length of
     // videos submitted for time tokens.
-    Oracle, 
+    Oracle,
 
     ReservedNeg1
   }
@@ -76,48 +76,37 @@ library Roles {
     revert (string(abi.encodePacked("Unknown Role Index: ", Strings.toString(uint8(index)))));
   }
 
+  bytes32 private constant HASH_SUPERUSER = keccak256(abi.encodePacked('Superuser'));
+  bytes32 private constant HASH_MINTER = keccak256(abi.encodePacked('Minter'));
+  bytes32 private constant HASH_CASTER = keccak256(abi.encodePacked('Caster'));
+  bytes32 private constant HASH_TRANSFERER = keccak256(abi.encodePacked('Transferer'));
+  bytes32 private constant HASH_CONFIGURER = keccak256(abi.encodePacked('Configurer'));
+  bytes32 private constant HASH_MAINTAINER = keccak256(abi.encodePacked('Maintainer'));
+  bytes32 private constant HASH_CREATOR = keccak256(abi.encodePacked('Creator'));
+  bytes32 private constant HASH_LIMITER = keccak256(abi.encodePacked('Limiter'));
+  bytes32 private constant HASH_BURNER = keccak256(abi.encodePacked('Burner'));
+  bytes32 private constant HASH_DESTROYER = keccak256(abi.encodePacked('Destroyer'));
+  bytes32 private constant HASH_ORACLE = keccak256(abi.encodePacked('Oracle'));
+  bytes32 private constant HASH_RESERVED_LAST = keccak256(abi.encodePacked('ReservedLast'));
+
   function roleIndexForName(string memory roleName)
     public
     pure
     returns (uint8 role)
   {
     bytes32 hash = keccak256(abi.encodePacked(roleName));
-    if(hash == keccak256(abi.encodePacked('Superuser'))) {
-      return uint8(Role.Superuser);
-    }
-    if(hash == keccak256(abi.encodePacked('Minter'))) {
-      return uint8(Role.Minter);
-    }
-    if(hash == keccak256(abi.encodePacked('Caster'))) {
-      return uint8(Role.Caster);
-    }
-    if(hash == keccak256(abi.encodePacked('Transferer'))) {
-      return uint8(Role.Transferer);
-    }
-    if(hash == keccak256(abi.encodePacked('Configurer'))) {
-      return uint8(Role.Configurer);
-    }
-    if(hash == keccak256(abi.encodePacked('Maintainer'))) {
-      return uint8(Role.Maintainer);
-    }
-    if(hash == keccak256(abi.encodePacked('Creator'))) {
-      return uint8(Role.Creator);
-    }
-    if(hash == keccak256(abi.encodePacked('Limiter'))) {
-      return uint8(Role.Limiter);
-    }
-    if(hash == keccak256(abi.encodePacked('Burner'))) {
-      return uint8(Role.Burner);
-    }
-    if(hash == keccak256(abi.encodePacked('Destroyer'))) {
-      return uint8(Role.Destroyer);
-    }
-    if(hash == keccak256(abi.encodePacked('Oracle'))) {
-      return uint8(Role.Oracle);
-    }
-    if(hash == keccak256(abi.encodePacked('ReservedLast'))) {
-      return uint8(Role.ReservedNeg1);
-    }
+    if(hash == HASH_SUPERUSER) return uint8(Role.Superuser);
+    if(hash == HASH_MINTER) return uint8(Role.Minter);
+    if(hash == HASH_CASTER) return uint8(Role.Caster);
+    if(hash == HASH_TRANSFERER) return uint8(Role.Transferer);
+    if(hash == HASH_CONFIGURER) return uint8(Role.Configurer);
+    if(hash == HASH_MAINTAINER) return uint8(Role.Maintainer);
+    if(hash == HASH_CREATOR) return uint8(Role.Creator);
+    if(hash == HASH_LIMITER) return uint8(Role.Limiter);
+    if(hash == HASH_BURNER) return uint8(Role.Burner);
+    if(hash == HASH_DESTROYER) return uint8(Role.Destroyer);
+    if(hash == HASH_ORACLE) return uint8(Role.Oracle);
+    if(hash == HASH_RESERVED_LAST) return uint8(Role.ReservedNeg1);
     revert(string(abi.encodePacked('Unknown role type: ', roleName)));
   }
 }

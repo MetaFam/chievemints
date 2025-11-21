@@ -2,4 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as bulkDisbursableNfTsSol from "./BulkDisbursableNFTs.sol";
+export { EnumerableERC1155__factory } from "./EnumerableERC1155__factory";
 export { Roles__factory } from "./Roles__factory";

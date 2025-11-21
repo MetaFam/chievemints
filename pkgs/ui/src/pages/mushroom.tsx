@@ -1,9 +1,9 @@
 import React from 'react'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 import { BiconomyPaymaster, BiconomySmartAccountV2, Bundler, DEFAULT_ECDSA_OWNERSHIP_MODULE, DEFAULT_ENTRYPOINT_ADDRESS, ECDSAOwnershipValidationModule, PaymasterMode, WalletClientSigner, createSmartAccountClient } from '@biconomy/account'
 import { Header } from '@/components'
 import {
-  createWalletClient, http, encodeFunctionData, parseAbi, custom, 
+  createWalletClient, http, encodeFunctionData, parseAbi, custom,
 } from 'viem'
 import { useAccount } from 'wagmi'
 import { optimism } from 'viem/chains'

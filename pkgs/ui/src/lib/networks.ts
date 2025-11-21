@@ -50,7 +50,8 @@ export const NETWORKS: NetworkInfo = (() => {
       rpcUrl: (typeof POLYGON_RPC !== 'undefined' ? (
         POLYGON_RPC
       ) : (
-        'https://polygon-rpcUrl.com'
+        // 'https://polygon-rpc.com/'
+        `https://polygon-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_ALCHEMY_ID}`
       )),
     },
     mumbai: {
@@ -64,7 +65,7 @@ export const NETWORKS: NetworkInfo = (() => {
         MUMBAI_RPC
       ) : (
         'https://rpcUrl.ankr.com/polygon_mumbai'
-        ?? 'https://rpcUrl-mumbai.matic.today'
+        // ?? 'https://rpcUrl-mumbai.matic.today'
       )),
     },
     optimisticEthereum: {

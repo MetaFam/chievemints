@@ -1,11 +1,11 @@
 import { useModal } from 'connectkit'
 import {
-  type PublicClient,
-  type WalletClient,
   useAccount,
   useChainId,
 } from 'wagmi'
 import {
+  type PublicClient,
+  type WalletClient,
   Abi,
   createPublicClient, createWalletClient, custom, http,
 } from 'viem'
@@ -30,9 +30,9 @@ export type ContractInterface = (
 )
 
 export type Web3ContextType = {
-  ensClient?: PublicClient
-  contractClient?: PublicClient
-  walletClient?: WalletClient
+  ensClient?: any // viem PublicClient with inferred chain types
+  contractClient?: any // viem PublicClient with inferred chain types
+  walletClient?: any // viem WalletClient with inferred chain types
   roContract?: ContractInterface
   bitsLibrary?: ContractInterface
   rolesLibrary?: ContractInterface
@@ -45,7 +45,7 @@ export type Web3ContextType = {
   connected: boolean
   contract: {
     address: Maybe<string>
-    abi: Maybe<Record<string, unknown>>
+    abi: Maybe<Abi>
   }
 }
 
@@ -96,7 +96,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactNode }> = (
     const contractClient = useMemo(() => (
       createPublicClient({
         chain: NETWORKS.contract.viemChain,
-        transport: http(),
+        transport: http(NETWORKS.contract.rpcUrl),
       })
     ), [])
 
@@ -119,11 +119,11 @@ export const Web3ContextProvider: React.FC<{ children: ReactNode }> = (
           console.debug('Reading contract…')
           return (
             contractClient.readContract({
-              address: address as '0x{string}',
+              address: address as `0x${string}`,
               abi,
               functionName,
-              args,
-            })
+              args: args ?? [],
+            } as any)
           )
         }
       ),
@@ -159,7 +159,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactNode }> = (
           return walletClient.writeContract({
             account: address as '0x{string}',
             address: contractAddress as '0x{string}',
-            chain: NETWORKS[chainId].wagmiChain,
+            chain: NETWORKS[chainId].viemChain,
             abi,
             functionName,
             args,
