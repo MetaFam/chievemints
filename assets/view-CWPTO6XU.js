@@ -1,1 +1,0 @@
-import"./components-ooiu0Tr0.js";import{n as e,r as t,t as n}from"./view-CU-1jYD3.js";export{n as View,e as ViewPage,t as default};
