@@ -1,0 +1,1 @@
+var e=`0xCcF43AB35493dCbBaef16897eCA65D9626B41A38`;export{e as default};

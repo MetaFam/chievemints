@@ -1,0 +1,1 @@
+import{G as e}from"./index-CspjFhug.js";export{e as secp256k1};

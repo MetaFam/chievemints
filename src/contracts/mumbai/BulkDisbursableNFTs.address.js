@@ -1,2 +1,0 @@
-export default '0x127B81AF011a2DF44F933b2b09c655D59Bb57b3C';
-//# sourceMappingURL=BulkDisbursableNFTs.address.js.map
