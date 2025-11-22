@@ -1,8 +1,8 @@
 import { NFTStorage } from 'nft.storage'
 import React, {
-  useCallback, useMemo, useRef, useState, forwardRef,
+  useCallback, useMemo, useRef, useState,
 } from 'react'
-import { Maybe } from './lib/types'
+import { type Maybe } from '#types'
 import tyl from './styles/config.module.css'
 
 declare const CHAIN_NAME: string
@@ -38,6 +38,7 @@ export const ipfsLinkPattern = (
     'https://nftstorage.link/{protocol}/{v1cid}/{path}'
   )
 )
+console.debug({ ipfsLinkPattern })
 
 export const nftGraph = (
   (typeof NFT_GRAPH !== 'undefined') ? (
@@ -97,16 +98,15 @@ export const defaults = {
   visible: '',
 }
 
-export const Settings = forwardRef<
-  HTMLDialogElement,
-  {
-    nftStorageAPIToken?: string
-    setNFTStorageAPIToken?: (token: Maybe<string>) => void
-  }
->(({
+export const Settings: React.FC<{
+  nftStorageAPIToken?: Maybe<string>
+  setNFTStorageAPIToken?: (token: Maybe<string>) => void
+  ref?: React.Ref<HTMLDialogElement | null>
+}> = ({
   nftStorageAPIToken: apiToken,
   setNFTStorageAPIToken: setAPIToken,
-}, ref) => {
+  ref,
+}) => {
   const [internalAPIToken, setInternalAPIToken] = (
     useState(apiToken ?? '')
   )
@@ -115,7 +115,7 @@ export const Settings = forwardRef<
     <dialog {...{ ref }} className={tyl.dialog}>
       <form
         onSubmit={() => {
-          setAPIToken(internalAPIToken)
+          setAPIToken?.(internalAPIToken)
         }}
       >
         <header>
@@ -152,8 +152,7 @@ export const Settings = forwardRef<
       </form>
     </dialog>
   )
-})
-Settings.displayName = 'Settings'
+}
 
 export const useConfig = ({ requireStorage = false } = {}) => {
   const host = window.location.host
@@ -168,12 +167,14 @@ export const useConfig = ({ requireStorage = false } = {}) => {
   )
   const setNFTStorageAPIToken = useCallback(
     (token: Maybe<string>) => {
-      store.setItem(key, token)
-      baseSetNFTStorageAPIToken(token)
+      if(token != null) {
+        store.setItem(key, token)
+        baseSetNFTStorageAPIToken(token)
+      }
     },
     [key, store],
   )
-  const dialog = useRef(null)
+  const dialog = useRef<HTMLDialogElement | null>(null)
   const storage = useMemo(() => {
     const token = nftStorageAPIToken
     return token ? new NFTStorage({ token }) : null

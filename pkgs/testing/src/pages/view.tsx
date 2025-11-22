@@ -7,7 +7,7 @@ import { FadeLoader } from 'react-spinners'
 import {
   regexify, deregexify, httpURL,
 } from '#lib/helpers'
-import type { ERC1155Metadata } from '#lib/types'
+import type { ERC1155Metadata } from '#types'
 import { HomeLink, ThreeDScene } from '#components'
 import { useWeb3 } from '#lib/hooks'
 import tyl from '../styles/view.module.css'

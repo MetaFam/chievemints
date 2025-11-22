@@ -1,22 +1,22 @@
+import React, { useCallback, useMemo, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import JSON5 from 'json5'
+import { useNavigate } from 'react-router'
+import { toast } from 'react-toastify'
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
+import { createPortal } from 'react-dom'
+import type {
+  ERC1155Metadata, FormValues, Maybe, OpenSeaAttribute,
+  Attribute, Values,
+} from '#types'
+import { useWeb3 } from '#lib/hooks'
+import { useConfig } from '#config'
 import {
   URIForm, JSONForm, NFTForm, MaxForm, SubmitButton,
 } from '#components'
 import {
   ipfsify, isSet, isEmpty, regexify, extractMessage,
 } from '#lib/helpers'
-import React, { useCallback, useMemo, useState } from 'react'
-import { useWeb3 } from '#lib/hooks'
-import { useForm } from 'react-hook-form'
-import JSON5 from 'json5'
-import {
-  ERC1155Metadata, FormValues, Maybe, OpenSeaAttribute, Attribute,
-} from '#lib/types'
-import { useNavigate } from 'react-router'
-import { useConfig } from '#config'
-import { toast } from 'react-toastify'
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
-import { createPortal } from 'react-dom'
-import { Values } from '#lib/types'
 import os from '../styles/OptionsForm.module.css'
 
 export const OptionsForm: React.FC<{

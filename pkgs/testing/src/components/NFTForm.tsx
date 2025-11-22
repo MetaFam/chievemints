@@ -1,16 +1,8 @@
-/* eslint-disable @next/next/no-img-element */
-import { nftBase } from '#config'
-import {
-  httpURL, isEmpty, regexify, capitalize,
-} from '#lib/helpers'
-import {
-  Attribute, ERC1155Metadata, Maybe, OpenSeaAttribute,
-} from '#lib/types'
 import React, {
-  ChangeEvent, useCallback, useEffect, useRef, useState,
+  type ChangeEvent, useCallback, useEffect, useRef, useState,
 } from 'react'
 import Markdown from 'react-markdown'
-import {
+import type {
   FieldValues, UseFormRegister, UseFormSetValue,
   UseFormWatch,
 } from 'react-hook-form'
@@ -18,6 +10,13 @@ import { Link } from 'react-router'
 import {
   Tab, Tabs, TabList, TabPanel,
 } from 'react-tabs'
+import { nftBase } from '#config'
+import {
+  httpURL, isEmpty, regexify, capitalize,
+} from '#lib/helpers'
+import type {
+  Attribute, ERC1155Metadata, Maybe, OpenSeaAttribute,
+} from '#types'
 import { ThreeDScene } from './ThreeDScene'
 import fs from '../styles/NFTForm.module.css'
 
@@ -209,7 +208,7 @@ const MediaDisplay: React.FC<{
     )
     setFilename(file)
 
-    const ext = file?.split('.').pop()
+    const ext = file?.split('.').pop() as string
     let type = 'none'
     if(['mp4', 'avif', 'webm'].includes(ext)) {
       type = 'video'

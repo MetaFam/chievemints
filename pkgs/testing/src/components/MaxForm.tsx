@@ -1,12 +1,13 @@
-import { useWeb3 } from '#lib/hooks'
-import { Maybe } from '#lib/types'
 import React, {
-  ChangeEvent, FormEvent, useCallback, useEffect, useState
+  type ChangeEvent, type FormEvent, useCallback,
+  useEffect, useState,
 } from 'react'
-import { SubmitButton } from './SubmitButton'
-import { extractMessage } from '#lib/helpers'
 import { BarLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
+import { useWeb3 } from '#lib/hooks'
+import type { Maybe } from '#types'
+import { extractMessage } from '#lib/helpers'
+import { SubmitButton } from './SubmitButton'
 
 type MaxFormProps = {
   tokenId?: string

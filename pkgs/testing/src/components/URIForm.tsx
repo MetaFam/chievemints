@@ -1,5 +1,7 @@
 import React from 'react'
-import { FieldValues, UseFormRegister } from 'react-hook-form'
+import type {
+  FieldValues, UseFormRegister,
+} from 'react-hook-form'
 import '../styles/URIForm.css'
 
 export const URIForm: React.FC<{

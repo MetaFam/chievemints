@@ -9,7 +9,7 @@ import {
   httpURL, regexify, deregexify, extractMessage,
 } from '#lib/helpers'
 import { HomeLink, OptionsForm } from '#components'
-import type { ERC1155Metadata, Maybe } from '#lib/types'
+import type { ERC1155Metadata, Maybe } from '#types'
 import '../styles/edit.css'
 
 export const Edit = () => {

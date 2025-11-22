@@ -1,5 +1,4 @@
-import { ExternalProvider } from '@ethersproject/providers'
-import { Chain } from 'viem'
+import { type Chain } from 'viem'
 
 export type Maybe<T> = T | null
 export type Values<T> = T[keyof T]

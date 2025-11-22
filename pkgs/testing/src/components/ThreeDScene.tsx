@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, useGLTF } from '@react-three/drei'
-import { Maybe } from '#lib/types'
+import type { Maybe } from '#types'
 import LoggingErrorBoundary from './LoggingErrorBoundary'
 
 export const Model = (

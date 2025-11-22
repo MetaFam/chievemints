@@ -1,9 +1,10 @@
-import { toSpanList } from '#lib/helpers'
-import { Limits } from '#lib/types'
 import React, {
-  FormEventHandler, HTMLAttributes, SetStateAction, useEffect,
+  type FormEventHandler, type HTMLAttributes,
+  type SetStateAction, useEffect,
 } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { toSpanList } from '#lib/helpers'
+import type { Limits } from '#types'
 import tffs from '../styles/TokenFilterForm.module.css'
 
 export type FilterValues = {

@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react'
-import { FieldValues, UseFormRegister } from 'react-hook-form'
+import type {
+  FieldValues, UseFormRegister,
+} from 'react-hook-form'
 import JSON5 from 'json5'
-import { ERC1155Metadata } from '#lib/types'
 import { HashLoader } from 'react-spinners'
+import { type ERC1155Metadata } from '#types'
 import jf from '../styles/JSONForm.module.css'
 
 export const JSONForm: React.FC<{

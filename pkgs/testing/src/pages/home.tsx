@@ -1,4 +1,4 @@
-import React, {
+import {
   useState, useEffect, useCallback, useRef,
 } from 'react'
 import { ConnectKitButton } from 'connectkit'
@@ -10,9 +10,9 @@ import Tippy from '@tippyjs/react'
 import {
   extractMessage, httpURL, toSpanList,
 } from '#lib/helpers'
-import {
+import type {
   HiddenError, Limits, Maybe, TokenState,
-} from '#lib/types'
+} from '#types'
 import {
   Header, TokenFilterForm, TokensTable,
 } from '#components'
