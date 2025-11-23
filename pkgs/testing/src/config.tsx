@@ -38,7 +38,6 @@ export const ipfsLinkPattern = (
     'https://nftstorage.link/{protocol}/{v1cid}/{path}'
   )
 )
-console.debug({ ipfsLinkPattern })
 
 export const nftGraph = (
   (typeof NFT_GRAPH !== 'undefined') ? (
@@ -154,7 +153,7 @@ export const Settings: React.FC<{
   )
 }
 
-export const useConfig = ({ requireStorage = false } = {}) => {
+export const useConfig = ({}: { requireStorage?: boolean } = {}) => {
   const host = window.location.host
   const key = `chievemints-${host}-nftStorageAPIToken`
   const store = localStorage

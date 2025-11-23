@@ -8,10 +8,10 @@ import {
 import JSON5 from 'json5'
 import Tippy from '@tippyjs/react'
 import {
-  extractMessage, httpURL, toSpanList,
+  HiddenError, extractMessage, httpURL, toSpanList,
 } from '#lib/helpers'
 import type {
-  HiddenError, Limits, Maybe, TokenState,
+  Limits, Maybe, TokenState,
 } from '#types'
 import {
   Header, TokenFilterForm, TokensTable,
@@ -21,7 +21,7 @@ import { defaults } from '#config'
 import tyl from '../styles/home.module.css'
 
 const Home = () => {
-  const [tokens, setTokens] = useState<Array<TokenState | Error>>([])
+  const [tokens, setTokens] = useState<Array<TokenState>>([])
   const [query] = useSearchParams()
   const [limit, setLimit] = useState(Number(query.get('limit') ?? defaults.limit))
   const [offset, setOffset] = useState(Number(query.get('offset') ?? defaults.offset))
@@ -52,7 +52,7 @@ const Home = () => {
     },
     [setTokens],
   )
-  const [typeCount, setTypeCount] = useState(null)
+  const [typeCount, setTypeCount] = useState<Maybe<number>>(null)
   const [GATING_TYPE, setGATING_TYPE] = useState<Maybe<bigint>>(null)
   const [DISABLING_TYPE, setDISABLING_TYPE] = useState<Maybe<bigint>>(null)
   const [TYPE_WIDTH, setTYPE_WIDTH] = useState<Maybe<number>>(null)
@@ -83,15 +83,15 @@ const Home = () => {
   useEffect(() => {
     if(roContract && bitsLibrary) {
       roContract('typeSupply')
-      .then(setTypeCount)
+      .then((val) => setTypeCount(val as number))
       bitsLibrary('GATING_TYPE')
-      .then(setGATING_TYPE)
+      .then((val) => setGATING_TYPE(val as bigint))
       bitsLibrary('DISABLING_TYPE')
-      .then(setDISABLING_TYPE)
+      .then((val) => setDISABLING_TYPE(val as bigint))
       bitsLibrary('TYPE_WIDTH')
-      .then(setTYPE_WIDTH)
+      .then((val) => setTYPE_WIDTH(val as number))
       bitsLibrary('TYPE_BOUNDARY')
-      .then(setTYPE_BOUNDARY)
+      .then((val) => setTYPE_BOUNDARY(val as number))
     }
   }, [roContract, bitsLibrary])
 
@@ -99,7 +99,7 @@ const Home = () => {
     setVisibleList(toSpanList(visible))
   }, [visible])
 
-  const controller = useRef(null)
+  const controller = useRef<AbortController>(null)
   const retrieve = useCallback(
     async (tokens: Array<TokenState>) => {
       controller.current?.abort()
@@ -110,21 +110,21 @@ const Home = () => {
           tokens.map(async (token, idx) => {
             try {
               const id: bigint = token.id ? BigInt(token.id) : (
-                await roContract('tokenByIndex', [token.index]) as bigint
+                await roContract?.('tokenByIndex', [token.index]) as bigint
               )
 
               const type = (
                 id
                 & (
-                  (2n**BigInt(TYPE_WIDTH) - 1n) // TYPE_WIDTH 1s
-                  << BigInt(TYPE_BOUNDARY)
+                  (2n**BigInt(TYPE_WIDTH ?? 0) - 1n) // TYPE_WIDTH 1s
+                  << BigInt(TYPE_BOUNDARY ?? 0)
                 )
               )
               const gating = token.is?.gating ?? (
                 type === GATING_TYPE
               )
               const disabling = token.is?.disabling ?? (
-                type === (GATING_TYPE | DISABLING_TYPE)
+                type === ((GATING_TYPE ?? 0n) | (DISABLING_TYPE ?? 0n))
               )
               const gates = token.gates ?? (gating || disabling ? (
                 Number((2n**32n - 1n) & id)
@@ -156,14 +156,14 @@ const Home = () => {
 
               const responses = await Promise.allSettled([
                 (async () => {
-                  const uri = token.uri ?? await roContract('uri', [id]) as string
+                  const uri = token.uri ?? await roContract?.('uri', [id]) as string
                   if(uri === '') {
                     throw new Error('No URI… Waiting for configuration…')
                   }
                   setToken(idx, { uri })
                   const response = await fetch(
                     httpURL(uri),
-                    { signal: controller.current.signal }
+                    { signal: controller.current?.signal }
                   )
                   if(!response.ok) {
                     throw new Error(`Request Status: ${response.status}`)
@@ -177,11 +177,11 @@ const Home = () => {
                   }
                 })(),
                 (async () => {
-                  const supply = await roContract('totalSupply', [id]) as bigint
+                  const supply = await roContract?.('totalSupply', [id]) as bigint
                   setToken(idx, { total: supply })
                 })(),
                 (async () => {
-                  const max = await roContract('getMax', [id]) as bigint
+                  const max = await roContract?.('getMax', [id]) as bigint
                   setToken(idx, { max })
                 })(),
               ])
@@ -223,13 +223,21 @@ const Home = () => {
         if(visibleList.some(() => true)) {
           visibleList.forEach(
             (elem) => {
-              let { high, low } = elem as Limits
-              const sorted = [low, high] = (
-                [low, high].sort((a, b) => (a - b))
+              let [high, low] = ((): [a: number, b: number] => {
+                switch(typeof elem) {
+                  case 'number': return [elem, elem]
+                  case 'object': {
+                    const { high, low } = elem as Limits
+                    return [high, low]
+                  }
+                  default: {
+                    throw new Error('Bad entry in visibility list.')
+                  }
+                }
+              })()
+              ;[high, low] = (
+                [high, low].sort((a, b) => (a - b))
               )
-              if(sorted.some((elem) => elem == null)) {
-                [high, low] = [elem as number, elem as number]
-              }
               tokens.push(...(
                 Array.from({ length: high - low + 1 })
                 .map((_, idx) => ({

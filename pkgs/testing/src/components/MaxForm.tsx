@@ -84,7 +84,7 @@ export const MaxForm = (
       </label>
       <SubmitButton
         label={`Set ${perUser ? 'Per User': ''} Max`}
-        disabled={!/^-?\d+$/.test(max)}
+        disabled={max ? !/^-?\d+$/.test(max) : false}
         requireStorage={false}
         short={true}
         className="full"

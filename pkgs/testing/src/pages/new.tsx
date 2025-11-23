@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { type TransactionReceipt, type Log, parseEventLogs } from 'viem'
+import { type TransactionReceipt, parseEventLogs } from 'viem'
 import { useForm } from 'react-hook-form'
 import { useSearchParams } from 'react-router'
 import { CircleLoader } from 'react-spinners'
@@ -45,6 +45,9 @@ const Content: React.FC = () => {
 
   useEffect(() => {
     const load = async () => {
+      if(!rolesLibrary) {
+        throw new Error('`rolesLibrary` is not set.')
+      }
       if(roContract) {
         const numRoles = (await rolesLibrary(
           'roleIndexForName', ['ReservedLast']
@@ -124,6 +127,9 @@ const Content: React.FC = () => {
       const receipt: TransactionReceipt = await (
         contractClient.waitForTransactionReceipt({ hash })
       )
+      if(!contract.abi) {
+        throw new Error('`contractr.abi` is not set.')
+      }
       const [event] = parseEventLogs({
         abi: contract.abi,
         logs: receipt.logs,

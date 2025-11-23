@@ -96,7 +96,9 @@ const Disburse = () => {
       if(roContract && address && tokenId) {
         try {
           setBalance(Number(
-            (await roContract('balanceOf', [address, tokenId])).toString()
+            ((await roContract(
+              'balanceOf', [address, tokenId],
+            )) as Number).toString()
           ))
         } catch (err) {
           setError((err as Error).message)

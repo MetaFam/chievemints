@@ -22,15 +22,15 @@ export const Model = (
 }
 
 export const ThreeDScene = (
-  { model, className = null, bg = null }:
-  { model: string; className?: string, bg?: string }
+  { model, className, bg = null }:
+  { model: string; className?: string, bg?: Maybe<string> }
 ) => {
   const [paused, setPaused] = React.useState(false)
 
   let args: Maybe<[r: number, g: number, b: number]> = null
-  if(bg) {
+  if(bg && bg.length >= 6) {
     args = (
-      bg.match(/../g)
+      bg.match(/../g)!
       .map((num) => Number(`0x${num}`) / 255)
       .slice(0, 3)
     ) as [r: number, g: number, b: number]

@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react'
 import type {
-  FieldValues, UseFormRegister,
+  FieldValues, UseFormRegister, UseFormSetValue,
 } from 'react-hook-form'
 import JSON5 from 'json5'
 import { HashLoader } from 'react-spinners'
-import { type ERC1155Metadata } from '#types'
+import type { ERC1155Metadata, Maybe } from '#types'
 import jf from '../styles/JSONForm.module.css'
 
 export const JSONForm: React.FC<{
   register: UseFormRegister<FieldValues>
-  metadata: ERC1155Metadata
-  setValue: (name: string, value: string) => void
+  metadata: Maybe<ERC1155Metadata>
+  setValue: UseFormSetValue<FieldValues>
 }> = ({
   register, metadata, setValue
 }) => {

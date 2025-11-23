@@ -12,6 +12,9 @@ export const SelfMint: React.FC<{ tokenId: string }> = ({ tokenId }) => {
 
   const mint = useCallback(async () => {
     try {
+      if(!rwContract) {
+        throw new Error('`rwContract` is not set.')
+      }
       setProcessing(true)
       const hash = await (
         rwContract('mint', [[address], BigInt(tokenId)])

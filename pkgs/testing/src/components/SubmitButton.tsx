@@ -2,8 +2,8 @@ import { PacmanLoader } from 'react-spinners'
 import { capitalize, useSwitchTo } from '#lib/helpers'
 import { NETWORKS } from '#lib/networks'
 import React, {
-  ButtonHTMLAttributes,
-  HTMLProps, MouseEvent, useCallback, useMemo, useState,
+  type ButtonHTMLAttributes, type MouseEvent,
+  useCallback, useMemo, useState,
 } from 'react'
 import { useWeb3 } from '#lib/hooks'
 import { useConfig } from '#config'
@@ -56,7 +56,7 @@ export const SubmitButton: React.FC<{
         switchTo(NETWORKS.contract.chainId)
       } else if(!storage && requireStorage) {
         evt.preventDefault()
-        openSettings()
+        openSettings?.()
       } else {
         // onClick?.apply(null, [evt])
       }

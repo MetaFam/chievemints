@@ -242,6 +242,7 @@ const MediaDisplay: React.FC<{
         <input
           onChange={set}
           ref={input}
+          {...{ accept }}
         />
         {filename && <h4>{filename}</h4>}
       </div>

@@ -1,5 +1,5 @@
-import React, {
-  ReactNode, useEffect, useMemo, useState,
+import {
+  type ReactNode, useEffect, useMemo, useState,
 } from 'react'
 import { useParams } from 'react-router'
 import JSON5 from 'json5'
@@ -14,9 +14,10 @@ import '../styles/edit.css'
 
 export const Edit = () => {
   const { nftId } = useParams()
+  if(!nftId) throw new Error('`nftId` is not set.')
   const tokenId = useMemo(() => deregexify(nftId), [nftId])
   const [metadata, setMetadata] = useState<Maybe<ERC1155Metadata>>()
-  const [metaURI, setMetaURI] = useState<Maybe<string>>()
+  const [metaURI, setMetaURI] = useState<string>()
   const [error, setError] = useState<ReactNode>()
   const { roContract } = useWeb3()
 

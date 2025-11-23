@@ -43,6 +43,10 @@ export type Ownership = {
 
 export const Owners = () => {
   const { nftId } = useParams()
+  if(!nftId) {
+    throw new Error('`nftId` is not set.')
+  }
+
   const tokenId = useMemo(() => (
     deregexify(Array.isArray(nftId) ? nftId[0] : nftId)
   ), [nftId])
@@ -95,6 +99,9 @@ export const Owners = () => {
 
   useEffect(() => {
     const lookup = async () => {
+      if(!roContract) {
+        throw new Error('`roContract` is not set.')
+      }
       if(tokenId) {
         const uri = await roContract('uri', [tokenId]) as string
         if(!uri) return

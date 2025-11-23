@@ -53,7 +53,7 @@ export const OptionsForm: React.FC<{
     const uri = watch('uri')
 
     const buildMeta = useCallback(async ({
-      data, ipfs = true,
+      data,
     }: { data: FormValues, ipfs?: boolean }) => {
       const {
         name, description, homepage, color,
@@ -164,9 +164,13 @@ export const OptionsForm: React.FC<{
           }
         })()
 
-        if (metadata == null) {
+        if(!storage) {
+          throw new Error('NFTStorage is not configured.')
+        }
+        if(metadata == null) {
           throw new Error(`Metadata is \`${JSON5.stringify(metadata)}\`.`)
-        } else if (metadata !== '') {
+        }
+        if(metadata !== '') {
           metadata = await ipfsify({ filesOrURL: metadata, storage })
         }
         await configure({ metadata })
@@ -276,7 +280,7 @@ export const OptionsForm: React.FC<{
             break
           }
         }
-        changePromise.then(() => setTab(idx))
+        changePromise?.then(() => setTab(idx))
       },
       [changeTo],
     )

@@ -3,11 +3,13 @@ import React, {
 } from 'react'
 import { Link } from 'react-router'
 
-export const LinkedSVG: React.FC<{
-  href: string
-  svg: string
-  ref?: React.Ref<HTMLObjectElement | null>
-}> = ({ href = '#', svg: data, ref, ...props }) => {
+export const LinkedSVG: React.FC<
+  {
+    href?: string
+    svg: string
+    ref?: React.Ref<HTMLObjectElement | null>
+  } & Omit<React.ComponentPropsWithoutRef<'a'>, 'href'>
+> = ({ href = '#', svg: data, ref, ...props }) => {
   const svg = useRef<HTMLObjectElement | null>(null)
   const link = useRef<HTMLAnchorElement | null>(null)
   const local = !/^(https?:)?(\/\/)/.test(href)
@@ -33,7 +35,7 @@ export const LinkedSVG: React.FC<{
   )
 
   const setRef = useCallback(
-    (elem: HTMLObjectElement) => {
+    (elem: HTMLObjectElement | null) => {
       svg.current = elem
       if(typeof ref === 'function') {
         ref(elem)

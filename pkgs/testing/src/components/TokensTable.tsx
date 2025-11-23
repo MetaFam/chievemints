@@ -1,12 +1,11 @@
 /* eslint-disable jsx-a11y/alt-text */
-/* eslint-disable @next/next/no-img-element */
 import Tippy from '@tippyjs/react'
-import { extractMessage, httpURL, regexify } from '#lib/helpers'
-import type { TokenState } from '#lib/types'
 import Markdown from 'react-markdown'
 import React from 'react'
 import { ClimbingBoxLoader } from 'react-spinners'
 import { Link } from 'react-router'
+import { extractMessage, httpURL, regexify } from '#lib/helpers'
+import type { TokenState } from '#types'
 import '../styles/TokensTable.css'
 
 type IndexedToken = { token: TokenState, index: number }
@@ -65,7 +64,7 @@ declare module 'react' {
 }
 
 const Image:React.FC<Token> = ({ token }) => (
-  <div className="img" style={{ '--img-bg': `#${token.metadata.background_color}` }}>
+  <div className="img" style={{ '--img-bg': `#${token.metadata?.background_color}` }}>
     <Link to={`/view/${regexify(token.id)}`} className="content">
       {token.metadata?.image && (
         <img
@@ -128,7 +127,7 @@ const Description:React.FC<Token> = ({ token }) => (
           }}
         >
           {token.is?.disabling || token.is?.gating ? (
-            `> ${token.metadata.description.replace(/\n/g, "\n> ")}`
+            `> ${token.metadata?.description?.replace(/\n/g, "\n> ")}`
           ) : (
             token.metadata?.description ?? (
               '*No Description*'
@@ -252,10 +251,14 @@ const Actions:React.FC<Token> = ({ token }) => {
 }
 
 export const TokensTable: React.FC<{
-  tokens: Array<TokenState | Error>
+  tokens: Array<TokenState>
 }> = ({ tokens }) => (
   <section id="tokens">
     {tokens.map((token: TokenState, index) => {
+      if(token instanceof Error) {
+        throw token
+      }
+
       if(token.is?.hidden) {
         return null
       }

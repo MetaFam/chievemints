@@ -110,7 +110,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactNode }> = (
     ), [])
 
     const contractReader = useCallback(
-      (address: string, abi: Abi) => (
+      (address: Maybe<string>, abi: Maybe<Abi>) => (
         async (functionName: string, args?: Array<unknown>) => {
           if(!address) {
             throw new Error('Contract address not set.')
