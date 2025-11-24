@@ -1,6 +1,6 @@
 import React, {
-  ChangeEvent, FormEvent, ReactNode, useCallback,
-  useEffect, useMemo, useState,
+  type ChangeEvent, type FormEvent, type ReactNode,
+  useCallback, useEffect, useMemo, useState,
 } from 'react'
 import { useParams } from 'react-router'
 import { ClockLoader, ScaleLoader } from 'react-spinners'
@@ -10,10 +10,10 @@ import { normalize } from 'viem/ens'
 import Tippy from '@tippyjs/react'
 import {
   deregexify, extractMessage, httpURL, regexify,
-} from '@/lib/helpers'
-import { Maybe, ERC1155Metadata, Optional } from '@/lib/types'
-import { useWeb3 } from '@/lib/hooks'
-import { HomeLink } from '@/components'
+} from '#lib/helpers'
+import type { Maybe, ERC1155Metadata, Optional } from '#types'
+import { useWeb3 } from '#lib/hooks'
+import { HomeLink } from '#components'
 import tyl from '../styles/disburse.module.css'
 
 const Address: React.FC<{ name: string }> = ({ name }) => {
@@ -96,7 +96,9 @@ const Disburse = () => {
       if(roContract && address && tokenId) {
         try {
           setBalance(Number(
-            (await roContract('balanceOf', [address, tokenId])).toString()
+            ((await roContract(
+              'balanceOf', [address, tokenId],
+            )) as Number).toString()
           ))
         } catch (err) {
           setError((err as Error).message)
@@ -163,7 +165,7 @@ const Disburse = () => {
         case 'whitelist': {
           console.debug('whitelist', { addrs })
           addrs.map(async (addr) => {
-            const minterRole = await roContract(
+            const minterRole = await roContract?.(
               'roleIndexForName', ['Minter']
             ) as string
             await rwContract('mint', [addr, minterRole, 1])

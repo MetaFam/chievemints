@@ -1,31 +1,7 @@
 {
-  "compilerOptions": {
-    "outDir": "./dist/",
-    "allowSyntheticDefaultImports": true,
-    "noImplicitAny": true,
-    "module": "ESNext",
-    "target": "ES2022",
-    "allowJs": true,
-    "esModuleInterop": true,
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "composite": true,
-    "sourceMap": true,
-    "jsx": "react",
-    "baseUrl": "./src/",
-    "paths": {
-      "@/lib/*": ["lib/*"],
-      "@/config": ["config"],
-      "@/components": ["components/index"],
-      "@/types": ["lib/types"],
-    },
-  },
-  "include": ["./src"],
-  "references": [{ "path": "./tsconfig.node.json" }],
-  "ts-node": {
-    "compilerOptions": {
-      "module": "CommonJS",
-    },
-  },
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
 }

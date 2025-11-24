@@ -1,13 +1,12 @@
 import React from 'react'
-import { BiconomyPaymaster, BiconomySmartAccountV2, Bundler, DEFAULT_ECDSA_OWNERSHIP_MODULE, DEFAULT_ENTRYPOINT_ADDRESS, ECDSAOwnershipValidationModule, PaymasterMode, WalletClientSigner, createSmartAccountClient } from '@biconomy/account'
+import { PaymasterMode, createSmartAccountClient } from '@biconomy/account'
 import {
-  createWalletClient, http, encodeFunctionData, parseAbi, custom,
+  createWalletClient, encodeFunctionData, parseAbi, custom,
 } from 'viem'
 import { optimism } from 'viem/chains'
 import { useAccount } from 'wagmi'
 import { toast } from 'react-toastify'
-import { Header } from '@/components'
-import ABI from '../contracts/optimisticEthereum/BulkDisbursableNFTs.abi';
+import { Header } from '#components'
 import tyl from '../styles/mushroom.module.css'
 
 export const FreeMushroom = () => (
@@ -22,6 +21,10 @@ export const FreeMushroom = () => (
 
 const Content: React.FC = () => {
   const { address } = useAccount()
+  if(!address) {
+    throw new Error('`address` not set.')
+  }
+
   const mint = async () => {
     const client = createWalletClient({
       account: address,

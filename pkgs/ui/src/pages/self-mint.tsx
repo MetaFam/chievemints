@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from 'react'
 import { useParams } from 'react-router'
 import { toast } from 'react-toastify'
-import { deregexify, extractMessage, regexify } from '@/lib/helpers'
-import { SubmitButton } from '@/components'
-import { useWeb3 } from '@/lib/hooks'
+import { deregexify, extractMessage, regexify } from '#lib/helpers'
+import { SubmitButton } from '#components'
+import { useWeb3 } from '#lib/hooks'
 import { View } from './view'
 
 export const SelfMint: React.FC<{ tokenId: string }> = ({ tokenId }) => {
@@ -12,6 +12,9 @@ export const SelfMint: React.FC<{ tokenId: string }> = ({ tokenId }) => {
 
   const mint = useCallback(async () => {
     try {
+      if(!rwContract) {
+        throw new Error('`rwContract` is not set.')
+      }
       setProcessing(true)
       const hash = await (
         rwContract('mint', [[address], BigInt(tokenId)])

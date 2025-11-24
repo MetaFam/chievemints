@@ -1,13 +1,13 @@
 import { gql, useLazyQuery } from '@apollo/client'
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   useParams, useSearchParams, Link,
 } from 'react-router'
-import { httpURL, deregexify, capitalize } from '@/lib/helpers'
-import { HomeLink } from '@/components'
-import { useWeb3 } from '@/lib/hooks'
-import { contractNetwork } from '@/config'
-import { Maybe } from '@/lib/types'
+import { httpURL, deregexify, capitalize } from '#lib/helpers'
+import { HomeLink } from '#components'
+import { useWeb3 } from '#lib/hooks'
+import { contractNetwork } from '#config'
+import type { Maybe } from '#types'
 import contractAddress from '../contracts/polygon/BulkDisbursableNFTs.address'
 
 const LIMIT = 100 // The Graph's return limit
@@ -43,6 +43,10 @@ export type Ownership = {
 
 export const Owners = () => {
   const { nftId } = useParams()
+  if(!nftId) {
+    throw new Error('`nftId` is not set.')
+  }
+
   const tokenId = useMemo(() => (
     deregexify(Array.isArray(nftId) ? nftId[0] : nftId)
   ), [nftId])
@@ -95,6 +99,9 @@ export const Owners = () => {
 
   useEffect(() => {
     const lookup = async () => {
+      if(!roContract) {
+        throw new Error('`roContract` is not set.')
+      }
       if(tokenId) {
         const uri = await roContract('uri', [tokenId]) as string
         if(!uri) return

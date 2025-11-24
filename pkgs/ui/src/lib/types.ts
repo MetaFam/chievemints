@@ -1,5 +1,4 @@
-import { ExternalProvider } from '@ethersproject/providers'
-import { Chain } from 'viem'
+import { type Chain } from 'viem'
 
 export type Maybe<T> = T | null
 export type Values<T> = T[keyof T]
@@ -55,7 +54,7 @@ export type CodedError = Error & { code: number }
 export type TokenState = {
   id?: string
   hidable?: boolean
-  is?: Record<string, unknown>
+  is?: Record<string, boolean>
   gates?: Maybe<number>
   index?: number
   uri?: string
@@ -104,18 +103,11 @@ export type FormValues = {
 }
 
 export type Limits = {
-  high?: number
-  low?: number
+  high: number
+  low: number
 }
 
 export type SpanList = Array<number | Limits>
-
-export class HiddenError extends Error {
-  constructor(message: string) {
-    super(message)
-    this.name = 'HiddenError'
-  }
-}
 
 export type Styles = (
   Record<string, string>

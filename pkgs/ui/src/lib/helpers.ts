@@ -2,10 +2,10 @@ import type {
   CodedError, Limits, Maybe,
   MetaMaskError, NamedString, NestedError,
   SpanList,
-} from '@/lib/types'
+} from '#lib/types'
 import { CID } from 'multiformats/cid'
-import { NETWORKS } from '@/lib/networks'
-import { ipfsLinkPattern } from '@/config'
+import { NETWORKS } from '#lib/networks'
+import { ipfsLinkPattern } from '#config'
 import JSON5 from 'json5'
 import { NFTStorage } from 'nft.storage'
 import { useWeb3 } from './hooks'
@@ -69,12 +69,9 @@ export const isEmpty = (
 )
 
 export const isSet = (
-  (val: unknown) => {
-    if(val === '' || val == null) {
-      return false
-    }
-    return true
-  }
+  <T>(val: T): val is Exclude<T, '' | null | undefined> => (
+    !(val === '' || val == null)
+  )
 )
 
 export const useSwitchTo = () => {
@@ -209,7 +206,7 @@ export const regexify = (str?: string) => {
   return condensed.join('')
 }
 
-export const deregexify = (str?: string) => {
+export const deregexify = (str: string) => {
   if(!str) return str
 
   const matches = str.split(/(\w\{\d+\})/)
@@ -267,7 +264,7 @@ export const toSpanList = (str: string): SpanList => {
           Object.entries({ low, high }).map(
             ([key, val]) => [key, Number(val)]
           )
-        )
+        ) as Limits
       }
       return Number(entry)
     })
@@ -279,4 +276,11 @@ export const toSpanList = (str: string): SpanList => {
     { get() { return () => spanListToString(this) } }
   )
   return list
+}
+
+export class HiddenError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'HiddenError'
+  }
 }

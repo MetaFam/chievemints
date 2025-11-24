@@ -1,0 +1,73 @@
+:root {
+  --bg-color-light: #EEE;
+  --font-color-light: #111;
+  --highlight-light: #531AFF;
+  --bg-color: var(--bg-color-light);
+  --font-color: var(--font-color-light);
+  --highlight: var(--highlight-light);
+  --active-color: rgba(235, 197, 0, 0.75);
+
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #111;
+    --font-color: #CCC;
+    --highlight: #BD4AFF;
+  }
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--font-color);
+  border-color: var(--font-color);
+  
+  & [role="tablist"] > [role="tab"] {
+    border-color: var(--font-color);
+
+    &[aria-selected="true"] {
+      background-color: #f5f5f577;
+    }
+  }
+
+  & :any-link {
+    color: var(--highlight);
+    transition: opacity 0.1s;
+  }
+  
+  & :any-link:hover {
+    opacity: 95%;
+    text-shadow: 0 0 0.1em #FFFFFFBB;
+  }
+}
+
+[role="tooltip"] {
+  z-index: 10;
+}
+
+[role="tablist"] {
+  display: flex;
+  border-bottom: none;
+
+  & > [role="tab"] {
+    flex-grow: 1;
+    text-align: center;
+    border-width: 1px;
+    border-style: solid solid none solid;
+    border-radius: 1rem 1rem 0 0;
+  }
+}
+
+.bigNBold, .biggerNBold {
+  font-weight: bold;
+}
+
+.bigNBold {
+  font-size: 1.1em;
+}
+
+.biggerNBold {
+  font-size: 2em;
+}

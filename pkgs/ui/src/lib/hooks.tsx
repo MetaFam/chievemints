@@ -1,27 +1,25 @@
-import { useModal } from 'connectkit'
-import {
-  useAccount,
-  useChainId,
-} from 'wagmi'
-import {
-  type PublicClient,
-  type WalletClient,
-  Abi,
-  createPublicClient, createWalletClient, custom, http,
-} from 'viem'
-import 'viem/window'
-import type { Maybe } from '@/lib/types'
 import React, {
   createContext,
-  ReactNode,
+  type ReactNode,
   useCallback,
   useContext,
   useEffect,
   useMemo,
   useState,
 } from 'react'
-import { NETWORKS } from '@/lib/networks'
-import { contractNetwork } from '@/config'
+import { useModal } from 'connectkit'
+import {
+  useAccount,
+  useChainId,
+} from 'wagmi'
+import {
+  type Abi,
+  createPublicClient, createWalletClient, custom, http,
+} from 'viem'
+import 'viem/window'
+import type { Maybe } from '#types'
+import { NETWORKS } from '#lib/networks'
+import { contractNetwork } from '#config'
 
 export type ContractInterface = (
   (functionName: string, args?: Array<unknown>) => (
@@ -112,7 +110,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactNode }> = (
     ), [])
 
     const contractReader = useCallback(
-      (address: string, abi: Abi) => (
+      (address: Maybe<string>, abi: Maybe<Abi>) => (
         async (functionName: string, args?: Array<unknown>) => {
           if(!address) {
             throw new Error('Contract address not set.')

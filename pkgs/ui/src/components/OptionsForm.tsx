@@ -1,22 +1,22 @@
-import {
-  URIForm, JSONForm, NFTForm, MaxForm, SubmitButton,
-} from '@/components'
-import {
-  ipfsify, isSet, isEmpty, regexify, extractMessage,
-} from '@/lib/helpers'
 import React, { useCallback, useMemo, useState } from 'react'
-import { useWeb3 } from '@/lib/hooks'
 import { useForm } from 'react-hook-form'
 import JSON5 from 'json5'
-import {
-  ERC1155Metadata, FormValues, Maybe, OpenSeaAttribute, Attribute,
-} from '@/lib/types'
 import { useNavigate } from 'react-router'
-import { useConfig } from '@/config'
 import { toast } from 'react-toastify'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import { createPortal } from 'react-dom'
-import { Values } from '@/lib/types'
+import type {
+  ERC1155Metadata, FormValues, Maybe, OpenSeaAttribute,
+  Attribute, Values,
+} from '#types'
+import { useWeb3 } from '#lib/hooks'
+import { useConfig } from '#config'
+import {
+  URIForm, JSONForm, NFTForm, MaxForm, SubmitButton,
+} from '#components'
+import {
+  ipfsify, isSet, isEmpty, regexify, extractMessage,
+} from '#lib/helpers'
 import os from '../styles/OptionsForm.module.css'
 
 export const OptionsForm: React.FC<{
@@ -53,7 +53,7 @@ export const OptionsForm: React.FC<{
     const uri = watch('uri')
 
     const buildMeta = useCallback(async ({
-      data, ipfs = true,
+      data,
     }: { data: FormValues, ipfs?: boolean }) => {
       const {
         name, description, homepage, color,
@@ -164,9 +164,13 @@ export const OptionsForm: React.FC<{
           }
         })()
 
-        if (metadata == null) {
+        if(!storage) {
+          throw new Error('NFTStorage is not configured.')
+        }
+        if(metadata == null) {
           throw new Error(`Metadata is \`${JSON5.stringify(metadata)}\`.`)
-        } else if (metadata !== '') {
+        }
+        if(metadata !== '') {
           metadata = await ipfsify({ filesOrURL: metadata, storage })
         }
         await configure({ metadata })
@@ -276,7 +280,7 @@ export const OptionsForm: React.FC<{
             break
           }
         }
-        changePromise.then(() => setTab(idx))
+        changePromise?.then(() => setTab(idx))
       },
       [changeTo],
     )

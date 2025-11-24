@@ -6,10 +6,10 @@ import JSON5 from 'json5'
 import { FadeLoader } from 'react-spinners'
 import {
   regexify, deregexify, httpURL,
-} from '@/lib/helpers'
-import type { ERC1155Metadata } from '@/lib/types'
-import { HomeLink, ThreeDScene } from '@/components'
-import { useWeb3 } from '@/lib/hooks'
+} from '#lib/helpers'
+import type { ERC1155Metadata } from '#types'
+import { HomeLink, ThreeDScene } from '#components'
+import { useWeb3 } from '#lib/hooks'
 import tyl from '../styles/view.module.css'
 
 export const View: React.FC<{ tokenId: string, header?: boolean }> = (

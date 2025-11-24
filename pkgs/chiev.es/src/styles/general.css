@@ -1,0 +1,32 @@
+.flex {
+  display: flex;
+}
+
+.flexCol {
+  display: flex;
+  flex-direction: column;
+}
+
+.iblock {
+  display: inline-block;
+}
+
+.block {
+  display: block;
+}
+
+.grow0 {
+  flex-grow: 0;
+}
+
+.grow1 {
+  flex-grow: 1;
+}
+
+.full {
+  width: 100%;
+}
+
+.strike {
+  text-decoration: line-through;
+}

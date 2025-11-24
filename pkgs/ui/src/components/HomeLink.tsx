@@ -1,4 +1,4 @@
-import { LinkedSVG } from '@/components'
+import { LinkedSVG } from '#components'
 import React from 'react'
 import '../styles/HomeLink.css'
 

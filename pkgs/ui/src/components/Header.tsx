@@ -1,5 +1,5 @@
-import { LinkedSVG } from '@/components'
-import React, { HTMLAttributes } from 'react'
+import { LinkedSVG } from '#components'
+import React, { type HTMLAttributes } from 'react'
 import Tippy from '@tippyjs/react'
 import tyl from '../styles/Header.module.css'
 

@@ -1,0 +1,36 @@
+.link {
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.footer {
+  display: flex;
+  place-items: center;
+  position: fixed;
+  bottom: 0;
+  right: 1rem;
+  width: clamp(100ex, 50vw, calc(100vw - 1rem));
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 0fr) 1fr;
+  gap: 3rem;
+  justify-items: end;
+  width: 100%;
+
+  & button {
+    font-size: 1em;
+  }
+}
+
+.main {
+  display: grid;
+  place-items: center;
+  margin-bottom: 5rem;
+
+  & h1 {
+    text-align: center;
+  }
+}

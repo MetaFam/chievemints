@@ -1,5 +1,5 @@
-import { contractNetwork } from '@/config'
-import type { NetworkInfo } from '@/types'
+import { contractNetwork } from '#config'
+import type { NetworkInfo } from '#types'
 import {
   mainnet, gnosis, localhost,
   polygon, polygonMumbai, optimism,

@@ -1,6 +1,7 @@
-import { Maybe } from '@/lib/types'
-import React, {
-  Component, ErrorInfo, PropsWithChildren, ReactNode,
+import type { Maybe } from '#types'
+import {
+  Component, type ErrorInfo, type PropsWithChildren,
+  type ReactNode,
 } from 'react'
 
 type StateType = { error?: Maybe<string> }
